@@ -1,3 +1,4 @@
+import "@mdi/font/css/materialdesignicons.css";
 import Vue from "vue";
 import Vuetify, { VSkeletonLoader } from "vuetify/lib";
 import { es, en } from "vuetify/es5/locale";

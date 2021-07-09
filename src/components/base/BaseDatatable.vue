@@ -6,34 +6,46 @@
     class="elevation-1"
   >
     <template v-slot:top>
-      <v-toolbar color="primary lighten-1" flat>
-        <v-toolbar-title class="white--text">{{ title }}</v-toolbar-title>
+      <v-toolbar flat>
+        <v-toolbar-title class="black--text">{{ title }}</v-toolbar-title>
         <v-spacer></v-spacer>
         <slot name="top"> </slot>
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
-      <v-icon small class="mr-2" @click="editItem(item)"> mdi-pencil </v-icon>
-      <v-icon small class="mr-2" @click="deleteItem(item)"> mdi-delete </v-icon>
-      <v-icon
+      <BaseDatatableRowButton
+        title-tooltip="Editar rol"
+        icon="mdi-pencil"
+        @click="editItem(item)"
+      />
+
+      <BaseDatatableRowButton
+        title-tooltip="Eliminar rol"
+        icon="mdi-delete"
+        @click="deleteItem(item)"
+      />
+
+      <BaseDatatableRowButton
         v-if="extraButtons"
-        small
-        class="mr-2"
+        title-tooltip="Modificar permisos"
+        icon="mdi-shield-key"
         @click="customMethod(item)"
-      >
-        mdi-delete
-      </v-icon>
+      />
     </template>
     <template v-slot:item.active="{ item }">
-      <v-chip
-        class="max-width"
-        small
-        :color="item.active ? 'primary' : 'secondary'"
-        dark
-        outlined
-      >
-        {{ item.active ? "Activo" : "Inactivo" }}
-      </v-chip>
+      <v-tooltip color="primary darken-2" bottom>
+        <template v-slot:activator="{ on, attrs }">
+          <div v-bind="attrs" v-on="on">
+            <v-switch
+              @change="changeStatus(item)"
+              dense
+              v-model="item.active"
+              inset
+            ></v-switch>
+          </div>
+        </template>
+        <span>{{ item.active ? "Activo" : "Inactivo" }}</span>
+      </v-tooltip>
     </template>
   </v-data-table>
 </template>
@@ -49,12 +61,18 @@ export default {
     extraButtons: Boolean,
   },
   methods: {
+    changeStatus(item) {
+      this.$emit("changeStatus", item);
+    },
+
     editItem(item) {
       this.$emit("editItem", item);
     },
+
     deleteItem(item) {
       this.$emit("deleteItem", item);
     },
+
     customMethod(item) {
       this.$emit("customMethod", item);
     },

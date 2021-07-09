@@ -58,19 +58,5 @@ describe("login.vue", () => {
 
     // Ensure that our mock event was called
     expect(wrapper.vm.handleLogin).toHaveBeenCalledTimes(1);
-
-    /*
-    wrapper.vm.handleLogin = jest.fn();
-    const button = wrapper.find('#sendButton');
-    button.trigger('click');
-    expect(wrapper.vm.handleLogin).toHaveBeenCalled();
-*/
-    /* const button = wrapper.find('#sendButton')
-    const spy = jest.spyOn(wrapper.vm, "handleLogin")
-    button.trigger('click')
-    await wrapper.vm.$nextTick()
-    expect(spy).toHaveBeenCalled()
-    jest.restoreAllMocks()
-*/
   });
 });

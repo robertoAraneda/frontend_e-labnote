@@ -12,11 +12,12 @@
       @deleteItem="handleDeleteModel($event)"
       @editItem="handleEditModel($event)"
       @customMethod="handlePermissions($event)"
+      @changeStatus="handleChangeStatus($event)"
       :items="roles"
       :headers="headers"
       sort-by="id"
       title="Roles"
-      :extra-buttons="true"
+      :extra-buttons="false"
     >
       <template slot="top">
         <BaseAcceptButton small @click="openDialog" label="Crear nuevo rol" />
@@ -43,12 +44,14 @@
           placeholder="Nombre del guard"
           disabled
         />
-        <v-row justify="center">
-          <v-radio-group v-model="editedItem.active" row>
-            <v-radio label="Inactivo" :value="false"></v-radio>
-            <v-radio label="Activo" :value="true"></v-radio>
-          </v-radio-group>
-        </v-row>
+        <v-radio-group v-model="editedItem.active" row>
+          <template v-slot:label>
+            <div class="black--text text-subtitle-1">Estado:</div>
+          </template>
+          <v-spacer />
+          <v-radio label="Inactivo" :value="false"></v-radio>
+          <v-radio label="Activo" :value="true"></v-radio>
+        </v-radio-group>
       </template>
     </BaseDialog>
     <BaseSnackbar v-model="snackbar" :type="type" />
@@ -62,10 +65,7 @@
 
 <script>
 import { RoleHeaders } from "../../../helpers/headersDatatable";
-import {
-  SnackbarMessages,
-  SnackbarType,
-} from "../../../helpers/SnackbarMessages";
+import { SnackbarType } from "../../../helpers/SnackbarMessages";
 import { validationMessage } from "../../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
@@ -90,7 +90,6 @@ export default {
     editedIndex: -1,
     defaultItem: new Role(),
     snackbar: false,
-    text: SnackbarMessages.SUCCESS,
     timeout: 2000,
     headers: RoleHeaders,
     dialogDelete: false,
@@ -98,7 +97,7 @@ export default {
   }),
 
   mounted() {
-    this.getRoles();
+    this.index();
   },
 
   computed: {
@@ -122,10 +121,11 @@ export default {
 
   methods: {
     ...mapActions({
-      getRoles: "role/getRoles",
+      index: "role/getRoles",
       store: "role/postRoles",
       put: "role/putRoles",
       delete: "role/deleteRoles",
+      changeStatus: "role/changeStatusRole",
     }),
 
     async save() {
@@ -149,8 +149,25 @@ export default {
           this.activateSnackbar();
           this.resetForm();
           this.closeDialog();
-          await this.getRoles();
+          await this.index();
         }
+      }
+    },
+
+    async handleChangeStatus(item) {
+      try {
+        const { status } = await this.changeStatus(item);
+
+        if (status === 200) {
+          this.type = SnackbarType.SUCCESS;
+        }
+      } catch (e) {
+        this.type = SnackbarType.ERROR;
+      } finally {
+        this.dialogDelete = false;
+        this.activateSnackbar();
+        this.resetForm();
+        await this.index();
       }
     },
 
@@ -180,7 +197,7 @@ export default {
           this.dialogDelete = false;
           this.activateSnackbar();
           this.resetForm();
-          await this.getRoles();
+          await this.index();
         }
       }
     },

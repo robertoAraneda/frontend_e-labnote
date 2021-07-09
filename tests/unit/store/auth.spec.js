@@ -64,7 +64,8 @@ describe("authenticación", () => {
     };
 
     Auth.mutations.SET_LOGIN_USER(state, {
-      properties: { name: "Roberto", rut: "15.654.738-7" },
+      name: "Roberto",
+      rut: "15.654.738-7",
     });
 
     expect(state).toEqual({

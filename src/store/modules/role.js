@@ -72,6 +72,17 @@ export default {
       }
     },
 
+    changeStatusRole: async (_, payload) => {
+      try {
+        return await httpRequest.putRequest(
+          `${BASE_URL}/${payload.id}/status`,
+          { active: payload.active }
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
     getPermissionByRole: async (_, { idRole, idModule }) => {
       try {
         const { data } = await httpRequest.getRequest(
