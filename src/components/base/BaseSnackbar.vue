@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { SnackbarMessages } from "../../helpers/SnackbarMessages";
+import { SnackbarMessages, SnackbarType } from "../../helpers/SnackbarMessages";
 
 export default {
   name: "BaseSnackbar",
@@ -55,9 +55,11 @@ export default {
         case "success":
           return SnackbarMessages.SUCCESS;
         case "warning":
-          return "warning";
+          return SnackbarMessages.WARNING;
         case "error":
           return SnackbarMessages.ERROR;
+        case "forbidden":
+          return SnackbarMessages.FORBIDDEN;
         default:
           return "primary";
       }
@@ -66,11 +68,13 @@ export default {
     setColor() {
       switch (this.type) {
         case "success":
-          return "success";
+          return SnackbarType.SUCCESS;
         case "warning":
-          return "warning";
+          return SnackbarType.WARNING;
         case "error":
-          return "error";
+          return SnackbarType.ERROR;
+        case "forbidden":
+          return SnackbarType.WARNING;
         default:
           return "primary";
       }
@@ -83,6 +87,8 @@ export default {
           return "warning_";
         case "error":
           return "error_";
+        case "forbidden":
+          return "error_";
         default:
           return "primary";
       }
@@ -94,6 +100,8 @@ export default {
         case "warning":
           return "mdi-alert-circle";
         case "error":
+          return "mdi-alert";
+        case "forbidden":
           return "mdi-alert";
         default:
           return "";

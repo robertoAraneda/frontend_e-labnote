@@ -13,6 +13,9 @@
       @editItem="handleEditModel($event)"
       @changeStatus="handleChangeStatus($event)"
       @searchItem="handleShowItem($event)"
+      :can-update="canUpdate"
+      :can-delete="canDelete"
+      :can-show="canShow"
       :items="items"
       :headers="headers"
       sort-by="id"
@@ -30,7 +33,7 @@
     <BaseDialog
       :dialog="dialog"
       :form-title="formTitle"
-      @close="dialog = false"
+      @close="closeDialog"
       @save="save"
     >
       <template slot="body">
@@ -55,15 +58,7 @@
           @blur="$v.editedItem.icon.$touch()"
           :error-messages="iconErrors"
         />
-        <BaseTextfield
-          v-model="editedItem.slug"
-          label="Slug"
-          disabled
-          @input="$v.editedItem.slug.$touch()"
-          @blur="$v.editedItem.slug.$touch()"
-          v-mask="['+## (#) #### ####']"
-          :error-messages="slugErrors"
-        />
+        <BaseTextfield :value="slugGenerator" label="Slug" disabled />
         <v-radio-group v-model="editedItem.active" row>
           <template v-slot:label>
             <div class="black--text text-subtitle-1">Estado:</div>
@@ -88,7 +83,7 @@ import { ModuleHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
-import { required, email } from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import Module from "../../models/Module";
 import { findIndex } from "../../helpers/Functions";
@@ -106,8 +101,7 @@ export default {
   validations: {
     editedItem: {
       name: { required },
-      slug: { required },
-      icon: { required, email },
+      icon: { required },
       url: { required },
       active: { required },
     },
@@ -125,14 +119,16 @@ export default {
     type: "success",
   }),
 
-  mounted() {
-    this.index();
+  async mounted() {
+    await this.index();
+    await this.getCurrentUser();
   },
 
   computed: {
     ...mapGetters({
       modules: "module/modules",
       loggedUser: "auth/user",
+      namedPermissions: "auth/namedPermissions",
     }),
 
     items() {
@@ -165,16 +161,41 @@ export default {
       if (!this.$v.editedItem.icon.$dirty) return errors;
       !this.$v.editedItem.icon.required &&
         errors.push(validationMessage.REQUIRED);
-      !this.$v.editedItem.email.email && errors.push(validationMessage.EMAIL);
       return errors;
     },
 
-    slugErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.slug.$dirty) return errors;
-      !this.$v.editedItem.slug.required &&
-        errors.push(validationMessage.REQUIRED);
-      return errors;
+    slugGenerator() {
+      let lowercase = this.editedItem.name.toLowerCase();
+
+      lowercase = lowercase.replace(/ó/g, "o");
+      lowercase = lowercase.replace(/á/g, "a");
+      lowercase = lowercase.replace(/é/g, "e");
+      lowercase = lowercase.replace(/í/g, "i");
+      lowercase = lowercase.replace(/ú/g, "o");
+      lowercase = lowercase.replace(/,/g, "");
+      lowercase = lowercase.replace(/\./g, "");
+
+      return lowercase.replace(/ /g, "-");
+    },
+
+    canCreate() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("module.create");
+    },
+
+    canUpdate() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("module.update");
+    },
+
+    canDelete() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("module.delete");
+    },
+
+    canShow() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("module.show");
     },
   },
 
@@ -187,6 +208,7 @@ export default {
       delete: "module/deleteItem",
       show: "module/showItem",
       changeStatus: "module/changeStatusItem",
+      getCurrentUser: "auth/attempt",
     }),
 
     async save() {
@@ -195,6 +217,7 @@ export default {
       if (!this.$v.$invalid) {
         try {
           let response;
+          this.editedItem.slug = this.slugGenerator;
           if (this.editedIndex === -1) {
             response = await this.store(this.editedItem);
           } else {
@@ -253,11 +276,7 @@ export default {
 
     async handleShowItem(item) {
       try {
-        const { data } = await this.show(item._link.self.href);
-
-        this.showUserDialog = true;
-
-        await this.fillEditedItem(data);
+        await this.fillEditedItem(item);
       } catch (e) {
         this.type = SnackbarType.ERROR;
         this.activateSnackbar();
@@ -293,9 +312,18 @@ export default {
     },
 
     async fillEditedItem(item) {
-      const { data } = await this.show(item._link.self.href);
+      const { status, data } = await this.show(item._link.self.href);
 
-      this.editedItem = Object.assign({}, data);
+      if (status === 200) {
+        this.editedItem = Object.assign({}, data);
+        console.log(data);
+      } else if (status === 403) {
+        this.type = SnackbarType.FORBIDDEN;
+        this.activateSnackbar();
+      } else {
+        this.type = SnackbarType.ERROR;
+        this.activateSnackbar();
+      }
     },
 
     activateSnackbar() {

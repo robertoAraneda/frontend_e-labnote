@@ -9,6 +9,7 @@ export default {
     access_token: null,
     roleLoggedUser: null,
     laboratoryLoggedUser: null,
+    permissionsLoggedUser: [],
   },
   mutations: {
     SET_LOGIN_USER: (state, user) => {
@@ -17,11 +18,35 @@ export default {
     SET_ACCESS_TOKEN: (state, access_token) => {
       state.access_token = access_token;
     },
+    SET_ROLE_USER: (state, payload) => {
+      state.roleLoggedUser = payload;
+    },
+    SET_PERMISSION_USER: (state, payload) => {
+      state.permissionsLoggedUser = payload;
+    },
   },
   getters: {
     authenticated: (state) => state.loginUser && state.access_token,
     token: (state) => state.access_token,
     user: (state) => state.loginUser,
+    role: (state) => state.roleLoggedUser,
+    permissions: (state) => state.permissionsLoggedUser,
+    namedPermissions: (state) => {
+      return state.permissionsLoggedUser.map((permission) => {
+        return permission.name;
+      });
+    },
+    namedPermissionsForMenu: (state) => {
+      return state.permissionsLoggedUser
+        .map((permission) => permission.name)
+        .filter((permission) => {
+          const split = permission.split(".");
+          if (split[1] === "index") {
+            return permission;
+          }
+          return false;
+        });
+    },
   },
   actions: {
     login: async (_, credentials) => {
@@ -53,6 +78,8 @@ export default {
         const { data } = await httpRequest.getRequest(`${BASE_URL}/user`);
 
         commit("SET_LOGIN_USER", data.user);
+        commit("SET_ROLE_USER", data.role);
+        commit("SET_PERMISSION_USER", data.permissions);
 
         return { success: true };
       } catch (error) {

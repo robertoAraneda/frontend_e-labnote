@@ -128,16 +128,6 @@ export const ModuleHeaders = [
     sortable: true,
   },
   {
-    text: "Vue url",
-    value: "url",
-    sortable: true,
-  },
-  {
-    text: "Slug",
-    value: "slug",
-    sortable: true,
-  },
-  {
     text: "Estado",
     value: "active",
     sortable: true,

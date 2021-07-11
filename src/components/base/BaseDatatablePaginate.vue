@@ -23,17 +23,20 @@
           title-tooltip="Ver"
           icon="mdi-eye"
           @click="searchItem(item)"
+          v-if="canShow"
         />
         <BaseDatatableRowButton
           title-tooltip="Editar"
           icon="mdi-pencil"
           @click="editItem(item)"
+          v-if="canUpdate"
         />
 
         <BaseDatatableRowButton
           title-tooltip="Eliminar"
           icon="mdi-delete"
           @click="deleteItem(item)"
+          v-if="canDelete"
         />
 
         <BaseDatatableRowButton
@@ -82,10 +85,29 @@ export default {
     headers: Array,
     items: Array,
     sortBy: String,
-    extraButtons: Boolean,
+    extraButtons: {
+      type: Boolean,
+      default: () => false,
+    },
     loading: Boolean,
     total: Number,
     itemsPerPage: Number,
+    canUpdate: {
+      type: Boolean,
+      default: () => true,
+    },
+    canDelete: {
+      type: Boolean,
+      default: () => true,
+    },
+    canShow: {
+      type: Boolean,
+      default: () => true,
+    },
+    canCreate: {
+      type: Boolean,
+      default: () => true,
+    },
   },
   data: () => ({
     search: "",

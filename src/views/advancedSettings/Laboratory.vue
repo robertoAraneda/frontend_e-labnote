@@ -31,7 +31,7 @@
     <BaseDialog
       :dialog="dialog"
       :form-title="formTitle"
-      @close="dialog = false"
+      @close="closeDialog"
       @save="save"
     >
       <template slot="body">

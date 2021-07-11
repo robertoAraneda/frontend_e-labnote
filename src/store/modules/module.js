@@ -38,6 +38,8 @@ export default {
         );
 
         commit("SET_MENUS_MODULE", data);
+
+        console.log("menu", data);
       } catch (error) {
         return { success: false };
       }
@@ -60,7 +62,6 @@ export default {
         const { data } = await httpRequest.getRequest(
           `${BASE_URL}/search?name=${name}`
         );
-        console.log(data);
 
         commit("SET_CURRENT_MODULE", data);
       } catch (error) {
@@ -73,9 +74,10 @@ export default {
         const { data } = await httpRequest.getRequest(
           `${BASE_URL}/search?slug=${slug}`
         );
-        console.log(data);
 
         commit("SET_CURRENT_MODULE", data);
+
+        console.log(data);
       } catch (error) {
         return { success: false };
       }
@@ -85,7 +87,7 @@ export default {
       try {
         return await httpRequest.getRequest(url);
       } catch (e) {
-        console.log(e);
+        return e.response;
       }
     },
 
@@ -121,16 +123,16 @@ export default {
           `${BASE_URL}/${payload.id}`,
           payload
         );
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        return e.response;
       }
     },
 
     deleteItem: async (_, payload) => {
       try {
         return await httpRequest.deleteRequest(`${BASE_URL}/${payload.id}`);
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        return e.response;
       }
     },
 
@@ -140,8 +142,8 @@ export default {
           `${BASE_URL}/${payload.id}/status`,
           { active: payload.active }
         );
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        return e.response;
       }
     },
   },

@@ -15,6 +15,7 @@
       @customMethod="handlePermissions($event)"
       @changeStatus="handleChangeStatus($event)"
       @changePage="handleChangePage($event)"
+      :canUpdate="canUpdate"
       :headers="headers"
       :items="items"
       title="Usuarios"
@@ -27,6 +28,7 @@
           small
           @click="openDialog"
           label="Crear nuevo usuario"
+          v-if="canCreate"
         />
       </template>
     </BaseDatatablePaginate>
@@ -178,7 +180,28 @@ export default {
       users: "user/users",
       isUsersLoading: "user/isUsersLoading",
       loggedUser: "auth/user",
+      namedPermissions: "auth/namedPermissions",
     }),
+
+    canCreate() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("user.create");
+    },
+
+    canUpdate() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("user.update");
+    },
+
+    canDelete() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("user.delete");
+    },
+
+    canShow() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("user.show");
+    },
 
     formTitle() {
       return this.editedIndex === -1 ? "Crear usuario" : "Editar usuario";
