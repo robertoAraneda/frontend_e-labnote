@@ -3,7 +3,7 @@
     <v-row class="mb-10">
       <v-col cols="12">
         <h3 class="text-subtitle-1 black--text">
-          En este módulo podrás gestionar los roles
+          En este módulo podrás gestionar los roles.
         </h3>
       </v-col>
     </v-row>
@@ -71,11 +71,9 @@ import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import Role from "../../../models/Role";
-import BaseSnackbar from "../../../components/base/BaseSnackbar";
 
 export default {
   name: "Role",
-  components: { BaseSnackbar },
   mixins: [validationMixin],
 
   validations: {

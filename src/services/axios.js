@@ -17,8 +17,6 @@ const defaultHeaders = {
   "Content-Type": "application/json",
 };
 
-console.log(baseURL);
-
 const postRequest = async (resource, data, headers = null) => {
   return await httpInstance.post(`${resource}`, data, {
     headers: headers || defaultHeaders,

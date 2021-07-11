@@ -4,16 +4,20 @@ export default class User {
     rut = "",
     names = "",
     lastname = "",
-    motherLastname = "",
+    mother_lastname = "",
     email = "",
-    password = ""
+    phone = "+56",
+    password = "elabnote",
+    active = true
   ) {
     this.id = id;
-    this.rut = rut;
-    this.names = names;
-    this.lastname = lastname;
-    this.motherLastname = motherLastname;
-    this.email = email;
+    this.rut = rut.toUpperCase();
+    this.names = names.toUpperCase();
+    this.lastname = lastname.toUpperCase();
+    this.mother_lastname = mother_lastname.toUpperCase();
+    this.email = email.toUpperCase();
+    this.phone = phone;
     this.password = password;
+    this.active = active;
   }
 }

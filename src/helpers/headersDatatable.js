@@ -38,3 +38,44 @@ export const RoleHeaders = [
     width: "150",
   },
 ];
+
+export const UserHeaders = [
+  {
+    text: "N°",
+    value: "id",
+    sortable: true,
+    width: "65",
+  },
+  {
+    text: "Rut",
+    value: "rut",
+    sortable: true,
+    width: "120",
+  },
+  {
+    text: "Nombres",
+    value: "names",
+    sortable: true,
+  },
+  {
+    text: "Apellido Paterno",
+    value: "lastname",
+    sortable: true,
+  },
+  {
+    text: "Apellido Materno",
+    value: "mother_lastname",
+    sortable: true,
+  },
+  {
+    text: "Estado",
+    value: "active",
+    sortable: false,
+  },
+  {
+    text: "Acciones",
+    value: "actions",
+    sortable: false,
+    width: "150",
+  },
+];

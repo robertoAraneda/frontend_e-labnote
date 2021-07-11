@@ -4,7 +4,7 @@ export const settings = [
     name: "roles",
     component: () =>
       import(
-        /* webpackChunkName: "settings" */ "../views/pages/settings/Role.vue"
+        /* webpackChunkName: "roles" */ "../views/pages/settings/Role.vue"
       ),
   },
   {
@@ -12,7 +12,7 @@ export const settings = [
     name: "permissions",
     component: () =>
       import(
-        /* webpackChunkName: "settings" */ "../views/pages/settings/Permission.vue"
+        /* webpackChunkName: "permissions" */ "../views/pages/settings/Permission.vue"
       ),
   },
   {
@@ -20,7 +20,7 @@ export const settings = [
     name: "users",
     component: () =>
       import(
-        /* webpackChunkName: "settings" */ "../views/pages/settings/User.vue"
+        /* webpackChunkName: "users" */ "../views/pages/settings/User.vue"
       ),
   },
   {
@@ -28,7 +28,7 @@ export const settings = [
     name: "laboratories",
     component: () =>
       import(
-        /* webpackChunkName: "settings" */ "../views/pages/settings/Laboratory.vue"
+        /* webpackChunkName: "laboratories" */ "../views/pages/settings/Laboratory.vue"
       ),
   },
   {
@@ -36,7 +36,7 @@ export const settings = [
     name: "modules",
     component: () =>
       import(
-        /* webpackChunkName: "settings" */ "../views/pages/settings/Module.vue"
+        /* webpackChunkName: "modules" */ "../views/pages/settings/Module.vue"
       ),
   },
   {
@@ -44,7 +44,7 @@ export const settings = [
     name: "menus",
     component: () =>
       import(
-        /* webpackChunkName: "settings" */ "../views/pages/settings/Menu.vue"
+        /* webpackChunkName: "menus" */ "../views/pages/settings/Menu.vue"
       ),
   },
 ];

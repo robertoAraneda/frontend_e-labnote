@@ -4,23 +4,31 @@
     :items="items"
     :sort-by="sortBy"
     class="elevation-1"
+    :search="search"
   >
     <template v-slot:top>
       <v-toolbar flat>
         <v-toolbar-title class="black--text">{{ title }}</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <BaseTextfield class="mt-6" label="Buscar" v-model="search" />
         <v-spacer></v-spacer>
         <slot name="top"> </slot>
       </v-toolbar>
     </template>
     <template v-slot:item.actions="{ item }">
       <BaseDatatableRowButton
-        title-tooltip="Editar rol"
+        title-tooltip="Ver"
+        icon="mdi-eye"
+        @click="searchItem(item)"
+      />
+      <BaseDatatableRowButton
+        title-tooltip="Editar"
         icon="mdi-pencil"
         @click="editItem(item)"
       />
 
       <BaseDatatableRowButton
-        title-tooltip="Eliminar rol"
+        title-tooltip="Eliminar"
         icon="mdi-delete"
         @click="deleteItem(item)"
       />
@@ -60,6 +68,9 @@ export default {
     sortBy: String,
     extraButtons: Boolean,
   },
+  data: () => ({
+    search: "",
+  }),
   methods: {
     changeStatus(item) {
       this.$emit("changeStatus", item);
@@ -71,6 +82,10 @@ export default {
 
     deleteItem(item) {
       this.$emit("deleteItem", item);
+    },
+
+    searchItem(item) {
+      this.$emit("searchItem", item);
     },
 
     customMethod(item) {
