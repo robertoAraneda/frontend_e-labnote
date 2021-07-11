@@ -10,8 +10,8 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import NavigationDrawer from "../../../components/navbar/NavigationDrawer";
-import LoggedNavbar from "../../../components/navbar/LoggedNavbar";
+import NavigationDrawer from "../../components/navbar/NavigationDrawer";
+import LoggedNavbar from "../../components/navbar/LoggedNavbar";
 export default {
   name: "Index",
   components: { LoggedNavbar, NavigationDrawer },

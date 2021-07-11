@@ -79,3 +79,73 @@ export const UserHeaders = [
     width: "150",
   },
 ];
+
+export const LaboratoryHeaders = [
+  {
+    text: "N°",
+    value: "id",
+    sortable: true,
+    width: "65",
+  },
+  {
+    text: "Nombre",
+    value: "name",
+    sortable: true,
+  },
+  {
+    text: "Teléfono",
+    value: "phone",
+    sortable: true,
+  },
+  {
+    text: "Estado",
+    value: "active",
+    sortable: true,
+  },
+  {
+    text: "Acciones",
+    value: "actions",
+    sortable: false,
+    width: "150",
+  },
+];
+
+export const ModuleHeaders = [
+  {
+    text: "N°",
+    value: "id",
+    sortable: true,
+    width: "65",
+  },
+  {
+    text: "Nombre",
+    value: "name",
+    sortable: true,
+  },
+  {
+    text: "Icono",
+    value: "icon",
+    sortable: true,
+  },
+  {
+    text: "Vue url",
+    value: "url",
+    sortable: true,
+  },
+  {
+    text: "Slug",
+    value: "slug",
+    sortable: true,
+  },
+  {
+    text: "Estado",
+    value: "active",
+    sortable: true,
+  },
+  {
+    text: "Acciones",
+    value: "actions",
+    sortable: false,
+    width: "150",
+  },
+];

@@ -122,16 +122,16 @@
 </template>
 
 <script>
-import { UserHeaders } from "../../../helpers/headersDatatable";
-import { SnackbarType } from "../../../helpers/SnackbarMessages";
-import { validationMessage } from "../../../helpers/ValidationMessage";
+import { UserHeaders } from "../../helpers/headersDatatable";
+import { SnackbarType } from "../../helpers/SnackbarMessages";
+import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
-import User from "../../../models/User";
+import User from "../../models/User";
 import { mask } from "vue-the-mask";
-import BaseDatatablePaginate from "../../../components/base/BaseDatatablePaginate";
-import UserShowCard from "../../../components/setting/UserShowCard";
+import BaseDatatablePaginate from "../../components/base/BaseDatatablePaginate";
+import UserShowCard from "../../components/setting/UserShowCard";
 
 export default {
   name: "User",
@@ -240,12 +240,9 @@ export default {
     async handleChangePage(page = this.page) {
       const { data } = await this.indexPaginated({ page });
 
-      console.log(data);
       this.items = data.data.collection;
       this.itemsPerPage = data.meta.per_page;
       this.total = data.meta.last_page;
-
-      console.log(this.total);
     },
 
     async save() {
@@ -298,8 +295,6 @@ export default {
       this.showUserDialog = true;
 
       this.fillEditedItem(data);
-
-      console.log(data);
     },
 
     handleDeleteModel(value) {

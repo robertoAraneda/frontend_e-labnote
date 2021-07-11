@@ -27,7 +27,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import TreeviewPermission from "../../../components/setting/TreeviewPermission";
+import TreeviewPermission from "../../components/setting/TreeviewPermission";
 
 export default {
   name: "Permission",

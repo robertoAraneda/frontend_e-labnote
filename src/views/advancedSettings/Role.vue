@@ -64,13 +64,13 @@
 </template>
 
 <script>
-import { RoleHeaders } from "../../../helpers/headersDatatable";
-import { SnackbarType } from "../../../helpers/SnackbarMessages";
-import { validationMessage } from "../../../helpers/ValidationMessage";
+import { RoleHeaders } from "../../helpers/headersDatatable";
+import { SnackbarType } from "../../helpers/SnackbarMessages";
+import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
-import Role from "../../../models/Role";
+import Role from "../../models/Role";
 
 export default {
   name: "Role",
