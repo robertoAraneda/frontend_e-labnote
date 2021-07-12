@@ -27,6 +27,7 @@
           small
           @click="openDialog"
           label="Crear nuevo módulo"
+          v-if="canCreate"
         />
       </template>
     </BaseDatatable>

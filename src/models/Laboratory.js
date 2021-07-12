@@ -1,4 +1,4 @@
-export default class User {
+export default class Laboratory {
   constructor(
     id = "",
     email = "",

@@ -6,6 +6,7 @@ import module from "./modules/module";
 import role from "./modules/role";
 import permission from "./modules/permission";
 import user from "./modules/user";
+import menus from "./modules/menus";
 
 Vue.use(Vuex);
 
@@ -34,5 +35,6 @@ export default new Vuex.Store({
     role,
     permission,
     user,
+    menus,
   },
 });

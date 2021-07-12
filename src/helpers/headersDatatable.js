@@ -139,3 +139,33 @@ export const ModuleHeaders = [
     width: "150",
   },
 ];
+
+export const MenuHeaders = [
+  {
+    text: "N°",
+    value: "id",
+    sortable: true,
+    width: "65",
+  },
+  {
+    text: "Nombre",
+    value: "name",
+    sortable: true,
+  },
+  {
+    text: "Icono",
+    value: "icon",
+    sortable: true,
+  },
+  {
+    text: "Estado",
+    value: "active",
+    sortable: true,
+  },
+  {
+    text: "Acciones",
+    value: "actions",
+    sortable: false,
+    width: "150",
+  },
+];

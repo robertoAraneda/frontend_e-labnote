@@ -1,4 +1,4 @@
-export default class User {
+export default class Module {
   constructor(name = "", icon = "", url = "", slug = "", active = true) {
     this.name = name;
     this.icon = icon;
