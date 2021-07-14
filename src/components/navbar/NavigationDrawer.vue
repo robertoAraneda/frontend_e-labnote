@@ -2,26 +2,30 @@
   <v-navigation-drawer
     app
     v-model="drawer"
-    color="primary"
-    dark
     width="260"
     mobile-breakpoint="960"
     v-bind="$attrs"
+    color="white"
   >
     <v-divider></v-divider>
 
-    <v-list dense nav shaped>
-      <v-list-item
-        v-for="link in links"
-        :key="link.id"
-        :to="{ name: link.url }"
-        link
-      >
-        <v-list-item-icon>
-          <v-icon>{{ link.icon }}</v-icon>
-        </v-list-item-icon>
-        <v-list-item-title>{{ link.name }}</v-list-item-title>
-      </v-list-item>
+    <v-list dense rounded>
+      <v-subheader>CONFIGURACIÓN AVANZADA</v-subheader>
+      <v-list-item-group color="primary darken-1">
+        <v-list-item
+          v-for="link in links"
+          :key="link.id"
+          :to="{ name: link.url }"
+          link
+        >
+          <v-list-item-icon>
+            <v-icon>{{ link.icon }}</v-icon>
+          </v-list-item-icon>
+          <v-list-item-content>
+            <v-list-item-title>{{ link.name }}</v-list-item-title>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list-item-group>
     </v-list>
   </v-navigation-drawer>
 </template>

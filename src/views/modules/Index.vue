@@ -1,5 +1,5 @@
 <template>
-  <v-container fluid>
+  <v-container class="fill-height">
     <v-row>
       <v-col v-for="module in modulesByLaboratory" :key="module.id" cols="4">
         <v-card :to="{ name: module.url, params: { slug: module.slug } }">

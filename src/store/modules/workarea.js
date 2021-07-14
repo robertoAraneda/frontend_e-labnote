@@ -1,49 +1,31 @@
 import httpRequest from "../../services/axios";
 
-const BASE_URL = "/api/v1/laboratories";
-httpRequest.setToken(localStorage.getItem("access_token"));
+const BASE_URL = "/api/v1/workareas";
 
 export default {
   namespaced: true,
   state: {
-    laboratories: null,
-    modulesByLaboratory: [],
-    isLaboratoriesLoading: false,
+    workareas: [],
+    isWorkareasLoading: false,
   },
   mutations: {
-    SET_LABORATORIES: (state, payload) => {
-      state.laboratories = payload;
+    SET_WORKAREAS: (state, payload) => {
+      state.workareas = payload;
     },
-    SET_MODULES_LABORATORIES: (state, payload) => {
-      state.modulesByLaboratory = payload;
-    },
-    SET_LABORATORIES_LOADING: (state, payload) => {
-      state.isLaboratoriesLoading = payload;
+    SET_WORKAREAS_LOADING: (state, payload) => {
+      state.isWorkareasLoading = payload;
     },
   },
   getters: {
-    laboratories: (state) => state.laboratories,
-    modulesByLaboratory: (state) => state.modulesByLaboratory,
-    isLaboratoriesLoading: (state) => state.isLaboratoriesLoading,
+    workareas: (state) => state.workareas,
+    isWorkareasLoading: (state) => state.isWorkareasLoading,
   },
   actions: {
-    getModulesByLaboratory: async ({ commit }, idLaboratory) => {
-      try {
-        const { data } = await httpRequest.getRequest(
-          `${BASE_URL}/${idLaboratory}/modules`
-        );
-
-        commit("SET_MODULES_LABORATORIES", data);
-      } catch (error) {
-        return { success: false };
-      }
-    },
-
     showItem: async (_, url) => {
       try {
         return await httpRequest.getRequest(url);
       } catch (e) {
-        console.log(e);
+        return e.response;
       }
     },
 
@@ -53,15 +35,15 @@ export default {
 
     getItems: async ({ commit }) => {
       try {
-        commit("SET_LABORATORIES_LOADING", true);
+        commit("SET_WORKAREAS_LOADING", true);
         const { data } = await httpRequest.getRequest(`${BASE_URL}`);
         console.log(data);
-        commit("SET_LABORATORIES", data);
+        commit("SET_WORKAREAS", data);
       } catch (error) {
-        commit("SET_LABORATORIES", []);
+        commit("SET_WORKAREAS", []);
         console.log(error);
       } finally {
-        commit("SET_LABORATORIES_LOADING", false);
+        commit("SET_WORKAREAS_LOADING", false);
       }
     },
 
@@ -79,16 +61,16 @@ export default {
           `${BASE_URL}/${payload.id}`,
           payload
         );
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        return e.response;
       }
     },
 
     deleteItem: async (_, payload) => {
       try {
         return await httpRequest.deleteRequest(`${BASE_URL}/${payload.id}`);
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        return e.response;
       }
     },
 
@@ -98,8 +80,8 @@ export default {
           `${BASE_URL}/${payload.id}/status`,
           { active: payload.active }
         );
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        return e.response;
       }
     },
   },

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <v-row class="mb-10">
       <v-col cols="12">
         <h3 class="text-subtitle-1 black--text">
@@ -15,6 +15,7 @@
       @customMethod="handlePermissions($event)"
       @changeStatus="handleChangeStatus($event)"
       @changePage="handleChangePage($event)"
+      :canUpdate="canUpdate"
       :headers="headers"
       :items="items"
       title="Usuarios"
@@ -27,6 +28,7 @@
           small
           @click="openDialog"
           label="Crear nuevo usuario"
+          v-if="canCreate"
         />
       </template>
     </BaseDatatablePaginate>
@@ -118,20 +120,20 @@
       @deleteItemConfirm="deleteItemConfirm()"
       :dialog-delete="dialogDelete"
     />
-  </div>
+  </v-container>
 </template>
 
 <script>
-import { UserHeaders } from "../../../helpers/headersDatatable";
-import { SnackbarType } from "../../../helpers/SnackbarMessages";
-import { validationMessage } from "../../../helpers/ValidationMessage";
+import { UserHeaders } from "../../helpers/headersDatatable";
+import { SnackbarType } from "../../helpers/SnackbarMessages";
+import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
-import User from "../../../models/User";
+import User from "../../models/User";
 import { mask } from "vue-the-mask";
-import BaseDatatablePaginate from "../../../components/base/BaseDatatablePaginate";
-import UserShowCard from "../../../components/setting/UserShowCard";
+import BaseDatatablePaginate from "../../components/base/BaseDatatablePaginate";
+import UserShowCard from "../../components/setting/UserShowCard";
 
 export default {
   name: "User",
@@ -178,7 +180,28 @@ export default {
       users: "user/users",
       isUsersLoading: "user/isUsersLoading",
       loggedUser: "auth/user",
+      namedPermissions: "auth/namedPermissions",
     }),
+
+    canCreate() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("user.create");
+    },
+
+    canUpdate() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("user.update");
+    },
+
+    canDelete() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("user.delete");
+    },
+
+    canShow() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("user.show");
+    },
 
     formTitle() {
       return this.editedIndex === -1 ? "Crear usuario" : "Editar usuario";
@@ -240,12 +263,9 @@ export default {
     async handleChangePage(page = this.page) {
       const { data } = await this.indexPaginated({ page });
 
-      console.log(data);
       this.items = data.data.collection;
       this.itemsPerPage = data.meta.per_page;
       this.total = data.meta.last_page;
-
-      console.log(this.total);
     },
 
     async save() {
@@ -298,8 +318,6 @@ export default {
       this.showUserDialog = true;
 
       this.fillEditedItem(data);
-
-      console.log(data);
     },
 
     handleDeleteModel(value) {

@@ -20,17 +20,20 @@
         title-tooltip="Ver"
         icon="mdi-eye"
         @click="searchItem(item)"
+        v-if="canShow"
       />
       <BaseDatatableRowButton
         title-tooltip="Editar"
         icon="mdi-pencil"
         @click="editItem(item)"
+        v-if="canUpdate"
       />
 
       <BaseDatatableRowButton
         title-tooltip="Eliminar"
         icon="mdi-delete"
         @click="deleteItem(item)"
+        v-if="canDelete"
       />
 
       <BaseDatatableRowButton
@@ -39,6 +42,14 @@
         icon="mdi-shield-key"
         @click="customMethod(item)"
       />
+    </template>
+    <template v-slot:item.icon="{ item }">
+      <v-chip small outlined class="ma-2" color="primary" label>
+        <v-icon small left>
+          {{ item.icon }}
+        </v-icon>
+        {{ item.icon }}
+      </v-chip>
     </template>
     <template v-slot:item.active="{ item }">
       <v-tooltip color="primary darken-2" bottom>
@@ -66,7 +77,26 @@ export default {
     headers: Array,
     items: Array,
     sortBy: String,
-    extraButtons: Boolean,
+    extraButtons: {
+      type: Boolean,
+      default: () => false,
+    },
+    canUpdate: {
+      type: Boolean,
+      default: () => true,
+    },
+    canDelete: {
+      type: Boolean,
+      default: () => true,
+    },
+    canShow: {
+      type: Boolean,
+      default: () => true,
+    },
+    canCreate: {
+      type: Boolean,
+      default: () => true,
+    },
   },
   data: () => ({
     search: "",
