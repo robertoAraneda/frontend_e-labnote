@@ -74,14 +74,25 @@ export default {
       }
 
       try {
-        httpRequest.setToken(localStorage.getItem("access_token"));
-        const { data } = await httpRequest.getRequest(`${BASE_URL}/user`);
+        const localToken = localStorage.getItem("access_token");
 
-        commit("SET_LOGIN_USER", data.user);
-        commit("SET_ROLE_USER", data.role);
-        commit("SET_PERMISSION_USER", data.permissions);
+        if (localToken) {
+          httpRequest.setToken(localToken);
+          const { data } = await httpRequest.getRequest(`${BASE_URL}/user`);
 
-        return { success: true };
+          console.log(data);
+
+          commit("SET_LOGIN_USER", data.user);
+          commit("SET_ROLE_USER", data.role);
+          commit("SET_PERMISSION_USER", data.permissions);
+
+          return { success: true };
+        } else {
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("user");
+          commit("SET_ACCESS_TOKEN", null);
+          commit("SET_LOGIN_USER", null);
+        }
       } catch (error) {
         console.log(error.response);
         localStorage.removeItem("access_token");

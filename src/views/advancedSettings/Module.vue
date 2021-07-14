@@ -122,7 +122,6 @@ export default {
 
   async mounted() {
     await this.index();
-    await this.getCurrentUser();
   },
 
   computed: {
@@ -209,7 +208,6 @@ export default {
       delete: "module/deleteItem",
       show: "module/showItem",
       changeStatus: "module/changeStatusItem",
-      getCurrentUser: "auth/attempt",
     }),
 
     async save() {

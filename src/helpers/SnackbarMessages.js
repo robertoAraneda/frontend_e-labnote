@@ -1,7 +1,7 @@
 export const SnackbarMessages = {
   ERROR: "Ha ocurrido un error.",
-  FORBIDDEN: "No estas autorizado para realizar esta operación.",
-  SUCCESS: "Operación realizada con éxito",
+  FORBIDDEN: "No tiene autorización para realizar esta operación.",
+  SUCCESS: "Operación realizada con éxito.",
   WARNING: "Mensaje de alerta",
 };
 

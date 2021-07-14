@@ -12,6 +12,7 @@
 <script>
 import Welcome from "../../components/login/Welcome.vue";
 import Login from "../../components/login/Login.vue";
+
 export default {
   components: { Welcome, Login },
 };

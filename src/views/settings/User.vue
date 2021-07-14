@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <v-container>
     <v-row class="mb-10">
       <v-col cols="12">
         <h3 class="text-subtitle-1 black--text">
@@ -120,7 +120,7 @@
       @deleteItemConfirm="deleteItemConfirm()"
       :dialog-delete="dialogDelete"
     />
-  </div>
+  </v-container>
 </template>
 
 <script>

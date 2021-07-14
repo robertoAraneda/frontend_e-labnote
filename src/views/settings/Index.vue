@@ -1,20 +1,19 @@
 <template>
-  <v-container>
+  <div>
     <NavigationDrawer :links="menusPermissions" />
-    <LoggedNavbar />
     <v-container fluid>
       <router-view></router-view>
     </v-container>
-  </v-container>
+  </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
 import NavigationDrawer from "../../components/navbar/NavigationDrawer";
-import LoggedNavbar from "../../components/navbar/LoggedNavbar";
+
 export default {
   name: "Index",
-  components: { LoggedNavbar, NavigationDrawer },
+  components: { NavigationDrawer },
   data: () => ({}),
   async mounted() {
     const slug = this.splitRoute(this.$route.path);

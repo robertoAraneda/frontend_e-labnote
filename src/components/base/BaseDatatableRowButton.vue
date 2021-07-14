@@ -7,6 +7,7 @@
         v-bind="attrs"
         v-on="on"
         class="mr-2"
+        color="secondary"
       >
         {{ icon }}
       </v-icon>

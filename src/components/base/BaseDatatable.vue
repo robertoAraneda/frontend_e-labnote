@@ -77,7 +77,10 @@ export default {
     headers: Array,
     items: Array,
     sortBy: String,
-    extraButtons: Boolean,
+    extraButtons: {
+      type: Boolean,
+      default: () => false,
+    },
     canUpdate: {
       type: Boolean,
       default: () => true,

@@ -1,7 +1,6 @@
 <template>
   <v-container>
     <NavigationDrawer :links="menus" />
-    <LoggedNavbar />
     <v-container fluid>
       <router-view></router-view>
     </v-container>
@@ -11,10 +10,10 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import NavigationDrawer from "../../components/navbar/NavigationDrawer";
-import LoggedNavbar from "../../components/navbar/LoggedNavbar";
+
 export default {
   name: "Index",
-  components: { LoggedNavbar, NavigationDrawer },
+  components: { NavigationDrawer },
   data: () => ({}),
   mounted() {
     const slug = this.splitRoute(this.$route.path);

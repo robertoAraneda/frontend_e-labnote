@@ -1,25 +1,10 @@
 <template>
-  <div>
+  <v-container>
     <v-row class="mb-10">
       <v-col cols="12">
         <h3 class="text-subtitle-1 black--text">
-          En este módulo podrás gestionar los menus de e-labnote.
+          En este módulo podrás gestionar las áreas de trabajo.
         </h3>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <h3 class="text-subtitle-1 black--text">Seleccione un módulo:</h3>
-      </v-col>
-      <v-col cols="12">
-        <BaseAutocomplete
-          v-model="selectedModule"
-          placeholder="Seleccione:"
-          :items="modules"
-          item-value="id"
-          item-text="name"
-          label="Módulos"
-        />
       </v-col>
     </v-row>
 
@@ -34,18 +19,18 @@
       :items="items"
       :headers="headers"
       sort-by="id"
-      title="Menús"
-      :extra-buttons="false"
+      title="Áreas de trabajo"
     >
       <template slot="top">
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nuevo menú"
+          label="Crear nueva área de trabajo"
           v-if="canCreate"
         />
       </template>
     </BaseDatatable>
+
     <BaseDialog
       :dialog="dialog"
       :form-title="formTitle"
@@ -60,42 +45,6 @@
           @blur="$v.editedItem.name.$touch()"
           :error-messages="nameErrors"
         />
-        <BaseTextfield
-          v-model="editedItem.url"
-          label="Vue URL"
-          @input="$v.editedItem.url.$touch()"
-          @blur="$v.editedItem.url.$touch()"
-          :error-messages="urlErrors"
-        />
-        <BaseTextfield
-          v-model="editedItem.icon"
-          label="Icono"
-          @input="$v.editedItem.icon.$touch()"
-          @blur="$v.editedItem.icon.$touch()"
-          :error-messages="iconErrors"
-        />
-        <BaseAutocomplete
-          v-model="editedItem.permission_id"
-          placeholder="Seleccione:"
-          :items="permissions"
-          item-value="id"
-          item-text="name"
-          label="Permiso inicial"
-          @input="$v.editedItem.permission_id.$touch()"
-          @blur="$v.editedItem.permission_id.$touch()"
-          :error-messages="permissionErrors"
-        />
-        <BaseAutocomplete
-          placeholder="Seleccione:"
-          v-model="editedItem.module_id"
-          :items="modules"
-          item-value="id"
-          item-text="name"
-          label="Módulo"
-          @input="$v.editedItem.module_id.$touch()"
-          @blur="$v.editedItem.module_id.$touch()"
-          :error-messages="moduleErrors"
-        />
         <v-radio-group v-model="editedItem.active" row>
           <template v-slot:label>
             <div class="black--text text-subtitle-1">Estado:</div>
@@ -106,87 +55,69 @@
         </v-radio-group>
       </template>
     </BaseDialog>
+
     <BaseSnackbar v-model="snackbar" :type="type" />
+
     <BaseConfirmDelete
-      @closeDelete="dialogDelete = false"
+      @closeDelete="closeDeleteDialog"
       @deleteItemConfirm="deleteItemConfirm()"
       :dialog-delete="dialogDelete"
     />
-  </div>
+  </v-container>
 </template>
 
 <script>
-import { MenuHeaders } from "../../helpers/headersDatatable";
+import { WorkareaHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import { mask } from "vue-the-mask";
-import Menu from "../../models/Menu";
+import Workarea from "../../models/Workarea";
 
 export default {
-  name: "Menu",
-
-  directives: {
-    mask,
-  },
+  name: "Workarea",
 
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
       name: { required },
-      icon: { required },
-      permission_id: { required },
-      module_id: { required },
-      url: { required },
       active: { required },
     },
   },
 
   data: () => ({
     dialog: false,
-    editedItem: new Menu(),
+    editedItem: new Workarea(),
     editedIndex: -1,
-    defaultItem: new Menu(),
+    defaultItem: new Workarea(),
     snackbar: false,
-    timeout: 2000,
-    headers: MenuHeaders,
+    headers: WorkareaHeaders,
     dialogDelete: false,
-    type: "success",
-    permissions: [],
-    modules: [],
-    selectedModule: 0,
+    type: SnackbarType.SUCCESS,
   }),
 
   async mounted() {
     await this.index();
-    await this.handleSelectForm();
   },
 
   computed: {
     ...mapGetters({
-      menus: "menus/menus",
-      loggedUser: "auth/user",
-      currentModule: "module/currentModule",
+      workareas: "workarea/workareas",
       namedPermissions: "auth/namedPermissions",
-      _modules: "module/modules",
-      _permissions: "permission/permissions",
     }),
 
     items() {
-      if (!this.menus) return [];
-      if (!this.selectedModule || this.selectedModule === 0)
-        return this.menus.collection;
-      return this.menus.collection.filter(
-        (menu) => menu.module.id === this.selectedModule
-      );
+      if (!this.workareas) return [];
+      return this.workareas.collection;
     },
 
     formTitle() {
-      return this.editedIndex === -1 ? "Crear menú" : "Editar menú";
+      return this.editedIndex === -1
+        ? "Crear área de trabajo"
+        : "Editar área de trabajo";
     },
 
     nameErrors() {
@@ -197,71 +128,36 @@ export default {
       return errors;
     },
 
-    urlErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.url.$dirty) return errors;
-      !this.$v.editedItem.url.required &&
-        errors.push(validationMessage.REQUIRED);
-      return errors;
-    },
-
-    iconErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.icon.$dirty) return errors;
-      !this.$v.editedItem.icon.required &&
-        errors.push(validationMessage.REQUIRED);
-      return errors;
-    },
-
-    permissionErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.permission_id.$dirty) return errors;
-      !this.$v.editedItem.permission_id.required &&
-        errors.push(validationMessage.REQUIRED);
-      return errors;
-    },
-
-    moduleErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.module_id.$dirty) return errors;
-      !this.$v.editedItem.module_id.required &&
-        errors.push(validationMessage.REQUIRED);
-      return errors;
-    },
-
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("menu.create");
+      return this.namedPermissions.includes("workarea.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("menu.update");
+      return this.namedPermissions.includes("workarea.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("menu.delete");
+      return this.namedPermissions.includes("workarea.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("menu.show");
+      return this.namedPermissions.includes("workarea.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "menus/getItems",
-      indexPaginate: "menus/getPaginatedItems",
-      store: "menus/postItem",
-      update: "menus/putItem",
-      delete: "menus/deleteItem",
-      show: "menus/showItem",
-      changeStatus: "menus/changeStatusItem",
-      getPermissionsByModule: "permission/getPermissionsByModule",
-      getModules: "module/getItems",
-      getPermissions: "permission/getItems",
+      index: "workarea/getItems",
+      indexPaginate: "workarea/getPaginatedItems",
+      store: "workarea/postItem",
+      update: "workarea/putItem",
+      delete: "workarea/deleteItem",
+      show: "workarea/showItem",
+      changeStatus: "workarea/changeStatusItem",
     }),
 
     async save() {
@@ -270,7 +166,6 @@ export default {
       if (!this.$v.$invalid) {
         try {
           let response;
-
           if (this.editedIndex === -1) {
             response = await this.store(this.editedItem);
           } else {
@@ -306,16 +201,6 @@ export default {
         this.resetForm();
         await this.index();
       }
-    },
-
-    async handleSelectForm() {
-      await this.getModules();
-      await this.getPermissions();
-
-      this.permissions = this._permissions.collection.filter(
-        (permission) => permission.action === "index"
-      );
-      this.modules = this._modules.collection;
     },
 
     async deleteItemConfirm() {
@@ -364,9 +249,8 @@ export default {
       this.resetForm();
     },
 
-    async openDialog() {
+    openDialog() {
       this.$v.$reset();
-
       this.dialog = true;
     },
 
@@ -380,7 +264,6 @@ export default {
 
       if (status === 200) {
         this.editedItem = Object.assign({}, data);
-        console.log(data);
       } else if (status === 403) {
         this.type = SnackbarType.FORBIDDEN;
         this.activateSnackbar();
