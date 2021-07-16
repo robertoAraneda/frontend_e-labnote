@@ -8,6 +8,8 @@ import permission from "./modules/permission";
 import user from "./modules/user";
 import menus from "./modules/menus";
 import workarea from "./modules/workarea";
+import analyte from "./modules/analyte";
+import loinc from "./modules/loinc";
 
 Vue.use(Vuex);
 
@@ -38,5 +40,7 @@ export default new Vuex.Store({
     user,
     menus,
     workarea,
+    analyte,
+    loinc,
   },
 });

@@ -5,11 +5,11 @@
     width="260"
     mobile-breakpoint="960"
     v-bind="$attrs"
-    color="white"
+    clipped
   >
     <v-divider></v-divider>
 
-    <v-list dense rounded>
+    <v-list dense shaped>
       <v-subheader>CONFIGURACIÓN AVANZADA</v-subheader>
       <v-list-item-group color="primary darken-1">
         <v-list-item

@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app dark color="primary">
+  <v-app-bar clipped-left app dark color="primary">
     <v-app-bar-nav-icon
       v-if="!isShowAppBarIcon"
       @click="setDrawer()"

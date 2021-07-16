@@ -1,7 +1,7 @@
 <template>
   <div>
     <NavigationDrawer :links="menusPermissions" />
-    <v-container fluid>
+    <v-container>
       <router-view></router-view>
     </v-container>
   </div>

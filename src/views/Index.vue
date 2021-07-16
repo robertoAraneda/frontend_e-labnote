@@ -1,8 +1,9 @@
 <template>
-  <div>
+  <div class="fill-height">
     <GuestNavbar v-if="!authenticated" />
     <LoggedNavbar v-else />
-    <v-main>
+    <v-main class="grey lighten-3 fill-height">
+      <h1>hola</h1>
       <router-view />
     </v-main>
   </div>
