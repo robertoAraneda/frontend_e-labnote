@@ -376,7 +376,7 @@ export default {
     },
 
     async fillEditedItem(item) {
-      const { status, data } = await this.show(item._link.self.href);
+      const { status, data } = await this.show(item._links.self.href);
 
       if (status === 200) {
         this.editedItem = Object.assign({}, data);

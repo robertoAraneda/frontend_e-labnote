@@ -1,5 +1,11 @@
 export const settings = [
   {
+    path: "",
+    name: "settings",
+    component: () =>
+      import(/* webpackChunkName: "base" */ "../views/settings/BaseIndex.vue"),
+  },
+  {
     path: "usuarios",
     name: "users",
     component: () =>

@@ -1,9 +1,14 @@
 <template>
-  <v-container>
+  <v-container fluid>
+    <h2 class="text-h5 text--primary darken-5">Módulo de configuración.</h2>
+    <h2 class="text-subtitle-1 text--secondary">
+      En éste módulo podrás gestionar los recursos de E-labNote.
+    </h2>
+
     <v-row class="mt-12">
       <v-col
-        v-for="module in modulesByLaboratory"
-        :key="module.id"
+        v-for="menu in menus"
+        :key="menu.id"
         cols="12"
         sm="6"
         md="4"
@@ -16,7 +21,7 @@
             :class="{ 'on-hover': hover }"
             :elevation="hover ? 12 : 2"
             flat
-            :to="{ name: module.url, params: { slug: module.slug } }"
+            :to="{ name: menu.url }"
           >
             <v-list-item-content class="justify-center">
               <div class="mx-auto text-center">
@@ -26,10 +31,10 @@
                   :color="!hover ? 'primary' : 'white'"
                 >
                   <v-icon :color="hover ? 'primary' : 'white'" large>{{
-                    module.icon
+                    menu.icon
                   }}</v-icon>
                 </v-avatar>
-                <h2 class="mt-5 text-h5">{{ module.name }}</h2>
+                <h2 class="mt-5 text-h5">{{ menu.name }}</h2>
                 <p class="text-caption mt-1">text</p>
               </div>
             </v-list-item-content>
@@ -44,14 +49,19 @@
 import { mapActions, mapGetters } from "vuex";
 
 export default {
-  name: "Index",
+  name: "BaseIndex",
   mounted() {
     this.getModulesByLaboratory(1);
   },
   computed: {
     ...mapGetters({
-      modulesByLaboratory: "laboratory/modulesByLaboratory",
+      currentModule: "module/currentModule",
     }),
+
+    menus() {
+      if (!this.currentModule) return [];
+      return this.currentModule.menus;
+    },
   },
   methods: {
     ...mapActions({

@@ -1,5 +1,13 @@
 export const advancedSettings = [
   {
+    path: "",
+    name: "advancedSettings",
+    component: () =>
+      import(
+        /* webpackChunkName: "roles" */ "../views/advancedSettings/BaseIndex.vue"
+      ),
+  },
+  {
     path: "roles",
     name: "roles",
     component: () =>
@@ -41,35 +49,10 @@ export const advancedSettings = [
   },
   {
     path: "examenes",
+    name: "analytes",
     component: () =>
       import(
-        /* webpackChunkName: "analytes" */ "../views/advancedSettings/analyte/Index.vue"
+        /* webpackChunkName: "analytes" */ "../views/advancedSettings/Analyte.vue"
       ),
-    children: [
-      {
-        path: "",
-        name: "analytes",
-        component: () =>
-          import(
-            /* webpackChunkName: "analytes" */ "../views/advancedSettings/analyte/List.vue"
-          ),
-      },
-      {
-        path: "crear",
-        name: "createAnalyte",
-        component: () =>
-          import(
-            /* webpackChunkName: "analytes" */ "../views/advancedSettings/analyte/Create.vue"
-          ),
-      },
-      {
-        path: "editar/:slug",
-        name: "editAnalyte",
-        component: () =>
-          import(
-            /* webpackChunkName: "analytes" */ "../views/advancedSettings/analyte/Edit.vue"
-          ),
-      },
-    ],
   },
 ];

@@ -287,7 +287,7 @@ export default {
 
     async handleShowItem(item) {
       try {
-        const { data } = await this.show(item._link.self.href);
+        const { data } = await this.show(item._links.self.href);
 
         this.showUserDialog = true;
 
@@ -327,7 +327,7 @@ export default {
     },
 
     async fillEditedItem(item) {
-      const { data } = await this.show(item._link.self.href);
+      const { data } = await this.show(item._links.self.href);
 
       this.editedItem = Object.assign({}, data);
     },

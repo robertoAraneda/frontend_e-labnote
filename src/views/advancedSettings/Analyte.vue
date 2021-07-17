@@ -1,6 +1,5 @@
 <template>
   <v-container>
-    <router-view />
     <v-row class="mb-10">
       <v-col cols="12">
         <h2 class="text-subtitle-1 grey--text darken-4">
