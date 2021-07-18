@@ -34,6 +34,7 @@ export default {
   props: {
     value: Boolean,
     type: String,
+    customMessage: String,
   },
 
   data: () => ({
@@ -53,11 +54,15 @@ export default {
     setMessage() {
       switch (this.type) {
         case "success":
-          return SnackbarMessages.SUCCESS;
+          return SnackbarMessages().SUCCESS;
         case "warning":
           return SnackbarMessages.WARNING;
         case "error":
-          return SnackbarMessages.ERROR;
+          if (this.customMessage === "") {
+            return SnackbarMessages().ERROR;
+          } else {
+            return SnackbarMessages(this.customMessage).CUSTOM;
+          }
         case "forbidden":
           return SnackbarMessages.FORBIDDEN;
         default:

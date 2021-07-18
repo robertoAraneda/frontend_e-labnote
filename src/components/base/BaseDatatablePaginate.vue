@@ -47,31 +47,22 @@
         />
       </template>
       <template v-slot:item.active="{ item }">
-        <v-tooltip color="primary darken-2" bottom>
-          <template v-slot:activator="{ on, attrs }">
-            <div v-bind="attrs" v-on="on">
-              <v-switch
-                @change="changeStatus(item)"
-                dense
-                v-model="item.active"
-                inset
-              ></v-switch>
-            </div>
-          </template>
-          <span>{{ item.active ? "Activo" : "Inactivo" }}</span>
-        </v-tooltip>
+        <v-switch
+          hide-details
+          color="secondary darken-3"
+          @change="changeStatus(item)"
+          dense
+          v-model="item.active"
+          inset
+        ></v-switch>
       </template>
       <template v-slot:footer>
-        <v-pagination
-          color="primary darken-2"
+        <BasePagination
           :length="total"
           v-model="page"
           :total-visible="5"
-          prev-icon="mdi-menu-left"
-          next-icon="mdi-menu-right"
-          circle
           @input="handlePageChange"
-        ></v-pagination>
+        />
       </template>
     </v-data-table>
   </div>
@@ -142,4 +133,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.v-input--selection-controls {
+  margin-top: 4px;
+  padding-top: 0px;
+}
+</style>

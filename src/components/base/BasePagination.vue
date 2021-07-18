@@ -1,16 +1,15 @@
 <template>
-  <v-text-field
+  <v-pagination
     v-bind="$attrs"
     v-on="$listeners"
-    filled
-    color="primary"
-    dense
-  ></v-text-field>
+    prev-icon="mdi-menu-left"
+    next-icon="mdi-menu-right"
+  ></v-pagination>
 </template>
 
 <script>
 export default {
-  name: "BaseTextfield",
+  name: "BasePagination",
 };
 </script>
 

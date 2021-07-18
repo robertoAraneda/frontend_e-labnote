@@ -1,10 +1,5 @@
 <template>
-  <v-container>
-    <BaseHeaderModule
-      title="Mantenedor exámenes base."
-      subtitle=" En éste módulo podrás gestionar los recursos base para la creación de exámenes."
-    />
-
+  <div>
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
       @editItem="handleEditModel($event)"
@@ -16,8 +11,9 @@
       :items="items"
       :headers="headers"
       sort-by="id"
+      title="Áreas de trabajo"
     >
-      <template v-slot:select>
+      <template slot="select">
         <BaseAutocomplete
           v-model="selectedWorkArea"
           placeholder="Seleccione:"
@@ -29,10 +25,11 @@
           hide-details
         />
       </template>
-      <template v-slot:searchButton>
+      <template slot="searchButton">
         <BaseAcceptButton
+          small
           @click="openDialog"
-          label="Crear nuevo examen base"
+          label="Crear examen"
           v-if="canCreate"
         />
       </template>
@@ -52,24 +49,9 @@
           @blur="$v.editedItem.name.$touch()"
           :error-messages="nameErrors"
         />
-        <v-radio-group v-model="editedItem.is_patient_codable" row>
-          <template v-slot:label>
-            <div class="">
-              <span class="text-body-1 text--primary"
-                >¿Demografía paciente codificada?</span
-              ><br />
-              <span class="text-body-2 text--secondary"
-                >(Resguardo de identidad):</span
-              >
-            </div>
-          </template>
-          <v-spacer />
-          <v-radio label="Si" :value="true"></v-radio>
-          <v-radio label="No" :value="false"></v-radio>
-        </v-radio-group>
         <v-radio-group v-model="editedItem.active" row>
           <template v-slot:label>
-            <div class="text--primary text-body-1">Estado:</div>
+            <div class="black--text text-subtitle-1">Estado:</div>
           </template>
           <v-spacer />
           <v-radio label="Inactivo" :value="false"></v-radio>
@@ -78,32 +60,28 @@
       </template>
     </BaseDialog>
 
-    <BaseSnackbar
-      :custom-message="customMessage"
-      v-model="snackbar"
-      :type="type"
-    />
+    <BaseSnackbar v-model="snackbar" :type="type" />
 
     <BaseConfirmDelete
       @closeDelete="closeDeleteDialog"
       @deleteItemConfirm="deleteItemConfirm()"
       :dialog-delete="dialogDelete"
     />
-  </v-container>
+  </div>
 </template>
 
 <script>
-import { AnalyteHeaders } from "../../helpers/headersDatatable";
-import { SnackbarType } from "../../helpers/SnackbarMessages";
-import { validationMessage } from "../../helpers/ValidationMessage";
+import { WorkareaHeaders } from "../../../helpers/headersDatatable";
+import { SnackbarType } from "../../../helpers/SnackbarMessages";
+import { validationMessage } from "../../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
-import { findIndex } from "../../helpers/Functions";
-import Analyte from "../../models/Analyte";
+import { findIndex } from "../../../helpers/Functions";
+import Workarea from "../../../models/Workarea";
 
 export default {
-  name: "Analyte",
+  name: "List",
 
   mixins: [validationMixin],
 
@@ -116,16 +94,15 @@ export default {
 
   data: () => ({
     dialog: false,
-    editedItem: new Analyte(),
+    editedItem: new Workarea(),
     editedIndex: -1,
-    defaultItem: new Analyte(),
+    defaultItem: new Workarea(),
     snackbar: false,
-    headers: AnalyteHeaders,
+    headers: WorkareaHeaders,
     dialogDelete: false,
     type: SnackbarType.SUCCESS,
     selectedWorkArea: null,
     workareas: [],
-    customMessage: "",
   }),
 
   async mounted() {
@@ -137,22 +114,24 @@ export default {
     ...mapGetters({
       _workareas: "workarea/workareas",
       _namedPermissions: "auth/namedPermissions",
-      _analytes: "analyte/analytes",
+      _observationServiceRequests:
+        "observationServiceRequest/observationServiceRequests",
     }),
 
     items() {
-      if (!this._analytes) return [];
+      if (!this._observationServiceRequests) return [];
       if (!this.selectedWorkArea || this.selectedWorkArea === 0)
-        return this._analytes.collection;
-      return this._analytes.collection.filter(
-        (analyte) => analyte.workarea.id === this.selectedWorkArea
+        return this._observationServiceRequests.collection;
+      return this._observationServiceRequests.collection.filter(
+        (observationServiceRequest) =>
+          observationServiceRequest.workarea.id === this.selectedWorkArea
       );
     },
 
     formTitle() {
       return this.editedIndex === -1
-        ? "Crear base examen"
-        : "Editar base examen";
+        ? "Crear área de trabajo"
+        : "Editar área de trabajo";
     },
 
     nameErrors() {
@@ -186,14 +165,15 @@ export default {
 
   methods: {
     ...mapActions({
-      index: "analyte/getItems",
-      indexPaginate: "analyte/getPaginatedItems",
-      store: "analyte/postItem",
-      update: "analyte/putItem",
-      delete: "analyte/deleteItem",
-      show: "analyte/showItem",
-      changeStatus: "analyte/changeStatusItem",
+      index: "observationServiceRequest/getItems",
+      indexPaginate: "observationServiceRequest/getPaginatedItems",
+      store: "observationServiceRequest/postItem",
+      update: "observationServiceRequest/putItem",
+      delete: "observationServiceRequest/deleteItem",
+      show: "observationServiceRequest/showItem",
+      changeStatus: "observationServiceRequest/changeStatusItem",
       getWorkareas: "workarea/getItems",
+      setEditedItem: "observationServiceRequest/setEdit",
     }),
 
     async handleSelectForm() {
@@ -214,14 +194,8 @@ export default {
             response = await this.update(this.editedItem);
           }
 
-          if (response.data.success) {
+          if (response) {
             this.type = SnackbarType.SUCCESS;
-          } else {
-            this.type = SnackbarType.ERROR;
-            console.log(response.data);
-            this.customMessage = Object.values(response.data.errors).map(
-              (error) => error[0]
-            )[0];
           }
         } catch (e) {
           this.type = SnackbarType.ERROR;
@@ -287,9 +261,15 @@ export default {
     },
 
     handleEditModel(value) {
+      console.log(value);
       this.fillEditedItem(value);
       this.editedIndex = findIndex(value, this.items);
-      this.openDialog();
+
+      this.$router.push({
+        name: "editObservationServiceRequest",
+        params: { slug: value.id },
+      });
+      //  this.openDialog();
     },
 
     closeDialog() {
@@ -298,10 +278,11 @@ export default {
     },
 
     openDialog() {
-      this.$v.$reset();
-      this.dialog = true;
+      //  this.$v.$reset();
 
-      // this.$router.push({ name: "createAnalyte" });
+      this.$router.push({ name: "createObservationServiceRequest" });
+
+      //this.dialog = true;
     },
 
     closeDeleteDialog() {
@@ -313,6 +294,7 @@ export default {
       const { status, data } = await this.show(item._links.self.href);
 
       if (status === 200) {
+        this.setEditAnalyte(data);
         this.editedItem = Object.assign({}, data);
       } else if (status === 403) {
         this.type = SnackbarType.FORBIDDEN;

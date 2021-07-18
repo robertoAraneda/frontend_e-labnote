@@ -1,29 +1,31 @@
 import httpRequest from "../../services/axios";
 
-const BASE_URL = "/api/v1/analytes";
+const BASE_URL = "/api/v1/observation-service-requests";
 
 export default {
   namespaced: true,
   state: {
-    analytes: [],
-    isAnalytesLoading: false,
-    editAnalyte: null,
+    observationServiceRequests: [],
+    isObservationServiceRequestLoading: false,
+    editObservationServiceRequest: null,
   },
   mutations: {
-    SET_ANALYTES: (state, payload) => {
-      state.analytes = payload;
+    SET_OBSERVATION_SERVICE_REQUESTS: (state, payload) => {
+      state.observationServiceRequests = payload;
     },
-    SET_ANALYTES_LOADING: (state, payload) => {
-      state.isAnalytesLoading = payload;
+    SET_OBSERVATION_SERVICE_REQUESTS_LOADING: (state, payload) => {
+      state.isObservationServiceRequestLoading = payload;
     },
-    SET_EDIT_ANALYTE: (state, payload) => {
-      state.editAnalyte = payload;
+    SET_EDIT_OBSERVATION_SERVICE_REQUESTS: (state, payload) => {
+      state.editObservationServiceRequest = payload;
     },
   },
   getters: {
-    analytes: (state) => state.analytes,
-    isAnalytesLoading: (state) => state.isAnalytesLoading,
-    editAnalyte: (state) => state.editAnalyte,
+    observationServiceRequests: (state) => state.observationServiceRequests,
+    isObservationServiceRequestLoading: (state) =>
+      state.isObservationServiceRequestLoading,
+    editObservationServiceRequest: (state) =>
+      state.editObservationServiceRequest,
   },
   actions: {
     showItem: async (_, url) => {
@@ -40,15 +42,15 @@ export default {
 
     getItems: async ({ commit }) => {
       try {
-        commit("SET_ANALYTES_LOADING", true);
+        commit("SET_OBSERVATION_SERVICE_REQUESTS_LOADING", true);
         const { data } = await httpRequest.getRequest(`${BASE_URL}`);
         console.log(data);
-        commit("SET_ANALYTES", data);
+        commit("SET_OBSERVATION_SERVICE_REQUESTS", data);
       } catch (error) {
-        commit("SET_ANALYTES", []);
+        commit("SET_OBSERVATION_SERVICE_REQUESTS", []);
         console.log(error);
       } finally {
-        commit("SET_ANALYTES_LOADING", false);
+        commit("SET_OBSERVATION_SERVICE_REQUESTS_LOADING", false);
       }
     },
 
@@ -90,8 +92,8 @@ export default {
       }
     },
 
-    setEditAnalyte: async ({ commit }, payload) => {
-      commit("SET_EDIT_ANALYTE", payload);
+    setEdit: async ({ commit }, payload) => {
+      commit("SET_EDIT_OBSERVATION_SERVICE_REQUESTS", payload);
     },
   },
 };

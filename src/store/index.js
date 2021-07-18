@@ -10,6 +10,13 @@ import menus from "./modules/menus";
 import workarea from "./modules/workarea";
 import analyte from "./modules/analyte";
 import loinc from "./modules/loinc";
+import observationServiceRequest from "./modules/observationServiceRequest";
+import container from "./modules/container";
+import availability from "./modules/availability";
+import medicalRequestType from "./modules/medicalRequestType";
+import processTime from "./modules/processTime";
+import specimen from "./modules/specimen";
+specimen;
 
 Vue.use(Vuex);
 
@@ -42,5 +49,11 @@ export default new Vuex.Store({
     workarea,
     analyte,
     loinc,
+    observationServiceRequest,
+    container,
+    availability,
+    medicalRequestType,
+    processTime,
+    specimen,
   },
 });

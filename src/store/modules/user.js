@@ -27,7 +27,7 @@ export default {
       try {
         return await httpRequest.getRequest(url);
       } catch (e) {
-        console.log(e);
+        return e.response;
       }
     },
 
@@ -52,24 +52,24 @@ export default {
     postItem: async (_, payload) => {
       try {
         return await httpRequest.postRequest(`${BASE_URL}`, payload);
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        return e.response;
       }
     },
 
     putItem: async (_, payload) => {
       try {
         return await httpRequest.putRequest(payload._link.self.href, payload);
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        return e.response;
       }
     },
 
     deleteItem: async (_, payload) => {
       try {
         return await httpRequest.deleteRequest(`${BASE_URL}/${payload.id}`);
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        return e.response;
       }
     },
 
@@ -79,8 +79,8 @@ export default {
           `${BASE_URL}/${payload.id}/status`,
           { active: payload.active }
         );
-      } catch (error) {
-        console.log(error);
+      } catch (e) {
+        return e.response;
       }
     },
   },

@@ -1,10 +1,9 @@
 <template>
   <v-container fluid>
-    <h2 class="text-h5 text--primary darken-5">Módulo de configuración.</h2>
-    <h2 class="text-subtitle-1 text--secondary">
-      En éste módulo podrás gestionar los recursos de E-labNote.
-    </h2>
-
+    <BaseHeaderModule
+      title="Módulo de configuración."
+      subtitle=" En éste módulo podrás gestionar los recursos de E-labNote."
+    />
     <v-row class="mt-12">
       <v-col
         v-for="menu in menus"

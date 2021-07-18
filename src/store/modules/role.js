@@ -37,7 +37,7 @@ export default {
       try {
         commit("SET_ROLES_LOADING", true);
         const { data } = await httpRequest.getRequest(`${BASE_URL}`);
-        commit("SET_ROLES", data);
+        commit("SET_ROLES", data.collection);
       } catch (error) {
         commit("SET_ROLES", []);
         console.log(error);

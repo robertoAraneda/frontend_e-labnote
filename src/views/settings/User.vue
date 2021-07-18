@@ -296,11 +296,24 @@ export default {
     },
 
     async handleChangeStatus(item) {
+      console.log(item);
       try {
-        const { status } = await this.changeStatus(item);
+        const { status, data } = await this.changeStatus(item);
 
+        console.log(status);
         if (status === 200) {
           this.type = SnackbarType.SUCCESS;
+        } else {
+          this.type = SnackbarType.ERROR;
+          console.log(data);
+
+          if (data.errors) {
+            this.customMessage = Object.values(data.errors).map(
+              (error) => error[0]
+            )[0];
+          } else {
+            this.type = SnackbarType.ERROR;
+          }
         }
       } catch (e) {
         this.type = SnackbarType.ERROR;

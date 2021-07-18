@@ -8,6 +8,9 @@ import BaseConfirmDelete from "../components/base/BaseConfirmDelete";
 import BaseDatatableRowButton from "../components/base/BaseDatatableRowButton";
 import BaseSnackbar from "../components/base/BaseSnackbar";
 import BaseAutocomplete from "../components/base/BaseAutocomplete";
+import BaseHeaderModule from "../components/base/BaseHeaderModule";
+import BasePagination from "../components/base/BasePagination";
+import BaseSwitch from "../components/base/BaseSwitch";
 
 Vue.component("BaseDatatable", BaseDatatable);
 Vue.component("BaseDialog", BaseDialog);
@@ -18,3 +21,6 @@ Vue.component("BaseConfirmDelete", BaseConfirmDelete);
 Vue.component("BaseSnackbar", BaseSnackbar);
 Vue.component("BaseDatatableRowButton", BaseDatatableRowButton);
 Vue.component("BaseAutocomplete", BaseAutocomplete);
+Vue.component("BaseHeaderModule", BaseHeaderModule);
+Vue.component("BasePagination", BasePagination);
+Vue.component("BaseSwitch", BaseSwitch);
