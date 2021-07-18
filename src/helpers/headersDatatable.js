@@ -194,3 +194,33 @@ export const WorkareaHeaders = [
     width: "150",
   },
 ];
+
+export const AnalyteHeaders = [
+  {
+    text: "N°",
+    value: "id",
+    sortable: true,
+    width: "65",
+  },
+  {
+    text: "Nombre",
+    value: "name",
+    sortable: true,
+  },
+  {
+    text: "Resguardo identidad",
+    value: "is_patient_codable",
+    sortable: true,
+  },
+  {
+    text: "Estado",
+    value: "active",
+    sortable: true,
+  },
+  {
+    text: "Acciones",
+    value: "actions",
+    sortable: false,
+    width: "150",
+  },
+];

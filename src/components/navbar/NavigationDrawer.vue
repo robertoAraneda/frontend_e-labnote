@@ -11,11 +11,12 @@
 
     <v-list dense shaped>
       <v-subheader>CONFIGURACIÓN AVANZADA</v-subheader>
-      <v-list-item-group color="primary darken-1">
+      <v-list-item-group color="primary">
         <v-list-item
           v-for="link in links"
           :key="link.id"
           :to="{ name: link.url }"
+          active-class="active"
           link
         >
           <v-list-item-icon>
@@ -53,4 +54,9 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.active {
+  background-color: #3999bf;
+  color: white;
+}
+</style>

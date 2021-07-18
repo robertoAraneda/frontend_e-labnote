@@ -49,7 +49,6 @@ const routes = [
       },
       {
         path: "/modulos/configuracion",
-        name: "settings",
         component: () =>
           import(
             /* webpackChunkName: "settings" */ "../views/settings/Index.vue"
@@ -59,7 +58,6 @@ const routes = [
       },
       {
         path: "/modulos/configuracion-avanzada",
-        name: "advancedSettings",
         component: () =>
           import(
             /* webpackChunkName: "advancedSettings" */ "../views/advancedSettings/Index.vue"
@@ -75,6 +73,8 @@ const router = new VueRouter({
   mode: "history",
   base: process.env.BASE_URL,
   routes,
+  linkActiveClass: "active",
+  linkExactActiveClass: "exact-active",
 });
 
 router.beforeEach((to, from, next) => {

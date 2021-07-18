@@ -1,28 +1,9 @@
 <template>
   <div>
-    <v-row class="mb-10">
-      <v-col cols="12">
-        <h3 class="text-subtitle-1 black--text">
-          En este módulo podrás gestionar los menus de e-labnote.
-        </h3>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <h3 class="text-subtitle-1 black--text">Seleccione un módulo:</h3>
-      </v-col>
-      <v-col cols="12">
-        <BaseAutocomplete
-          v-model="selectedModule"
-          placeholder="Seleccione:"
-          :items="modules"
-          item-value="id"
-          item-text="name"
-          label="Módulos"
-        />
-      </v-col>
-    </v-row>
-
+    <BaseHeaderModule
+      title="Mantenedor base de Menú"
+      subtitle="En este módulo podrás gestionar los menus de e-labnote."
+    />
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
       @editItem="handleEditModel($event)"
@@ -37,12 +18,23 @@
       title="Menús"
       :extra-buttons="false"
     >
-      <template slot="top">
+      <template slot="searchButton">
         <BaseAcceptButton
-          small
           @click="openDialog"
           label="Crear nuevo menú"
           v-if="canCreate"
+        />
+      </template>
+      <template slot="select">
+        <BaseAutocomplete
+          v-model="selectedModule"
+          placeholder="Seleccione:"
+          :items="modules"
+          item-value="id"
+          item-text="name"
+          label="Módulos"
+          single-line
+          hide-details
         />
       </template>
     </BaseDatatable>
@@ -376,7 +368,7 @@ export default {
     },
 
     async fillEditedItem(item) {
-      const { status, data } = await this.show(item._link.self.href);
+      const { status, data } = await this.show(item._links.self.href);
 
       if (status === 200) {
         this.editedItem = Object.assign({}, data);

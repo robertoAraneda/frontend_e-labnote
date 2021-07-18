@@ -1,29 +1,9 @@
 <template>
   <v-container>
-    <router-view />
-    <v-row class="mb-10">
-      <v-col cols="12">
-        <h2 class="text-subtitle-1 grey--text darken-4">
-          En este módulo podrás gestionar los exámenes utilizados en la
-          solicitud de medios y página informativa.
-        </h2>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12">
-        <h3 class="text-body-1 black--text">Seleccione un área de trabajo:</h3>
-      </v-col>
-      <v-col cols="12">
-        <BaseAutocomplete
-          v-model="selectedWorkArea"
-          placeholder="Seleccione:"
-          :items="workareas"
-          item-value="id"
-          item-text="name"
-          label="Área de trabajo"
-        />
-      </v-col>
-    </v-row>
+    <BaseHeaderModule
+      title="Mantenedor exámenes base."
+      subtitle=" En éste módulo podrás gestionar los recursos base para la creación de exámenes."
+    />
 
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
@@ -36,13 +16,23 @@
       :items="items"
       :headers="headers"
       sort-by="id"
-      title="Áreas de trabajo"
     >
-      <template slot="top">
+      <template v-slot:select>
+        <BaseAutocomplete
+          v-model="selectedWorkArea"
+          placeholder="Seleccione:"
+          :items="workareas"
+          item-value="id"
+          item-text="name"
+          label="Área de trabajo"
+          single-line
+          hide-details
+        />
+      </template>
+      <template v-slot:searchButton>
         <BaseAcceptButton
-          small
           @click="openDialog"
-          label="Crear nueva área de trabajo"
+          label="Crear nuevo examen base"
           v-if="canCreate"
         />
       </template>
@@ -62,9 +52,24 @@
           @blur="$v.editedItem.name.$touch()"
           :error-messages="nameErrors"
         />
+        <v-radio-group v-model="editedItem.is_patient_codable" row>
+          <template v-slot:label>
+            <div class="">
+              <span class="text-body-1 text--primary"
+                >¿Demografía paciente codificada?</span
+              ><br />
+              <span class="text-body-2 text--secondary"
+                >(Resguardo de identidad):</span
+              >
+            </div>
+          </template>
+          <v-spacer />
+          <v-radio label="Si" :value="true"></v-radio>
+          <v-radio label="No" :value="false"></v-radio>
+        </v-radio-group>
         <v-radio-group v-model="editedItem.active" row>
           <template v-slot:label>
-            <div class="black--text text-subtitle-1">Estado:</div>
+            <div class="text--primary text-body-1">Estado:</div>
           </template>
           <v-spacer />
           <v-radio label="Inactivo" :value="false"></v-radio>
@@ -73,7 +78,11 @@
       </template>
     </BaseDialog>
 
-    <BaseSnackbar v-model="snackbar" :type="type" />
+    <BaseSnackbar
+      :custom-message="customMessage"
+      v-model="snackbar"
+      :type="type"
+    />
 
     <BaseConfirmDelete
       @closeDelete="closeDeleteDialog"
@@ -84,14 +93,14 @@
 </template>
 
 <script>
-import { WorkareaHeaders } from "../../helpers/headersDatatable";
+import { AnalyteHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import Workarea from "../../models/Workarea";
+import Analyte from "../../models/Analyte";
 
 export default {
   name: "Analyte",
@@ -107,15 +116,16 @@ export default {
 
   data: () => ({
     dialog: false,
-    editedItem: new Workarea(),
+    editedItem: new Analyte(),
     editedIndex: -1,
-    defaultItem: new Workarea(),
+    defaultItem: new Analyte(),
     snackbar: false,
-    headers: WorkareaHeaders,
+    headers: AnalyteHeaders,
     dialogDelete: false,
     type: SnackbarType.SUCCESS,
     selectedWorkArea: null,
     workareas: [],
+    customMessage: "",
   }),
 
   async mounted() {
@@ -141,8 +151,8 @@ export default {
 
     formTitle() {
       return this.editedIndex === -1
-        ? "Crear área de trabajo"
-        : "Editar área de trabajo";
+        ? "Crear base examen"
+        : "Editar base examen";
     },
 
     nameErrors() {
@@ -204,8 +214,14 @@ export default {
             response = await this.update(this.editedItem);
           }
 
-          if (response) {
+          if (response.data.success) {
             this.type = SnackbarType.SUCCESS;
+          } else {
+            this.type = SnackbarType.ERROR;
+            console.log(response.data);
+            this.customMessage = Object.values(response.data.errors).map(
+              (error) => error[0]
+            )[0];
           }
         } catch (e) {
           this.type = SnackbarType.ERROR;
@@ -282,11 +298,10 @@ export default {
     },
 
     openDialog() {
-      //  this.$v.$reset();
+      this.$v.$reset();
+      this.dialog = true;
 
-      this.$router.push({ name: "createAnalyte" });
-
-      //this.dialog = true;
+      // this.$router.push({ name: "createAnalyte" });
     },
 
     closeDeleteDialog() {
@@ -295,7 +310,7 @@ export default {
     },
 
     async fillEditedItem(item) {
-      const { status, data } = await this.show(item._link.self.href);
+      const { status, data } = await this.show(item._links.self.href);
 
       if (status === 200) {
         this.editedItem = Object.assign({}, data);

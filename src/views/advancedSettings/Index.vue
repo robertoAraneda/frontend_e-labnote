@@ -1,9 +1,7 @@
 <template>
   <div>
     <NavigationDrawer :links="menus" />
-    <v-container>
-      <router-view></router-view>
-    </v-container>
+    <router-view />
   </div>
 </template>
 

@@ -1,33 +1,40 @@
 <template>
   <div>
-    <v-row class="mb-10">
-      <v-col cols="12">
-        <h3 class="text-subtitle-1 black--text">
-          En este módulo podrás gestionar los laboratorios asociados a
-          e-labnote.
-        </h3>
-      </v-col>
-    </v-row>
-
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
       @editItem="handleEditModel($event)"
       @changeStatus="handleChangeStatus($event)"
       @searchItem="handleShowItem($event)"
+      :can-update="canUpdate"
+      :can-delete="canDelete"
+      :can-show="canShow"
       :items="items"
       :headers="headers"
       sort-by="id"
-      title="Laboratorios"
-      :extra-buttons="false"
+      title="Áreas de trabajo"
     >
-      <template slot="top">
+      <template slot="select">
+        <BaseAutocomplete
+          v-model="selectedWorkArea"
+          placeholder="Seleccione:"
+          :items="workareas"
+          item-value="id"
+          item-text="name"
+          label="Área de trabajo"
+          single-line
+          hide-details
+        />
+      </template>
+      <template slot="searchButton">
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nuevo laboratorio"
+          label="Crear examen"
+          v-if="canCreate"
         />
       </template>
     </BaseDatatable>
+
     <BaseDialog
       :dialog="dialog"
       :form-title="formTitle"
@@ -42,42 +49,6 @@
           @blur="$v.editedItem.name.$touch()"
           :error-messages="nameErrors"
         />
-        <BaseTextfield
-          v-model="editedItem.address"
-          label="Dirección"
-          @input="$v.editedItem.address.$touch()"
-          @blur="$v.editedItem.address.$touch()"
-          :error-messages="addressErrors"
-        />
-        <BaseTextfield
-          v-model="editedItem.email"
-          label="Correo electrónico"
-          @input="$v.editedItem.email.$touch()"
-          @blur="$v.editedItem.email.$touch()"
-          :error-messages="emailErrors"
-        />
-        <BaseTextfield
-          v-model="editedItem.phone"
-          label="Teléfono"
-          @input="$v.editedItem.phone.$touch()"
-          @blur="$v.editedItem.phone.$touch()"
-          v-mask="['+## (#) #### ####']"
-          :error-messages="phoneErrors"
-        />
-        <BaseTextfield
-          v-model="editedItem.redirect"
-          label="URL"
-          @input="$v.editedItem.redirect.$touch()"
-          @blur="$v.editedItem.redirect.$touch()"
-          :error-messages="redirectErrors"
-        />
-        <BaseTextfield
-          v-model="editedItem.technical_director"
-          label="Director técnico"
-          @input="$v.editedItem.technical_director.$touch()"
-          @blur="$v.editedItem.technical_director.$touch()"
-          :error-messages="technicalDirectorErrors"
-        />
         <v-radio-group v-model="editedItem.active" row>
           <template v-slot:label>
             <div class="black--text text-subtitle-1">Estado:</div>
@@ -88,9 +59,11 @@
         </v-radio-group>
       </template>
     </BaseDialog>
+
     <BaseSnackbar v-model="snackbar" :type="type" />
+
     <BaseConfirmDelete
-      @closeDelete="dialogDelete = false"
+      @closeDelete="closeDeleteDialog"
       @deleteItemConfirm="deleteItemConfirm()"
       :dialog-delete="dialogDelete"
     />
@@ -98,68 +71,67 @@
 </template>
 
 <script>
-import { LaboratoryHeaders } from "../../helpers/headersDatatable";
-import { SnackbarType } from "../../helpers/SnackbarMessages";
-import { validationMessage } from "../../helpers/ValidationMessage";
+import { WorkareaHeaders } from "../../../helpers/headersDatatable";
+import { SnackbarType } from "../../../helpers/SnackbarMessages";
+import { validationMessage } from "../../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
-import { required, email } from "vuelidate/lib/validators";
+import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
-import Laboratory from "../../models/Laboratory";
-import { findIndex } from "../../helpers/Functions";
-import { mask } from "vue-the-mask";
+import { findIndex } from "../../../helpers/Functions";
+import Workarea from "../../../models/Workarea";
 
 export default {
-  name: "Laboratory",
-
-  directives: {
-    mask,
-  },
+  name: "List",
 
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
       name: { required },
-      address: { required },
-      email: { required, email },
-      phone: { required },
-      redirect: { required },
-      technical_director: { required },
       active: { required },
     },
   },
 
   data: () => ({
     dialog: false,
-    editedItem: new Laboratory(),
+    editedItem: new Workarea(),
     editedIndex: -1,
-    defaultItem: new Laboratory(),
+    defaultItem: new Workarea(),
     snackbar: false,
-    timeout: 2000,
-    headers: LaboratoryHeaders,
+    headers: WorkareaHeaders,
     dialogDelete: false,
-    type: "success",
+    type: SnackbarType.SUCCESS,
+    selectedWorkArea: null,
+    workareas: [],
   }),
 
-  mounted() {
-    this.index();
+  async mounted() {
+    await this.index();
+    await this.handleSelectForm();
   },
 
   computed: {
     ...mapGetters({
-      laboratories: "laboratory/laboratories",
-      loggedUser: "auth/user",
+      _workareas: "workarea/workareas",
+      _namedPermissions: "auth/namedPermissions",
+      _observationServiceRequests:
+        "observationServiceRequest/observationServiceRequests",
     }),
 
     items() {
-      if (!this.laboratories) return [];
-      return this.laboratories.collection;
+      if (!this._observationServiceRequests) return [];
+      if (!this.selectedWorkArea || this.selectedWorkArea === 0)
+        return this._observationServiceRequests.collection;
+      return this._observationServiceRequests.collection.filter(
+        (observationServiceRequest) =>
+          observationServiceRequest.workarea.id === this.selectedWorkArea
+      );
     },
 
     formTitle() {
       return this.editedIndex === -1
-        ? "Crear laboratorio"
-        : "Editar laboratorio";
+        ? "Crear área de trabajo"
+        : "Editar área de trabajo";
     },
 
     nameErrors() {
@@ -170,58 +142,45 @@ export default {
       return errors;
     },
 
-    addressErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.address.$dirty) return errors;
-      !this.$v.editedItem.address.required &&
-        errors.push(validationMessage.REQUIRED);
-      return errors;
+    canCreate() {
+      if (!this._namedPermissions) return false;
+      return this._namedPermissions.includes("workarea.create");
     },
 
-    emailErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.email.$dirty) return errors;
-      !this.$v.editedItem.email.required &&
-        errors.push(validationMessage.REQUIRED);
-      !this.$v.editedItem.email.email && errors.push(validationMessage.EMAIL);
-      return errors;
+    canUpdate() {
+      if (!this._namedPermissions) return false;
+      return this._namedPermissions.includes("workarea.update");
     },
 
-    phoneErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.phone.$dirty) return errors;
-      !this.$v.editedItem.phone.required &&
-        errors.push(validationMessage.REQUIRED);
-      return errors;
+    canDelete() {
+      if (!this._namedPermissions) return false;
+      return this._namedPermissions.includes("workarea.delete");
     },
 
-    redirectErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.redirect.$dirty) return errors;
-      !this.$v.editedItem.redirect.required &&
-        errors.push(validationMessage.REQUIRED);
-      return errors;
-    },
-
-    technicalDirectorErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.technical_director.$dirty) return errors;
-      !this.$v.editedItem.technical_director.required &&
-        errors.push(validationMessage.REQUIRED);
-      return errors;
+    canShow() {
+      if (!this._namedPermissions) return false;
+      return this._namedPermissions.includes("workarea.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "laboratory/getItems",
-      indexPaginate: "laboratory/getPaginatedItems",
-      store: "laboratory/postItem",
-      update: "laboratory/putItem",
-      delete: "laboratory/deleteItem",
-      show: "laboratory/showItem",
-      changeStatus: "laboratory/changeStatusItem",
+      index: "observationServiceRequest/getItems",
+      indexPaginate: "observationServiceRequest/getPaginatedItems",
+      store: "observationServiceRequest/postItem",
+      update: "observationServiceRequest/putItem",
+      delete: "observationServiceRequest/deleteItem",
+      show: "observationServiceRequest/showItem",
+      changeStatus: "observationServiceRequest/changeStatusItem",
+      getWorkareas: "workarea/getItems",
+      setEditedItem: "observationServiceRequest/setEdit",
     }),
+
+    async handleSelectForm() {
+      await this.getWorkareas();
+
+      this.workareas = this._workareas.collection;
+    },
 
     async save() {
       this.$v.$touch();
@@ -287,11 +246,7 @@ export default {
 
     async handleShowItem(item) {
       try {
-        const { data } = await this.show(item._links.self.href);
-
-        this.showUserDialog = true;
-
-        await this.fillEditedItem(data);
+        await this.fillEditedItem(item);
       } catch (e) {
         this.type = SnackbarType.ERROR;
         this.activateSnackbar();
@@ -306,9 +261,15 @@ export default {
     },
 
     handleEditModel(value) {
+      console.log(value);
       this.fillEditedItem(value);
       this.editedIndex = findIndex(value, this.items);
-      this.openDialog();
+
+      this.$router.push({
+        name: "editObservationServiceRequest",
+        params: { slug: value.id },
+      });
+      //  this.openDialog();
     },
 
     closeDialog() {
@@ -317,8 +278,11 @@ export default {
     },
 
     openDialog() {
-      this.$v.$reset();
-      this.dialog = true;
+      //  this.$v.$reset();
+
+      this.$router.push({ name: "createObservationServiceRequest" });
+
+      //this.dialog = true;
     },
 
     closeDeleteDialog() {
@@ -327,9 +291,18 @@ export default {
     },
 
     async fillEditedItem(item) {
-      const { data } = await this.show(item._links.self.href);
+      const { status, data } = await this.show(item._links.self.href);
 
-      this.editedItem = Object.assign({}, data);
+      if (status === 200) {
+        this.setEditAnalyte(data);
+        this.editedItem = Object.assign({}, data);
+      } else if (status === 403) {
+        this.type = SnackbarType.FORBIDDEN;
+        this.activateSnackbar();
+      } else {
+        this.type = SnackbarType.ERROR;
+        this.activateSnackbar();
+      }
     },
 
     activateSnackbar() {

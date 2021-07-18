@@ -26,7 +26,8 @@ const options = {
         secondary: "#737373",
         terciary: "#8BC3D9",
         red: "#AC1315", //'#AC1315' '#BA2E38'
-        white: "#F2F2F2",
+        white: "#fff",
+        white_: "#F2F2F2",
         black: "#262223",
       },
     },
