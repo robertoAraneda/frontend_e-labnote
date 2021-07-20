@@ -42,10 +42,20 @@
           v-if="canShow"
         />
         <BaseDatatableRowButton
+          v-if="useSlugRoute && canUpdate"
           title-tooltip="Editar"
           icon="mdi-pencil"
           @click="editItem(item)"
-          v-if="canUpdate"
+          :to="{
+            name: 'editObservationServiceRequest',
+            params: { slug: item.slug },
+          }"
+        />
+        <BaseDatatableRowButton
+          v-else-if="canUpdate"
+          title-tooltip="Editar"
+          icon="mdi-pencil"
+          @click="editItem(item)"
         />
 
         <BaseDatatableRowButton
@@ -76,7 +86,6 @@
           dense
           @change="changeStatus(item)"
           v-model="item.active"
-          color="secondary darken-3"
           inset
         ></v-switch>
       </template>
@@ -127,6 +136,10 @@ export default {
     canCreate: {
       type: Boolean,
       default: () => true,
+    },
+    useSlugRoute: {
+      type: Boolean,
+      default: () => false,
     },
   },
   data: () => ({

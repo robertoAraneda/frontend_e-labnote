@@ -1,26 +1,30 @@
 <template>
-  <v-app-bar clipped-left app dark color="primary">
+  <v-app-bar clipped-left app color="primary">
     <v-app-bar-nav-icon
+      class="white--text"
       v-if="!isShowAppBarIcon"
       @click="setDrawer()"
     ></v-app-bar-nav-icon>
 
-    <v-toolbar-title>e-LabNote</v-toolbar-title>
+    <v-toolbar-title class="white--text">e-LabNote</v-toolbar-title>
     <v-spacer />
-    <BaseAcceptButton
-      v-if="showMainPageButton"
-      label="Página Principal"
-      @click="mainPage"
-      dark
-      color="secondary"
-    />
-    <BaseAcceptButton
-      v-if="showModuleButton"
-      label="Modulos"
-      @click="redirectModules"
-      text
-      color="white"
-    />
+    <v-container class="py-0 fill-height">
+      <BaseAcceptButton
+        v-if="showMainPageButton"
+        label="Página Principal"
+        @click="mainPage"
+        text
+        class="white--text ml-3"
+      />
+      <BaseAcceptButton
+        v-if="showModuleButton"
+        label="Modulos"
+        @click="redirectModules"
+        text
+        class="white--text ml-3"
+      />
+    </v-container>
+    <v-avatar class="mr-10" color="grey darken-1" size="32">A</v-avatar>
   </v-app-bar>
 </template>
 

@@ -2,9 +2,7 @@
   <v-text-field
     v-bind="$attrs"
     v-on="$listeners"
-    filled
     color="primary"
-    dense
   ></v-text-field>
 </template>
 

@@ -20,7 +20,6 @@
       :headers="headers"
       sort-by="id"
       title="Módulos"
-      :extra-buttons="false"
     >
       <template slot="top">
         <BaseAcceptButton

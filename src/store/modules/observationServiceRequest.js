@@ -16,7 +16,7 @@ export default {
     SET_OBSERVATION_SERVICE_REQUESTS_LOADING: (state, payload) => {
       state.isObservationServiceRequestLoading = payload;
     },
-    SET_EDIT_OBSERVATION_SERVICE_REQUESTS: (state, payload) => {
+    SET_EDIT_OBSERVATION_SERVICE_REQUEST: (state, payload) => {
       state.editObservationServiceRequest = payload;
     },
   },
@@ -93,7 +93,7 @@ export default {
     },
 
     setEdit: async ({ commit }, payload) => {
-      commit("SET_EDIT_OBSERVATION_SERVICE_REQUESTS", payload);
+      commit("SET_EDIT_OBSERVATION_SERVICE_REQUEST", payload);
     },
   },
 };

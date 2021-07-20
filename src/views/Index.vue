@@ -1,9 +1,8 @@
 <template>
-  <v-main class="grey lighten-3">
+  <v-main class="blue-grey lighten-5">
     <GuestNavbar v-if="!authenticated" />
     <LoggedNavbar v-else />
     <v-breadcrumbs
-      large
       v-if="$route.path !== '/'"
       :items="breadcrumbs"
     ></v-breadcrumbs>
@@ -38,13 +37,13 @@ export default {
           href += "/" + link;
           return {
             text: link.toUpperCase().replaceAll("-", " "),
-            disabled: index === links.length - 1,
+            disabled: true, //index === links.length - 1
             href: href,
           };
         } else {
           return {
             text: "E-Labnote",
-            disabled: false,
+            disabled: true,
             href: "/",
           };
         }

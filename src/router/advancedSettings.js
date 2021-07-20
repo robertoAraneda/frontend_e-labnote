@@ -48,7 +48,7 @@ export const advancedSettings = [
       ),
   },
   {
-    path: "examenes",
+    path: "prestaciones",
     name: "analytes",
     component: () =>
       import(

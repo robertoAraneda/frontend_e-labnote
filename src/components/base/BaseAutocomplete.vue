@@ -2,22 +2,17 @@
   <v-autocomplete
     v-bind="$attrs"
     v-on="$listeners"
-    filled
     color="primary"
-    chips
-    deletable-chips
-    small-chips
     prepend-inner-icon="mdi-filter"
   >
     <template v-slot:selection="data">
       <v-chip
-        class="my-3"
         v-bind="data.attrs"
         :input-value="data.selected"
         close
-        color="secondary"
+        color="blue-grey lighten-5"
         @click="data.select"
-        @click:close="remove(data.item)"
+        @click:close="remove()"
       >
         <span class="text-truncate">{{ data.item.name }}</span>
       </v-chip>
@@ -34,8 +29,8 @@ export default {
   }),
 
   methods: {
-    remove(item) {
-      this.$emit("remove", item);
+    remove() {
+      this.$emit("remove");
     },
   },
 };
