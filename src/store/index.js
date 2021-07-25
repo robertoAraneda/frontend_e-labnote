@@ -16,7 +16,6 @@ import availability from "./modules/availability";
 import medicalRequestType from "./modules/medicalRequestType";
 import processTime from "./modules/processTime";
 import specimen from "./modules/specimen";
-specimen;
 
 Vue.use(Vuex);
 
