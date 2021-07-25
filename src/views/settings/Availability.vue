@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <BaseHeaderModule title="Módulo de áreas de trabajo" subtitle="En este módulo podrás gestionar las áreas de trabajo."/>
+    <BaseHeaderModule title="Módulo de disponibilidades" subtitle="En este módulo podrás gestionar las categorías de disponibilidad."/>
 
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
@@ -18,7 +18,7 @@
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nueva área de trabajo"
+          label="Crear nueva disponibilidad"
           v-if="canCreate"
         />
       </template>
@@ -60,17 +60,17 @@
 </template>
 
 <script>
-import { WorkareaHeaders } from "../../helpers/headersDatatable";
+import { AvailabilityHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import Workarea from "../../models/Workarea";
+import Availability from "../../models/Availability";
 
 export default {
-  name: "Workarea",
+  name: "Availability",
 
   mixins: [validationMixin],
 
@@ -83,11 +83,11 @@ export default {
 
   data: () => ({
     dialog: false,
-    editedItem: new Workarea(),
+    editedItem: new Availability(),
     editedIndex: -1,
-    defaultItem: new Workarea(),
+    defaultItem: new Availability(),
     snackbar: false,
-    headers: WorkareaHeaders,
+    headers: AvailabilityHeaders,
     dialogDelete: false,
     type: SnackbarType.SUCCESS,
   }),
@@ -98,59 +98,59 @@ export default {
 
   computed: {
     ...mapGetters({
-      workareas: "workarea/workareas",
+      availabilities: "availability/availabilities",
       namedPermissions: "auth/namedPermissions",
     }),
 
     items() {
-      if (!this.workareas) return [];
-      return this.workareas.collection;
+      if (!this.availabilities) return [];
+      return this.availabilities.collection;
     },
 
     formTitle() {
       return this.editedIndex === -1
-        ? "Crear área de trabajo"
-        : "Editar área de trabajo";
+        ? "Crear disponibilidad"
+        : "Editar disponibilidad";
     },
 
     nameErrors() {
       const errors = [];
       if (!this.$v.editedItem.name.$dirty) return errors;
       !this.$v.editedItem.name.required &&
-        errors.push(validationMessage.REQUIRED);
+      errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("workarea.create");
+      return this.namedPermissions.includes("availability.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("workarea.update");
+      return this.namedPermissions.includes("availability.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("workarea.delete");
+      return this.namedPermissions.includes("availability.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("workarea.show");
+      return this.namedPermissions.includes("availability.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "workarea/getItems",
-      indexPaginate: "workarea/getPaginatedItems",
-      store: "workarea/postItem",
-      update: "workarea/putItem",
-      delete: "workarea/deleteItem",
-      show: "workarea/showItem",
-      changeStatus: "workarea/changeStatusItem",
+      index: "availability/getItems",
+      indexPaginate: "availability/getPaginatedItems",
+      store: "availability/postItem",
+      update: "availability/putItem",
+      delete: "availability/deleteItem",
+      show: "availability/showItem",
+      changeStatus: "availability/changeStatusItem",
     }),
 
     async save() {

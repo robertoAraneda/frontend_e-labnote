@@ -52,4 +52,12 @@ export const settings = [
         /* webpackChunkName: "workareas" */ "../views/settings/Workarea.vue"
       ),
   },
+  {
+    path: "disponibilidad",
+    name: "availabilities",
+    component: () =>
+      import(
+        /* webpackChunkName: "availabilities" */ "../views/settings/Availability.vue"
+        ),
+  },
 ];
