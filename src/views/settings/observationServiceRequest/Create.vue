@@ -208,6 +208,31 @@
         <BaseAcceptButton @click="save" label="Guardar" />
       </v-card-actions>
     </v-card>
+    <v-dialog
+      v-model="redirectToList"
+      transition="dialog-bottom-transition"
+      max-width="600"
+      persistent
+    >
+      <template v-slot:default>
+        <v-card>
+          <v-toolbar color="primary" dark>E-LabNote</v-toolbar>
+          <v-card-text>
+            <div class="text-h6 pa-12 text-center">
+              Registro editado correctamente.
+            </div>
+          </v-card-text>
+          <v-card-actions class="justify-center">
+            <v-btn
+              rounded
+              color="primary"
+              :to="{ name: 'observationServiceRequests' }"
+              >Volver a la lista</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </div>
 </template>
 
@@ -242,6 +267,7 @@ export default {
     searchLoinc: null,
     loinc: null,
     clinical_information: "",
+    redirectToList: false,
 
     editedItem: new ObservationServiceRequest(),
     editedDefault: new ObservationServiceRequest(),
@@ -538,7 +564,11 @@ export default {
 
       if (!this.$v.$invalid) {
         try {
-          await this.store(this.editedItem);
+          const { status } = await this.store(this.editedItem);
+
+          if (status === 201) {
+            this.redirectToList = true;
+          }
         } catch (e) {
           console.log(e);
         } finally {

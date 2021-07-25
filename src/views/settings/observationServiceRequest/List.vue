@@ -265,7 +265,9 @@ export default {
     async handleEditModel(value) {
       await this.fillEditedItem(value);
       // this.editedIndex = findIndex(value, this.items);
-      this.setEditedItem(this.editedItem);
+
+      console.log("enviando");
+      await this.setEditedItem(this.editedItem);
       //  this.openDialog();
     },
 
@@ -292,8 +294,6 @@ export default {
 
       if (status === 200) {
         this.editedItem = Object.assign({}, data);
-
-        console.log("form-list", this.editedItem);
       } else if (status === 403) {
         this.type = SnackbarType.FORBIDDEN;
         this.activateSnackbar();

@@ -12,7 +12,7 @@
           <v-spacer />
         </v-toolbar>
         <v-row justify="center">
-          <v-col cols="7">
+          <v-col cols="auto">
             <small>
               **El nombre del examen se construye de forma automática con la
               combinación de la prestación base y el tipo de muestra.</small
@@ -208,6 +208,31 @@
         <BaseAcceptButton @click="save" label="Guardar" />
       </v-card-actions>
     </v-card>
+    <v-dialog
+      v-model="redirectToList"
+      transition="dialog-bottom-transition"
+      max-width="600"
+      persistent
+    >
+      <template v-slot:default>
+        <v-card>
+          <v-toolbar color="primary" dark>E-LabNote</v-toolbar>
+          <v-card-text>
+            <div class="text-h6 pa-12 text-center">
+              Registro editado correctamente.
+            </div>
+          </v-card-text>
+          <v-card-actions class="justify-center">
+            <v-btn
+              rounded
+              color="primary"
+              :to="{ name: 'observationServiceRequests' }"
+              >Volver a la lista</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </div>
 </template>
 
@@ -242,6 +267,7 @@ export default {
     searchLoinc: null,
     loinc: null,
     clinical_information: "",
+    redirectToList: false,
 
     editedItem: new ObservationServiceRequest(),
     editedDefault: new ObservationServiceRequest(),
@@ -279,32 +305,22 @@ export default {
     itemsWorkareas: [],
   }),
 
-  mounted() {
-    this.querySelectionsContainer();
-    this.querySelectionsProcessTime();
-    this.querySelectionsMedicalRequestType();
-    this.querySelectionsSpecimen();
-    this.querySelectionsAnalyte();
-    this.querySelectionsAvailability();
-    this.querySelectionsWorkarea();
+  async mounted() {
+    const { data, status } = await this.getItemBySlug(this.$route.params.slug);
+
+    if (status === 200) {
+      this.fillEditObject(data);
+    }
+    await this.querySelectionsContainer();
+    await this.querySelectionsProcessTime();
+    await this.querySelectionsMedicalRequestType();
+    await this.querySelectionsSpecimen();
+    await this.querySelectionsAnalyte();
+    await this.querySelectionsAvailability();
+    await this.querySelectionsWorkarea();
   },
 
   watch: {
-    _editedItem() {
-      this.clinical_information = this._editedItem.clinical_information;
-      this.selectedAvailability = this._editedItem._embedded.availability;
-      this.selectedAnalytes = this._editedItem._embedded.analyte;
-      this.selectedContainers = this._editedItem._embedded.container;
-      this.selectedProcessTimes = this._editedItem._embedded.processTime;
-      this.selectedWorkareas = this._editedItem._embedded.workarea;
-      this.selectedMedicalRequestTypes =
-        this._editedItem._embedded.medicalRequestType;
-      this.selectedSpecimens = this._editedItem._embedded.specimen;
-      this.searchLoinc = this._editedItem._embedded.loinc.loinc_num;
-
-      console.log("from-edit", this.editedItem);
-    },
-
     async searchLoinc(val) {
       this.isLoading = true;
 
@@ -415,7 +431,6 @@ export default {
       _processTimes: "processTime/processTimes",
       _workareas: "workarea/workareas",
       _medicalRequestTypes: "medicalRequestType/medicalRequestTypes",
-      _editedItem: "observationServiceRequest/editObservationServiceRequest",
     }),
 
     name() {
@@ -549,21 +564,36 @@ export default {
       getAnalytes: "analyte/getItems",
       getProcessTimes: "processTime/getItems",
       getMedicalRequestTypes: "medicalRequestType/getItems",
-      index: "observationServiceRequest/getItems",
-      indexPaginate: "observationServiceRequest/getPaginatedItems",
-      store: "observationServiceRequest/postItem",
       update: "observationServiceRequest/putItem",
-      delete: "observationServiceRequest/deleteItem",
-      show: "observationServiceRequest/showItem",
-      changeStatus: "observationServiceRequest/changeStatusItem",
+      getItemBySlug: "observationServiceRequest/getItemBySlug",
     }),
+
+    fillEditObject(item) {
+      this.clinical_information = item.clinical_information;
+      this.selectedAvailability = item._embedded.availability;
+      this.selectedAnalytes = item._embedded.analyte;
+      this.selectedContainers = item._embedded.container;
+      this.selectedProcessTimes = item._embedded.processTime;
+      this.selectedWorkareas = item._embedded.workarea;
+      this.selectedMedicalRequestTypes = item._embedded.medicalRequestType;
+      this.selectedSpecimens = item._embedded.specimen;
+      this.searchLoinc = item._embedded.loinc.loinc_num;
+
+      //se agrega el id al objeto edititem
+      this.editedItem.id = item.id;
+    },
 
     async save() {
       this.$v.$touch();
 
       if (!this.$v.$invalid) {
         try {
-          await this.store(this.editedItem);
+          console.log("updating");
+          const { status } = await this.update(this.editedItem);
+
+          if (status === 200) {
+            this.redirectToList = true;
+          }
         } catch (e) {
           console.log(e);
         } finally {

@@ -95,5 +95,15 @@ export default {
     setEdit: async ({ commit }, payload) => {
       commit("SET_EDIT_OBSERVATION_SERVICE_REQUEST", payload);
     },
+
+    getItemBySlug: async (_, payload) => {
+      try {
+        return await httpRequest.getRequest(
+          `${BASE_URL}/search?slug=${payload}`
+        );
+      } catch (e) {
+        return e.response;
+      }
+    },
   },
 };
