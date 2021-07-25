@@ -1,12 +1,6 @@
 <template>
   <v-container>
-    <v-row class="mb-10">
-      <v-col cols="12">
-        <h3 class="text-subtitle-1 black--text">
-          En este módulo podrás gestionar las áreas de trabajo.
-        </h3>
-      </v-col>
-    </v-row>
+    <BaseHeaderModule title="Módulo de áreas de trabajo" subtitle="En este módulo podrás gestionar las áreas de trabajo."/>
 
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
@@ -19,9 +13,8 @@
       :items="items"
       :headers="headers"
       sort-by="id"
-      title="Áreas de trabajo"
     >
-      <template slot="top">
+      <template slot="searchButton">
         <BaseAcceptButton
           small
           @click="openDialog"

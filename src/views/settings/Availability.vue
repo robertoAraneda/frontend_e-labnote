@@ -1,12 +1,6 @@
 <template>
   <v-container>
-    <v-row class="mb-10">
-      <v-col cols="12">
-        <h3 class="text-subtitle-1 black--text">
-          En este módulo podrás gestionar las categorías de disponibilidad.
-        </h3>
-      </v-col>
-    </v-row>
+    <BaseHeaderModule title="Módulo de disponibilidades" subtitle="En este módulo podrás gestionar las categorías de disponibilidad."/>
 
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
@@ -19,9 +13,8 @@
       :items="items"
       :headers="headers"
       sort-by="id"
-      title="Categorías de disponibilidad"
     >
-      <template slot="top">
+      <template slot="searchButton">
         <BaseAcceptButton
           small
           @click="openDialog"
