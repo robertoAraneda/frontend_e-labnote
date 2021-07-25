@@ -1,188 +1,238 @@
 <template>
   <div>
-    <v-card>
-      <v-card-title>Crear exámen</v-card-title>
-      <v-toolbar flat>
-        <v-toolbar-title>Nombre: {{ name }}</v-toolbar-title>
-        <v-spacer />
-      </v-toolbar>
+    <v-card class="elevation-0">
+      <v-subheader class="text-h6">Crear examen</v-subheader>
+
       <v-card-text>
-        <v-textarea
-          v-model="clinical_information"
-          filled
-          name="input-7-4"
-          label="Información clínica"
-          @input="$v.clinical_information.$touch()"
-          @blur="$v.clinical_information.$touch()"
-          :error-messages="clinicalInformationErrors"
-        ></v-textarea>
-        <v-toolbar height="100" flat outlined class="mb-6">
-          <v-toolbar-title>LOINC: </v-toolbar-title>
+        <v-toolbar flat>
+          <v-spacer />
+          <v-subheader class="text-h4 text-decoration-underline">{{
+            name
+          }}</v-subheader>
+          <v-spacer />
+        </v-toolbar>
+        <v-row justify="center">
+          <v-col cols="7">
+            <small>
+              **El nombre del examen se construye de forma automática con la
+              combinación de la prestación base y el tipo de muestra.</small
+            >
+          </v-col>
+        </v-row>
+
+        <v-subheader class="text-h6">LOINC: </v-subheader>
+        <v-toolbar flat outlined class="mb-6 blue-grey lighten-5">
           <v-toolbar-items>
             <v-text-field
-              class="ml-6 text-h6 py-5"
+              class="mt-3 centered-input text-h6"
               color="primary"
               v-model="searchLoinc"
-              placeholder="Buscar"
-              filled
+              placeholder="Buscar por código"
               @input="$v.searchLoinc.$touch()"
               @blur="$v.searchLoinc.$touch()"
               :error-messages="loincErrors"
             ></v-text-field
           ></v-toolbar-items>
           <v-spacer />
-          <v-toolbar-title>{{ longCommonName }}</v-toolbar-title>
+          <v-toolbar-title
+            class="text-truncate ml-2 text-decoration-underline"
+            >{{ longCommonName }}</v-toolbar-title
+          >
           <v-spacer />
         </v-toolbar>
-        <v-row>
-          <v-col cols="12" md="6" lg="4" xl="3">
-            <BaseAutocomplete
-              v-model="selectedAvailability"
-              :items="itemsAvailabilities"
-              @focus="querySelectionsAvailability('')"
-              :loading="loadingAvailability"
-              :search-input.sync="searchAvailability"
-              flat
-              cache-items
-              placeholder="Seleccione:"
-              item-value="id"
-              item-text="name"
-              label="Disponibilidad"
-              @remove="selectedAvailability = null"
-              return-object
-              @change="$v.selectedAvailability.$touch()"
-              @blur="$v.selectedAvailability.$touch()"
-              :error-messages="availabilityErrors"
-            ></BaseAutocomplete>
-          </v-col>
-          <v-col cols="12" md="6" lg="4" xl="3">
-            <BaseAutocomplete
-              v-model="selectedAnalytes"
-              :items="itemsAnalytes"
-              @focus="querySelectionsAnalyte('')"
-              :loading="loadingAnalytes"
-              :search-input.sync="searchAnalytes"
-              flat
-              cache-items
-              placeholder="Seleccione:"
-              item-value="id"
-              item-text="name"
-              label="Examen base"
-              @remove="selectedAnalytes = null"
-              return-object
-              @change="$v.selectedAnalytes.$touch()"
-              @blur="$v.selectedAnalytes.$touch()"
-              :error-messages="analyteErrors"
-            ></BaseAutocomplete>
-          </v-col>
-          <v-col cols="12" md="6" lg="4" xl="3">
-            <BaseAutocomplete
-              v-model="selectedSpecimens"
-              :items="itemsSpecimens"
-              @focus="querySelectionsSpecimen('')"
-              :loading="loadingSpecimens"
-              :search-input.sync="searchSpecimens"
-              flat
-              cache-items
-              placeholder="Seleccione:"
-              item-value="id"
-              item-text="name"
-              label="Tipo de muestra"
-              @remove="selectedSpecimens = null"
-              return-object
-              @change="$v.selectedSpecimens.$touch()"
-              @blur="$v.selectedSpecimens.$touch()"
-              :error-messages="specimenErrors"
-            ></BaseAutocomplete>
-          </v-col>
-          <v-col cols="12" md="6" lg="4" xl="3">
-            <BaseAutocomplete
-              v-model="selectedMedicalRequestTypes"
-              :items="itemsMedicalRequestTypes"
-              @focus="querySelectionsMedicalRequestType('')"
-              :loading="loadingMedicalRequestTypes"
-              :search-input.sync="searchMedicalRequestTypes"
-              flat
-              cache-items
-              placeholder="Seleccione:"
-              item-value="id"
-              item-text="name"
-              label="Tipo de solicitud médica"
-              @remove="selectedMedicalRequestTypes = null"
-              return-object
-              @change="$v.selectedMedicalRequestTypes.$touch()"
-              @blur="$v.selectedMedicalRequestTypes.$touch()"
-              :error-messages="medicalRequestTypeErrors"
-            ></BaseAutocomplete>
-          </v-col>
-          <v-col cols="12" md="6" lg="4" xl="3">
-            <BaseAutocomplete
-              v-model="selectedProcessTimes"
-              :items="itemsProcessTimes"
-              @focus="querySelectionsProcessTime('')"
-              :loading="loadingProcessTimes"
-              :search-input.sync="searchProcessTimes"
-              flat
-              cache-items
-              placeholder="Seleccione:"
-              item-value="id"
-              item-text="name"
-              label="Tiempo de proceso"
-              @remove="selectedProcessTimes = null"
-              return-object
-              @change="$v.selectedProcessTimes.$touch()"
-              @blur="$v.selectedProcessTimes.$touch()"
-              :error-messages="processTimeErrors"
-            ></BaseAutocomplete>
-          </v-col>
-          <v-col cols="12" md="6" lg="4" xl="3">
-            <BaseAutocomplete
-              v-model="selectedContainers"
-              :items="itemsContainers"
-              @focus="querySelectionsContainer('')"
-              :loading="loadingContainers"
-              :search-input.sync="searchContainers"
-              flat
-              cache-items
-              placeholder="Seleccione:"
-              item-value="id"
-              item-text="name"
-              label="Tipo de contenedor"
-              @remove="selectedContainers = null"
-              return-object
-              @change="$v.selectedContainers.$touch()"
-              @blur="$v.selectedContainers.$touch()"
-              :error-messages="containerErrors"
-            ></BaseAutocomplete>
-          </v-col>
-          <v-col cols="12" md="6" lg="4" xl="3">
-            <BaseAutocomplete
-              v-model="selectedWorkareas"
-              :items="itemsWorkareas"
-              @focus="querySelectionsWorkarea('')"
-              :loading="loadingWorkareas"
-              :search-input.sync="searchWorkareas"
-              flat
-              cache-items
-              placeholder="Seleccione:"
-              item-value="id"
-              item-text="name"
-              label="Área de trabajo"
-              @remove="selectedWorkarea = null"
-              return-object
-              @change="$v.selectedWorkareas.$touch()"
-              @blur="$v.selectedWorkareas.$touch()"
-              :error-messages="workareaErrors"
-            ></BaseAutocomplete>
-          </v-col>
-        </v-row>
+        <v-textarea
+          outlined
+          v-model="clinical_information"
+          label="Información clínica"
+          @input="$v.clinical_information.$touch()"
+          @blur="$v.clinical_information.$touch()"
+          :error-messages="clinicalInformationErrors"
+        ></v-textarea>
+
+        <v-card outlined elevation="0">
+          <v-card-text>
+            <v-row>
+              <v-col cols="12" md="6" lg="6" xl="4">
+                <BaseAutocomplete
+                  v-model="selectedAnalytes"
+                  :items="itemsAnalytes"
+                  @focus="querySelectionsAnalyte('')"
+                  :loading="loadingAnalytes"
+                  :search-input.sync="searchAnalytes"
+                  flat
+                  cache-items
+                  placeholder="Seleccione:"
+                  item-value="id"
+                  item-text="name"
+                  label="Prestación base"
+                  @remove="selectedAnalytes = null"
+                  return-object
+                  @change="$v.selectedAnalytes.$touch()"
+                  @blur="$v.selectedAnalytes.$touch()"
+                  :error-messages="analyteErrors"
+                ></BaseAutocomplete>
+              </v-col>
+
+              <v-col cols="12" md="6" lg="6" xl="4">
+                <BaseAutocomplete
+                  v-model="selectedSpecimens"
+                  :items="itemsSpecimens"
+                  @focus="querySelectionsSpecimen('')"
+                  :loading="loadingSpecimens"
+                  :search-input.sync="searchSpecimens"
+                  flat
+                  cache-items
+                  placeholder="Seleccione:"
+                  item-value="id"
+                  item-text="name"
+                  label="Tipo de muestra"
+                  @remove="selectedSpecimens = null"
+                  return-object
+                  @change="$v.selectedSpecimens.$touch()"
+                  @blur="$v.selectedSpecimens.$touch()"
+                  :error-messages="specimenErrors"
+                ></BaseAutocomplete>
+              </v-col>
+
+              <v-col cols="12" md="6" lg="4" xl="3">
+                <BaseAutocomplete
+                  v-model="selectedAvailability"
+                  :items="itemsAvailabilities"
+                  @focus="querySelectionsAvailability('')"
+                  :loading="loadingAvailability"
+                  :search-input.sync="searchAvailability"
+                  flat
+                  cache-items
+                  placeholder="Seleccione:"
+                  item-value="id"
+                  item-text="name"
+                  label="Disponibilidad"
+                  @remove="selectedAvailability = null"
+                  return-object
+                  @change="$v.selectedAvailability.$touch()"
+                  @blur="$v.selectedAvailability.$touch()"
+                  :error-messages="availabilityErrors"
+                ></BaseAutocomplete>
+              </v-col>
+
+              <v-col cols="12" md="6" lg="4" xl="3">
+                <BaseAutocomplete
+                  v-model="selectedMedicalRequestTypes"
+                  :items="itemsMedicalRequestTypes"
+                  @focus="querySelectionsMedicalRequestType('')"
+                  :loading="loadingMedicalRequestTypes"
+                  :search-input.sync="searchMedicalRequestTypes"
+                  flat
+                  cache-items
+                  placeholder="Seleccione:"
+                  item-value="id"
+                  item-text="name"
+                  label="Tipo de solicitud médica"
+                  @remove="selectedMedicalRequestTypes = null"
+                  return-object
+                  @change="$v.selectedMedicalRequestTypes.$touch()"
+                  @blur="$v.selectedMedicalRequestTypes.$touch()"
+                  :error-messages="medicalRequestTypeErrors"
+                ></BaseAutocomplete>
+              </v-col>
+
+              <v-col cols="12" md="6" lg="4" xl="3">
+                <BaseAutocomplete
+                  v-model="selectedProcessTimes"
+                  :items="itemsProcessTimes"
+                  @focus="querySelectionsProcessTime('')"
+                  :loading="loadingProcessTimes"
+                  :search-input.sync="searchProcessTimes"
+                  flat
+                  cache-items
+                  placeholder="Seleccione:"
+                  item-value="id"
+                  item-text="name"
+                  label="Tiempo de proceso"
+                  @remove="selectedProcessTimes = null"
+                  return-object
+                  @change="$v.selectedProcessTimes.$touch()"
+                  @blur="$v.selectedProcessTimes.$touch()"
+                  :error-messages="processTimeErrors"
+                ></BaseAutocomplete>
+              </v-col>
+
+              <v-col cols="12" md="6" lg="4" xl="3">
+                <BaseAutocomplete
+                  v-model="selectedWorkareas"
+                  :items="itemsWorkareas"
+                  @focus="querySelectionsWorkarea('')"
+                  :loading="loadingWorkareas"
+                  :search-input.sync="searchWorkareas"
+                  flat
+                  cache-items
+                  placeholder="Seleccione:"
+                  item-value="id"
+                  item-text="name"
+                  label="Área de trabajo"
+                  @remove="selectedWorkarea = null"
+                  return-object
+                  @change="$v.selectedWorkareas.$touch()"
+                  @blur="$v.selectedWorkareas.$touch()"
+                  :error-messages="workareaErrors"
+                ></BaseAutocomplete>
+              </v-col>
+
+              <v-col cols="12" md="6" lg="6" xl="4">
+                <BaseAutocomplete
+                  v-model="selectedContainers"
+                  :items="itemsContainers"
+                  @focus="querySelectionsContainer('')"
+                  :loading="loadingContainers"
+                  :search-input.sync="searchContainers"
+                  flat
+                  cache-items
+                  placeholder="Seleccione:"
+                  item-value="id"
+                  item-text="name"
+                  label="Tipo de contenedor"
+                  @remove="selectedContainers = null"
+                  return-object
+                  @change="$v.selectedContainers.$touch()"
+                  @blur="$v.selectedContainers.$touch()"
+                  :error-messages="containerErrors"
+                ></BaseAutocomplete>
+              </v-col>
+            </v-row>
+          </v-card-text>
+        </v-card>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
         <BaseCancelButton label="Cancelar" />
-        <BaseAcceptButton label="Guardar" />
+        <BaseAcceptButton @click="save" label="Guardar" />
       </v-card-actions>
     </v-card>
+    <v-dialog
+      v-model="redirectToList"
+      transition="dialog-bottom-transition"
+      max-width="600"
+      persistent
+    >
+      <template v-slot:default>
+        <v-card>
+          <v-toolbar color="primary" dark>E-LabNote</v-toolbar>
+          <v-card-text>
+            <div class="text-h6 pa-12 text-center">
+              Registro editado correctamente.
+            </div>
+          </v-card-text>
+          <v-card-actions class="justify-center">
+            <v-btn
+              rounded
+              color="primary"
+              :to="{ name: 'observationServiceRequests' }"
+              >Volver a la lista</v-btn
+            >
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
   </div>
 </template>
 
@@ -217,6 +267,7 @@ export default {
     searchLoinc: null,
     loinc: null,
     clinical_information: "",
+    redirectToList: false,
 
     editedItem: new ObservationServiceRequest(),
     editedDefault: new ObservationServiceRequest(),
@@ -365,6 +416,7 @@ export default {
       _processTimes: "processTime/processTimes",
       _workareas: "workarea/workareas",
       _medicalRequestTypes: "medicalRequestType/medicalRequestTypes",
+      _editedItem: "observationServiceRequest/editObservationServiceRequest",
     }),
 
     name() {
@@ -498,9 +550,33 @@ export default {
       getAnalytes: "analyte/getItems",
       getProcessTimes: "processTime/getItems",
       getMedicalRequestTypes: "medicalRequestType/getItems",
+      index: "observationServiceRequest/getItems",
+      indexPaginate: "observationServiceRequest/getPaginatedItems",
+      store: "observationServiceRequest/postItem",
+      update: "observationServiceRequest/putItem",
+      delete: "observationServiceRequest/deleteItem",
+      show: "observationServiceRequest/showItem",
+      changeStatus: "observationServiceRequest/changeStatusItem",
     }),
 
-    async save() {},
+    async save() {
+      this.$v.$touch();
+
+      if (!this.$v.$invalid) {
+        try {
+          const { status } = await this.store(this.editedItem);
+
+          if (status === 201) {
+            this.redirectToList = true;
+          }
+        } catch (e) {
+          console.log(e);
+        } finally {
+          console.log("fin");
+        }
+      }
+      console.log(this.editedItem);
+    },
 
     async querySelectionsAvailability(v) {
       this.loadingAvailability = true;
@@ -609,4 +685,8 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.centered-input >>> input {
+  text-align: center;
+}
+</style>

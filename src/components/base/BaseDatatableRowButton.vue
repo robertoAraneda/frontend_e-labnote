@@ -1,13 +1,7 @@
 <template>
-  <v-icon
-    @click="handleClickEvent()"
-    v-bind="$attrs"
-    v-on="$listeners"
-    class="mr-2"
-    color="secondary"
-  >
-    {{ icon }}
-  </v-icon>
+  <v-btn icon v-bind="$attrs" v-on="$listeners" color="secondary">
+    <v-icon> {{ icon }}</v-icon>
+  </v-btn>
 </template>
 
 <script>
@@ -16,11 +10,6 @@ export default {
   props: {
     titleTooltip: String,
     icon: String,
-  },
-  methods: {
-    handleClickEvent() {
-      this.$emit("click");
-    },
   },
 };
 </script>

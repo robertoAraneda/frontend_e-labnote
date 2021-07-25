@@ -16,7 +16,6 @@
       :headers="headers"
       sort-by="id"
       title="Menús"
-      :extra-buttons="false"
     >
       <template slot="searchButton">
         <BaseAcceptButton
@@ -35,6 +34,7 @@
           label="Módulos"
           single-line
           hide-details
+          @remove="remove"
         />
       </template>
     </BaseDatatable>
@@ -150,7 +150,7 @@ export default {
     type: "success",
     permissions: [],
     modules: [],
-    selectedModule: 0,
+    selectedModule: null,
   }),
 
   async mounted() {
@@ -170,8 +170,7 @@ export default {
 
     items() {
       if (!this.menus) return [];
-      if (!this.selectedModule || this.selectedModule === 0)
-        return this.menus.collection;
+      if (!this.selectedModule) return this.menus.collection;
       return this.menus.collection.filter(
         (menu) => menu.module.id === this.selectedModule
       );
@@ -255,6 +254,10 @@ export default {
       getModules: "module/getItems",
       getPermissions: "permission/getItems",
     }),
+
+    remove() {
+      this.selectedModule = null;
+    },
 
     async save() {
       this.$v.$touch();

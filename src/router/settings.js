@@ -21,19 +21,19 @@ export const settings = [
           ),
       },
       {
-        path: "crear",
-        name: "createObservationServiceRequest",
-        component: () =>
-          import(
-            /* webpackChunkName: "analytes" */ "../views/settings/observationServiceRequest/Create.vue"
-          ),
-      },
-      {
         path: "editar/:slug",
         name: "editObservationServiceRequest",
         component: () =>
           import(
-            /* webpackChunkName: "analytes" */ "../views/settings/observationServiceRequest/Edit.vue"
+            /* webpackChunkName: "edit" */ "../views/settings/observationServiceRequest/Edit.vue"
+          ),
+      },
+      {
+        path: "crear",
+        name: "createObservationServiceRequest",
+        component: () =>
+          import(
+            /* webpackChunkName: "create" */ "../views/settings/observationServiceRequest/Create.vue"
           ),
       },
     ],

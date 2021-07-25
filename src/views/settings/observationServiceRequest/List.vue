@@ -12,6 +12,8 @@
       :headers="headers"
       sort-by="id"
       title="Áreas de trabajo"
+      :link-to-edit="itemToEdit"
+      :use-slug-route="true"
     >
       <template slot="select">
         <BaseAutocomplete
@@ -27,7 +29,6 @@
       </template>
       <template slot="searchButton">
         <BaseAcceptButton
-          small
           @click="openDialog"
           label="Crear examen"
           v-if="canCreate"
@@ -103,6 +104,7 @@ export default {
     type: SnackbarType.SUCCESS,
     selectedWorkArea: null,
     workareas: [],
+    itemToEdit: {},
   }),
 
   async mounted() {
@@ -260,15 +262,12 @@ export default {
       this.dialogDelete = true;
     },
 
-    handleEditModel(value) {
-      console.log(value);
-      this.fillEditedItem(value);
-      this.editedIndex = findIndex(value, this.items);
+    async handleEditModel(value) {
+      await this.fillEditedItem(value);
+      // this.editedIndex = findIndex(value, this.items);
 
-      this.$router.push({
-        name: "editObservationServiceRequest",
-        params: { slug: value.id },
-      });
+      console.log("enviando");
+      await this.setEditedItem(this.editedItem);
       //  this.openDialog();
     },
 
@@ -294,7 +293,6 @@ export default {
       const { status, data } = await this.show(item._links.self.href);
 
       if (status === 200) {
-        this.setEditAnalyte(data);
         this.editedItem = Object.assign({}, data);
       } else if (status === 403) {
         this.type = SnackbarType.FORBIDDEN;
