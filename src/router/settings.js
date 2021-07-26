@@ -68,4 +68,12 @@ export const settings = [
         /* webpackChunkName: "processTime" */ "../views/settings/ProcessTime.vue"
         ),
   },
+  {
+    path: "tiempo-de-respuesta",
+    name: "responseTime",
+    component: () =>
+      import(
+        /* webpackChunkName: "responseTime" */ "../views/settings/ResponseTime.vue"
+        ),
+  },
 ];
