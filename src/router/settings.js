@@ -60,4 +60,12 @@ export const settings = [
         /* webpackChunkName: "availabilities" */ "../views/settings/Availability.vue"
         ),
   },
+  {
+    path: "tiempo-de-proceso",
+    name: "processTime",
+    component: () =>
+      import(
+        /* webpackChunkName: "processTime" */ "../views/settings/ProcessTime.vue"
+        ),
+  },
 ];
