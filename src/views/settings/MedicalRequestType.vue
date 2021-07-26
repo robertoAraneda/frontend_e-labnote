@@ -1,6 +1,6 @@
 <template>
   <v-container>
-    <BaseHeaderModule title="Módulo de tiempos de respuesta" subtitle="En este módulo podrás gestionar los tiempos de respuesta."/>
+    <BaseHeaderModule title="Módulo de tipo de solicitud médica" subtitle="En este módulo podrás gestionar los tipos de solicitud médica."/>
 
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
@@ -18,7 +18,7 @@
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nuevo tiempo de respuesta"
+          label="Crear nuevo tipo de solicitud médica"
           v-if="canCreate"
         />
       </template>
@@ -60,17 +60,17 @@
 </template>
 
 <script>
-import { ResponseTimeHeaders } from "../../helpers/headersDatatable";
+import { MedicaRequestTypeHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import ResponseTime from "../../models/ResponseTime";
+import MedicaRequestType from "../../models/MedicaRequestType";
 
 export default {
-  name: "ResponseTime",
+  name: "MedicaRequestType",
 
   mixins: [validationMixin],
 
@@ -83,11 +83,11 @@ export default {
 
   data: () => ({
     dialog: false,
-    editedItem: new ResponseTime(),
+    editedItem: new MedicaRequestType(),
     editedIndex: -1,
-    defaultItem: new ResponseTime(),
+    defaultItem: new MedicaRequestType(),
     snackbar: false,
-    headers: ResponseTimeHeaders,
+    headers: MedicaRequestTypeHeaders,
     dialogDelete: false,
     type: SnackbarType.SUCCESS,
   }),
@@ -98,19 +98,19 @@ export default {
 
   computed: {
     ...mapGetters({
-      responseTimes: "responseTime/responseTimes",
+      medicalRequestTypes: "medicalRequestType/medicalRequestTypes",
       namedPermissions: "auth/namedPermissions",
     }),
 
     items() {
-      if (!this.responseTimes) return [];
-      return this.responseTimes.collection;
+      if (!this.medicalRequestTypes) return [];
+      return this.medicalRequestTypes.collection;
     },
 
     formTitle() {
       return this.editedIndex === -1
-        ? "Crear tiempo de respuesta"
-        : "Editar tiempo de respuesta";
+        ? "Crear tipo de solicitud médica"
+        : "Editar tipo de solicitud médica";
     },
 
     nameErrors() {
@@ -123,34 +123,34 @@ export default {
 
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("responseTime.create");
+      return this.namedPermissions.includes("medicalRequestType.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("responseTime.update");
+      return this.namedPermissions.includes("medicalRequestType.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("responseTime.delete");
+      return this.namedPermissions.includes("medicalRequestType.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("responseTime.show");
+      return this.namedPermissions.includes("medicalRequestType.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "responseTime/getItems",
-      indexPaginate: "responseTime/getPaginatedItems",
-      store: "responseTime/postItem",
-      update: "responseTime/putItem",
-      delete: "responseTime/deleteItem",
-      show: "responseTime/showItem",
-      changeStatus: "responseTime/changeStatusItem",
+      index: "medicalRequestType/getItems",
+      indexPaginate: "medicalRequestType/getPaginatedItems",
+      store: "medicalRequestType/postItem",
+      update: "medicalRequestType/putItem",
+      delete: "medicalRequestType/deleteItem",
+      show: "medicalRequestType/showItem",
+      changeStatus: "medicalRequestType/changeStatusItem",
     }),
 
     async save() {

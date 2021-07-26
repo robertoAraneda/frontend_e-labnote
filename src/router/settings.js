@@ -62,18 +62,26 @@ export const settings = [
   },
   {
     path: "tiempo-de-proceso",
-    name: "processTime",
+    name: "processTimes",
     component: () =>
       import(
-        /* webpackChunkName: "processTime" */ "../views/settings/ProcessTime.vue"
+        /* webpackChunkName: "processTimes" */ "../views/settings/ProcessTime.vue"
         ),
   },
   {
     path: "tiempo-de-respuesta",
-    name: "responseTime",
+    name: "responseTimes",
     component: () =>
       import(
-        /* webpackChunkName: "responseTime" */ "../views/settings/ResponseTime.vue"
+        /* webpackChunkName: "responseTimes" */ "../views/settings/ResponseTime.vue"
+        ),
+  },
+  {
+    path: "tipo-de-solicitud-medica",
+    name: "medicalRequestTypes",
+    component: () =>
+      import(
+        /* webpackChunkName: "medicalRequestTypes" */ "../views/settings/MedicalRequestType.vue"
         ),
   },
 ];
