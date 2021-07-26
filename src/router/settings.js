@@ -84,4 +84,12 @@ export const settings = [
         /* webpackChunkName: "medicalRequestTypes" */ "../views/settings/MedicalRequestType.vue"
         ),
   },
+  {
+    path: "cantidad-de-muestra",
+      name: "sampleQuantities",
+    component: () =>
+    import(
+      /* webpackChunkName: "sampleQuantities" */ "../views/settings/SampleQuantity.vue"
+      ),
+  },
 ];
