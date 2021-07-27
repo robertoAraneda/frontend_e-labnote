@@ -16,7 +16,7 @@ import availability from "./modules/availability";
 import medicalRequestType from "./modules/medicalRequestType";
 import processTime from "./modules/processTime";
 import specimen from "./modules/specimen";
-specimen;
+import patient from "./modules/patient";
 
 Vue.use(Vuex);
 
@@ -55,5 +55,6 @@ export default new Vuex.Store({
     medicalRequestType,
     processTime,
     specimen,
+    patient,
   },
 });
