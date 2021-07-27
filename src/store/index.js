@@ -18,6 +18,7 @@ import processTime from "./modules/processTime";
 import specimen from "./modules/specimen";
 import responseTime from "./modules/responseTime";
 import sampleQuantity from "./modules/sampleQuantity";
+import samplingCondition from "./modules/samplingCondition";
 
 Vue.use(Vuex);
 
@@ -57,6 +58,7 @@ export default new Vuex.Store({
     processTime,
     specimen,
     responseTime,
-    sampleQuantity
+    sampleQuantity,
+    samplingCondition
   },
 });

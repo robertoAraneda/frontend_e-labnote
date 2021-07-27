@@ -92,4 +92,12 @@ export const settings = [
       /* webpackChunkName: "sampleQuantities" */ "../views/settings/SampleQuantity.vue"
       ),
   },
+  {
+    path: "condicion-de-toma-de-muestra",
+    name: "samplingConditions",
+    component: () =>
+      import(
+        /* webpackChunkName: "samplingConditions" */ "../views/settings/SamplingCondition.vue"
+        ),
+  },
 ];
