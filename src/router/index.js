@@ -4,6 +4,7 @@ import { settings } from "./settings";
 import { advancedSettings } from "./advancedSettings";
 
 import store from "../store";
+import { serviceRequest } from "./serviceRequest";
 
 Vue.use(VueRouter);
 
@@ -31,19 +32,19 @@ const routes = [
       },
       {
         path: "/modulos/solicitud-de-medios",
-        name: "laboratoryRequests",
         component: () =>
           import(
-            /* webpackChunkName: "laboratoryRequest" */ "../views/laboratoryRequest/Index.vue"
+            /* webpackChunkName: "serviceRequest" */ "../views/serviceRequest/Index.vue"
           ),
         meta: { requiresAuth: true },
+        children: [...serviceRequest],
       },
       {
         path: "/modulos/toma-de-muestras",
         name: "sampling",
         component: () =>
           import(
-            /* webpackChunkName: "laboratoryRequest" */ "../views/laboratoryRequest/Index.vue"
+            /* webpackChunkName: "serviceRequest" */ "../views/serviceRequest/Index.vue"
           ),
         meta: { requiresAuth: true },
       },
