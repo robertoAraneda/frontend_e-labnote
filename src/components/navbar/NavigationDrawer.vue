@@ -2,7 +2,7 @@
   <v-navigation-drawer
     app
     v-model="drawer"
-    width="260"
+    width="300"
     mobile-breakpoint="960"
     v-bind="$attrs"
     clipped
