@@ -100,4 +100,20 @@ export const settings = [
         /* webpackChunkName: "samplingConditions" */ "../views/settings/SamplingCondition.vue"
         ),
   },
+  {
+    path: "toma-de-muestra",
+    name: "specimens",
+    component: () =>
+      import(
+        /* webpackChunkName: "specimens" */ "../views/settings/Specimen.vue"
+        ),
+  },
+/*  {
+    path: "contenedor",
+    name: "containers",
+    component: () =>
+      import(
+        /* webpackChunkName: "containers"  "../views/settings/Container.vue"
+        ),
+  },*/
 ];
