@@ -7,15 +7,16 @@
     v-bind="$attrs"
     clipped
   >
-    <v-sheet color="grey lighten-4" class="pa-4">
-      <v-avatar class="mb-4" color="grey darken-1" size="64"></v-avatar>
+    <v-sheet color="white" class="pa-4 text-center">
+      <v-avatar ou class="mb-4 white--text text-h4" color="primary" size="64">{{
+        role
+      }}</v-avatar>
 
-      <div>administrador@elabnote.com</div>
+      <div class="title">{{ user.roles[0].name }}</div>
     </v-sheet>
     <v-divider></v-divider>
 
     <v-list dense shaped>
-      <v-subheader>CONFIGURACIÓN AVANZADA</v-subheader>
       <v-list-item-group color="primary">
         <v-list-item
           v-for="link in links"
@@ -37,7 +38,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "NavigationDrawer",
@@ -47,6 +48,9 @@ export default {
   data: () => ({}),
   computed: {
     ...mapState(["drawer"]),
+    ...mapGetters({
+      user: "auth/user",
+    }),
     drawer: {
       get() {
         return this.$store.state.drawer;
@@ -54,6 +58,10 @@ export default {
       set(val) {
         this.$store.commit("SET_DRAWER", val);
       },
+    },
+    role() {
+      if (!this.user) return "";
+      return this.user.roles[0].name.charAt(0).toUpperCase();
     },
   },
 };

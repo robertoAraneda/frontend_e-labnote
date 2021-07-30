@@ -4,17 +4,17 @@ let url = "";
 let body = {};
 
 jest.mock("../../../src/services/axios", () => ({
-  post: (_url, _body) => {
+  postRequest: (_url, _body) => {
     return new Promise((resolve) => {
       url = _url;
       body = _body;
-      resolve(true);
+      resolve({ data: true });
     });
   },
-  get: (_url) => {
+  getRequest: (_url) => {
     return new Promise((resolve) => {
       url = _url;
-      resolve(true);
+      resolve({ data: true });
     });
   },
 }));
@@ -27,7 +27,7 @@ describe("authenticación", () => {
 
     await Auth.actions.login({ commit }, { username, password });
 
-    expect(url).toBe("/api/auth/login");
+    expect(url).toBe("/api/v1/auth/login");
     expect(body).toEqual({ username, password });
   });
 
@@ -37,7 +37,9 @@ describe("authenticación", () => {
       access_token: "token",
     };
 
-    await Auth.actions.attempt({ commit, state }, "token");
+    const response = await Auth.actions.attempt({ commit, state }, "token");
+
+    console.log(response);
 
     expect(url).toBe("/api/auth/user");
     expect(commit).toHaveBeenCalledWith("SET_ACCESS_TOKEN", "token");

@@ -1,10 +1,14 @@
 <template>
   <div>
-    <v-toolbar color="grey" dark flat>
-      <v-icon>mdi-silverware</v-icon>
+    <v-toolbar color="white" flat>
       <v-toolbar-title>{{ module.name }}</v-toolbar-title>
       <v-spacer />
-      <v-btn depressed dark color="green" @click="handlePermissionsByModule"
+      <v-btn
+        depressed
+        rounded
+        dark
+        color="primary"
+        @click="handlePermissionsByModule"
         >Cargar</v-btn
       >
     </v-toolbar>
