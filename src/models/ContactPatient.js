@@ -1,10 +1,10 @@
 export default class ContactPatient {
   constructor(
-    given = "YOLANDA",
-    family = "ESPINOZA",
-    relationship = "Madre",
-    phone = "+56958639620",
-    email = "yolanda@gmail.com"
+    given = "",
+    family = "",
+    relationship = "",
+    phone = "",
+    email = ""
   ) {
     this.given = given;
     this.family = family;
