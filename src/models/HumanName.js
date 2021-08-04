@@ -1,9 +1,9 @@
 export default class HumanName {
   constructor(
     use = "official",
-    given = "ROBERTO ALEJANDRO",
-    father_family = "ARANEDA",
-    mother_family = "ESPINOZA"
+    given = "",
+    father_family = "",
+    mother_family = ""
   ) {
     this.use = use;
     this.given = given;

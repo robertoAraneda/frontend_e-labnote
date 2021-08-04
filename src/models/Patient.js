@@ -3,15 +3,14 @@ import HumanName from "./HumanName";
 import ContactPointPatient from "./ContactPointPatient";
 import AddressPatient from "./AddressPatient";
 import ContactPatient from "./ContactPatient";
-import AdministrativeGender from "./AdministrativeGender";
 
 export default class Patient {
   constructor(
-    birthdate = "1983-12-06",
+    birthdate = "",
     active = true,
-    gender = new AdministrativeGender(),
+    administrative_gender_id = null,
     identifier = [new IdentifierPatient()],
-    name = new HumanName(),
+    name = [new HumanName()],
     telecom = [new ContactPointPatient()],
     address = [new AddressPatient()],
     contact = [new ContactPatient()]
@@ -20,7 +19,7 @@ export default class Patient {
     this.active = active;
     this.name = name;
     this.telecom = telecom;
-    this.gender = gender;
+    this.administrative_gender_id = administrative_gender_id;
     this.birthdate = birthdate;
     this.address = address;
     this.contact = contact;

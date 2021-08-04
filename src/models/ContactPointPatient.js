@@ -1,5 +1,5 @@
 export default class ContactPointPatient {
-  constructor(value = "robaraneda@gmail.com", use = "Casa", system = "Email") {
+  constructor(value = "", use = "", system = "") {
     this.use = use;
     this.value = value;
     this.system = system;
