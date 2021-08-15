@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <BaseHeaderModule
-      title="Módulo de tipo de solicitud médica"
-      subtitle="En este módulo podrás gestionar los tipos de solicitud médica."
+      title="Módulo de contenedor"
+      subtitle="En este módulo podrás gestionar los contenedores."
     />
 
     <BaseDatatable
@@ -21,7 +21,7 @@
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nuevo tipo de solicitud médica"
+          label="Crear nuevo contenedor"
           v-if="canCreate"
         />
       </template>
@@ -41,6 +41,44 @@
           @blur="$v.editedItem.name.$touch()"
           :error-messages="nameErrors"
         />
+        <BaseTextfield
+          v-model="editedItem.shortname"
+          label="Abreviatura"
+          @input="$v.editedItem.shortname.$touch()"
+          @blur="$v.editedItem.shortname.$touch()"
+          :error-messages="shortnameErrors"
+        />
+        <v-menu
+          v-model="menu"
+          :close-on-content-click="false"
+          transition="scale-transition"
+          offset-y
+          min-width="auto"
+        >
+          <template v-slot:activator="{ on, attrs }">
+            <v-text-field
+              v-model="editedItem.color"
+              @input="$v.editedItem.color.$touch()"
+              @blur="$v.editedItem.color.$touch()"
+              label="Color"
+              readonly
+              v-bind="attrs"
+              v-on="on"
+            ></v-text-field>
+          </template>
+          <v-color-picker
+            v-model="color"
+            hide-canvas
+            hide-sliders
+            mode="hexa"
+            hide-mode-switch
+            dot-size="25"
+            elevation="5"
+            show-swatches
+            @input="menu = false"
+          >
+          </v-color-picker>
+        </v-menu>
         <v-radio-group v-model="editedItem.active" row>
           <template v-slot:label>
             <div class="black--text text-subtitle-1">Estado:</div>
@@ -63,34 +101,38 @@
 </template>
 
 <script>
-import { MedicaRequestTypeHeaders } from "../../helpers/headersDatatable";
+import { ContainerHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import MedicaRequestType from "../../models/MedicaRequestType";
+import Container from "../../models/Container";
 
 export default {
-  name: "MedicaRequestType",
+  name: "Container",
 
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
       name: { required },
+      shortname: { required },
+      color: { required },
       active: { required },
     },
   },
 
   data: () => ({
+    color: "",
+    menu: false,
     dialog: false,
-    editedItem: new MedicaRequestType(),
+    editedItem: new Container(),
     editedIndex: -1,
-    defaultItem: new MedicaRequestType(),
+    defaultItem: new Container(),
     snackbar: false,
-    headers: MedicaRequestTypeHeaders,
+    headers: ContainerHeaders,
     dialogDelete: false,
     type: SnackbarType.SUCCESS,
   }),
@@ -99,21 +141,25 @@ export default {
     await this.index();
   },
 
+  watch: {
+    color(value) {
+      console.log(value)
+      this.editedItem.color = value;
+    }
+  },
   computed: {
     ...mapGetters({
-      medicalRequestTypes: "medicalRequestType/medicalRequestTypes",
+      containers: "container/containers",
       namedPermissions: "auth/namedPermissions",
     }),
 
     items() {
-      if (!this.medicalRequestTypes) return [];
-      return this.medicalRequestTypes.collection;
+      if (!this.containers) return [];
+      return this.containers.collection;
     },
 
     formTitle() {
-      return this.editedIndex === -1
-        ? "Crear tipo de solicitud médica"
-        : "Editar tipo de solicitud médica";
+      return this.editedIndex === -1 ? "Crear contenedor" : "Editar contenedor";
     },
 
     nameErrors() {
@@ -123,37 +169,44 @@ export default {
         errors.push(validationMessage.REQUIRED);
       return errors;
     },
+    shortnameErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.shortname.$dirty) return errors;
+      !this.$v.editedItem.shortname.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
 
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("medicalRequestType.create");
+      return this.namedPermissions.includes("container.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("medicalRequestType.update");
+      return this.namedPermissions.includes("container.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("medicalRequestType.delete");
+      return this.namedPermissions.includes("container.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("medicalRequestType.show");
+      return this.namedPermissions.includes("container.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "medicalRequestType/getItems",
-      indexPaginate: "medicalRequestType/getPaginatedItems",
-      store: "medicalRequestType/postItem",
-      update: "medicalRequestType/putItem",
-      delete: "medicalRequestType/deleteItem",
-      show: "medicalRequestType/showItem",
-      changeStatus: "medicalRequestType/changeStatusItem",
+      index: "container/getItems",
+      indexPaginate: "container/getPaginatedItems",
+      store: "container/postItem",
+      update: "container/putItem",
+      delete: "container/deleteItem",
+      show: "container/showItem",
+      changeStatus: "container/changeStatusItem",
     }),
 
     async save() {

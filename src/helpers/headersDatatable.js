@@ -372,7 +372,7 @@ export const SamplingConditionHeaders = [
     value: "actions",
     sortable: false,
     width: "150",
-  }
+  },
 ];
 
 export const SpecimenHeaders = [
@@ -397,5 +397,40 @@ export const SpecimenHeaders = [
     value: "actions",
     sortable: false,
     width: "150",
-  }
+  },
+];
+
+export const ContainerHeaders = [
+  {
+    text: "N°",
+    value: "id",
+    sortable: true,
+    width: "65",
+  },
+  {
+    text: "Nombre",
+    value: "name",
+    sortable: true,
+  },
+  {
+    text: "Abreviatura",
+    value: "shortname",
+    sortable: true,
+  },
+  {
+    text: "Color",
+    value: "color",
+    sortable: true,
+  },
+  {
+    text: "Estado",
+    value: "active",
+    sortable: true,
+  },
+  {
+    text: "Acciones",
+    value: "actions",
+    sortable: false,
+    width: "150",
+  },
 ];

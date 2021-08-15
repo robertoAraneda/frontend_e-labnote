@@ -1,6 +1,9 @@
 <template>
   <v-container>
-    <BaseHeaderModule title="Módulo de tiempos de respuesta" subtitle="En este módulo podrás gestionar los tiempos de respuesta."/>
+    <BaseHeaderModule
+      title="Módulo de tiempos de respuesta"
+      subtitle="En este módulo podrás gestionar los tiempos de respuesta."
+    />
 
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
@@ -117,7 +120,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.name.$dirty) return errors;
       !this.$v.editedItem.name.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -253,7 +256,7 @@ export default {
     },
 
     async fillEditedItem(item) {
-      const { status, data } = await this.show(item._link.self.href);
+      const { status, data } = await this.show(item._links.self.href);
 
       if (status === 200) {
         this.editedItem = Object.assign({}, data);

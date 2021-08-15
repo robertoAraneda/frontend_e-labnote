@@ -58,7 +58,7 @@ export const settings = [
     component: () =>
       import(
         /* webpackChunkName: "availabilities" */ "../views/settings/Availability.vue"
-        ),
+      ),
   },
   {
     path: "tiempo-de-proceso",
@@ -66,7 +66,7 @@ export const settings = [
     component: () =>
       import(
         /* webpackChunkName: "processTimes" */ "../views/settings/ProcessTime.vue"
-        ),
+      ),
   },
   {
     path: "tiempo-de-respuesta",
@@ -74,7 +74,7 @@ export const settings = [
     component: () =>
       import(
         /* webpackChunkName: "responseTimes" */ "../views/settings/ResponseTime.vue"
-        ),
+      ),
   },
   {
     path: "tipo-de-solicitud-medica",
@@ -82,14 +82,14 @@ export const settings = [
     component: () =>
       import(
         /* webpackChunkName: "medicalRequestTypes" */ "../views/settings/MedicalRequestType.vue"
-        ),
+      ),
   },
   {
     path: "cantidad-de-muestra",
-      name: "sampleQuantities",
+    name: "sampleQuantities",
     component: () =>
-    import(
-      /* webpackChunkName: "sampleQuantities" */ "../views/settings/SampleQuantity.vue"
+      import(
+        /* webpackChunkName: "sampleQuantities" */ "../views/settings/SampleQuantity.vue"
       ),
   },
   {
@@ -98,7 +98,7 @@ export const settings = [
     component: () =>
       import(
         /* webpackChunkName: "samplingConditions" */ "../views/settings/SamplingCondition.vue"
-        ),
+      ),
   },
   {
     path: "toma-de-muestra",
@@ -106,14 +106,14 @@ export const settings = [
     component: () =>
       import(
         /* webpackChunkName: "specimens" */ "../views/settings/Specimen.vue"
-        ),
+      ),
   },
-/*  {
+  {
     path: "contenedor",
     name: "containers",
     component: () =>
       import(
-        /* webpackChunkName: "containers"  "../views/settings/Container.vue"
-        ),
-  },*/
+        /* webpackChunkName: "containers" */ "../views/settings/Container.vue"
+      ),
+  },
 ];
