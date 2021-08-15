@@ -55,4 +55,12 @@ export const advancedSettings = [
         /* webpackChunkName: "analytes" */ "../views/advancedSettings/Analyte.vue"
       ),
   },
+  {
+    path: "comunas",
+    name: "cities",
+    component: () =>
+      import(
+        /* webpackChunkName: "cities" */ "../views/advancedSettings/City.vue"
+      ),
+  },
 ];

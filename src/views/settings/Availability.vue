@@ -1,6 +1,9 @@
 <template>
   <v-container>
-    <BaseHeaderModule title="Módulo de disponibilidades" subtitle="En este módulo podrás gestionar las categorías de disponibilidad."/>
+    <BaseHeaderModule
+      title="Módulo de disponibilidades"
+      subtitle="En este módulo podrás gestionar las categorías de disponibilidad."
+    />
 
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
@@ -117,7 +120,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.name.$dirty) return errors;
       !this.$v.editedItem.name.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -253,7 +256,7 @@ export default {
     },
 
     async fillEditedItem(item) {
-      const { status, data } = await this.show(item._link.self.href);
+      const { status, data } = await this.show(item._links.self.href);
 
       if (status === 200) {
         this.editedItem = Object.assign({}, data);

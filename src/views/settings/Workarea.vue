@@ -1,6 +1,9 @@
 <template>
   <v-container>
-    <BaseHeaderModule title="Módulo de áreas de trabajo" subtitle="En este módulo podrás gestionar las áreas de trabajo."/>
+    <BaseHeaderModule
+      title="Módulo de áreas de trabajo"
+      subtitle="En este módulo podrás gestionar las áreas de trabajo."
+    />
 
     <BaseDatatable
       @deleteItem="handleDeleteModel($event)"
@@ -253,8 +256,7 @@ export default {
     },
 
     async fillEditedItem(item) {
-      const { status, data } = await this.show(item._link.self.href);
-
+      const { status, data } = await this.show(item._links.self.href);
       if (status === 200) {
         this.editedItem = Object.assign({}, data);
       } else if (status === 403) {
