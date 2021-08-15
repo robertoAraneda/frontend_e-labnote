@@ -56,6 +56,14 @@ export const advancedSettings = [
       ),
   },
   {
+    path: "regiones",
+    name: "states",
+    component: () =>
+      import(
+        /* webpackChunkName: "cities" */ "../views/advancedSettings/State.vue"
+      ),
+  },
+  {
     path: "comunas",
     name: "cities",
     component: () =>

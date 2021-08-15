@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <BaseHeaderModule
-      title="Módulo de comunas"
-      subtitle="En este módulo podrás gestionar las comunas."
+      title="Módulo de regiones"
+      subtitle="En este módulo podrás gestionar las regiones."
     />
 
     <BaseDatatable
@@ -21,7 +21,7 @@
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nueva comuna"
+          label="Crear nueva región"
           v-if="canCreate"
         />
       </template>
@@ -34,6 +34,13 @@
       @save="save"
     >
       <template slot="body">
+        <BaseTextfield
+          v-model="editedItem.code"
+          label="Código"
+          @input="$v.editedItem.code.$touch()"
+          @blur="$v.editedItem.code.$touch()"
+          :error-messages="codeErrors"
+        />
         <BaseTextfield
           v-model="editedItem.name"
           label="Nombre"
@@ -63,22 +70,23 @@
 </template>
 
 <script>
-import { SpecimenHeaders } from "../../helpers/headersDatatable";
+import { StateHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import Specimen from "../../models/Specimen";
+import State from "../../models/State";
 
 export default {
-  name: "Specimen",
+  name: "State",
 
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
+      code: { required },
       name: { required },
       active: { required },
     },
@@ -86,11 +94,11 @@ export default {
 
   data: () => ({
     dialog: false,
-    editedItem: new Specimen(),
+    editedItem: new State(),
     editedIndex: -1,
-    defaultItem: new Specimen(),
+    defaultItem: new State(),
     snackbar: false,
-    headers: SpecimenHeaders,
+    headers: StateHeaders,
     dialogDelete: false,
     type: SnackbarType.SUCCESS,
   }),
@@ -101,19 +109,19 @@ export default {
 
   computed: {
     ...mapGetters({
-      specimens: "specimen/specimens",
+      states: "state/states",
       namedPermissions: "auth/namedPermissions",
     }),
 
     items() {
-      if (!this.specimens) return [];
-      return this.specimens.collection;
+      if (!this.states) return [];
+      return this.states.collection;
     },
 
     formTitle() {
       return this.editedIndex === -1
-        ? "Crear toma de muestra"
-        : "Editar toma de muestra";
+        ? "Crear región"
+        : "Editar región";
     },
 
     nameErrors() {
@@ -124,36 +132,44 @@ export default {
       return errors;
     },
 
+    codeErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.code.$dirty) return errors;
+      !this.$v.editedItem.code.required &&
+      errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.create");
+      return this.namedPermissions.includes("state.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.update");
+      return this.namedPermissions.includes("state.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.delete");
+      return this.namedPermissions.includes("state.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.show");
+      return this.namedPermissions.includes("state.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "specimen/getItems",
-      indexPaginate: "specimen/getPaginatedItems",
-      store: "specimen/postItem",
-      update: "specimen/putItem",
-      delete: "specimen/deleteItem",
-      show: "specimen/showItem",
-      changeStatus: "specimen/changeStatusItem",
+      index: "state/getItems",
+      indexPaginate: "state/getPaginatedItems",
+      store: "state/postItem",
+      update: "state/putItem",
+      delete: "state/deleteItem",
+      show: "state/showItem",
+      changeStatus: "state/changeStatusItem",
     }),
 
     async save() {
