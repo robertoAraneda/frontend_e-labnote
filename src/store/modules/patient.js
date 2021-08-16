@@ -267,6 +267,22 @@ export default {
       }
     },
 
+    findPatientByNames: async ({ commit }, payload) => {
+      try {
+        const { data } = await httpRequest.getRequest(
+          `${BASE_URL}/search?query=names&given=${payload.given}&father_family=${payload.father_family}&mother_family=${payload.mother_family}`
+        );
+
+        console.log(data);
+
+        commit("SET_PATIENTS", data);
+        console.log("found");
+      } catch (e) {
+        commit("SET_PATIENTS", []);
+        return e.response;
+      }
+    },
+
     setEditedPatient: ({ commit }, payload) => {
       commit("SET_EDITED_PATIENT", payload);
     },
