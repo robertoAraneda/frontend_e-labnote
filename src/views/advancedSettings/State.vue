@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <BaseHeaderModule
-      title="Módulo de comunas"
-      subtitle="En este módulo podrás gestionar las comunas."
+      title="Módulo de regiones"
+      subtitle="En este módulo podrás gestionar las regiones."
     />
 
     <BaseDatatable
@@ -21,21 +21,8 @@
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nueva comuna"
+          label="Crear nueva región"
           v-if="canCreate"
-        />
-      </template>
-      <template slot="select">
-        <BaseAutocomplete
-          v-model="selectedState"
-          placeholder="Seleccione:"
-          :items="states"
-          item-value="code"
-          item-text="name"
-          label="Regiones"
-          single-line
-          hide-details
-          @remove="remove"
         />
       </template>
     </BaseDatatable>
@@ -61,17 +48,6 @@
           @blur="$v.editedItem.name.$touch()"
           :error-messages="nameErrors"
         />
-        <BaseAutocomplete
-          v-model="editedItem.state_code"
-          placeholder="Seleccione:"
-          :items="states"
-          item-value="code"
-          item-text="name"
-          label="Región"
-          @input="$v.editedItem.state_code.$touch()"
-          @blur="$v.editedItem.state_code.$touch()"
-          :error-messages="stateErrors"
-        />
         <v-radio-group v-model="editedItem.active" row>
           <template v-slot:label>
             <div class="black--text text-subtitle-1">Estado:</div>
@@ -94,18 +70,17 @@
 </template>
 
 <script>
-import { CityHeaders } from "../../helpers/headersDatatable";
+import { StateHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import City from "../../models/City";
-
+import State from "../../models/State";
 
 export default {
-  name: "City",
+  name: "State",
 
   mixins: [validationMixin],
 
@@ -113,61 +88,40 @@ export default {
     editedItem: {
       code: { required },
       name: { required },
-      state_code: {required},
       active: { required },
     },
   },
 
   data: () => ({
     dialog: false,
-    editedItem: new City(),
+    editedItem: new State(),
     editedIndex: -1,
-    defaultItem: new City(),
+    defaultItem: new State(),
     snackbar: false,
-    headers: CityHeaders,
+    headers: StateHeaders,
     dialogDelete: false,
     type: SnackbarType.SUCCESS,
-    selectedState: null,
   }),
 
   async mounted() {
     await this.index();
-    await this.getStates();
   },
 
   computed: {
     ...mapGetters({
-      cities: "city/cities",
+      states: "state/states",
       namedPermissions: "auth/namedPermissions",
-      citiesByState: "state/citiesByState",
-      _states: "state/states",
     }),
 
-    states() {
-      if (!this._states) return [];
-      return this._states.collection
-    },
-
     items() {
-      if (!this.cities) return [];
-      if (!this.selectedState) return this.cities.collection;
-      return this.cities.collection.filter(
-        (city) => city.state_code === this.selectedState
-      );
+      if (!this.states) return [];
+      return this.states.collection;
     },
 
     formTitle() {
       return this.editedIndex === -1
-        ? "Crear comuna"
-        : "Editar comuna";
-    },
-
-    codeErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.code.$dirty) return errors;
-      !this.$v.editedItem.code.required &&
-      errors.push(validationMessage.REQUIRED);
-      return errors;
+        ? "Crear región"
+        : "Editar región";
     },
 
     nameErrors() {
@@ -178,51 +132,45 @@ export default {
       return errors;
     },
 
-    stateErrors() {
+    codeErrors() {
       const errors = [];
-      if (!this.$v.editedItem.state_code.$dirty) return errors;
-      !this.$v.editedItem.state_code.required &&
+      if (!this.$v.editedItem.code.$dirty) return errors;
+      !this.$v.editedItem.code.required &&
       errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("city.create");
+      return this.namedPermissions.includes("state.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("city.update");
+      return this.namedPermissions.includes("state.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("city.delete");
+      return this.namedPermissions.includes("state.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("city.show");
+      return this.namedPermissions.includes("state.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "city/getItems",
-      indexPaginate: "city/getPaginatedItems",
-      store: "city/postItem",
-      update: "city/putItem",
-      delete: "city/deleteItem",
-      show: "city/showItem",
-      changeStatus: "city/changeStatusItem",
-      getCitiesByState: "state/getCitiesByState",
-      getStates: "state/getItems",
+      index: "state/getItems",
+      indexPaginate: "state/getPaginatedItems",
+      store: "state/postItem",
+      update: "state/putItem",
+      delete: "state/deleteItem",
+      show: "state/showItem",
+      changeStatus: "state/changeStatusItem",
     }),
-
-    remove() {
-      this.selectedState = null;
-    },
 
     async save() {
       this.$v.$touch();

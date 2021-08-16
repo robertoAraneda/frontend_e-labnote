@@ -20,6 +20,8 @@ import responseTime from "./modules/responseTime";
 import sampleQuantity from "./modules/sampleQuantity";
 import samplingCondition from "./modules/samplingCondition";
 import patient from "./modules/patient";
+import state from "./modules/state";
+import city from "./modules/city";
 
 Vue.use(Vuex);
 
@@ -62,5 +64,7 @@ export default new Vuex.Store({
     sampleQuantity,
     samplingCondition,
     patient,
+    state,
+    city,
   },
 });
