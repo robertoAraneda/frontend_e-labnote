@@ -459,3 +459,28 @@ export const StateHeaders = [
     width: "150",
   },
 ];
+
+export const CityHeaders = [
+  {
+    text: "Código",
+    value: "code",
+    sortable: true,
+    width: "150",
+  },
+  {
+    text: "Nombre",
+    value: "name",
+    sortable: true,
+  },
+  {
+    text: "Estado",
+    value: "active",
+    sortable: true,
+  },
+  {
+    text: "Acciones",
+    value: "actions",
+    sortable: false,
+    width: "150",
+  },
+];

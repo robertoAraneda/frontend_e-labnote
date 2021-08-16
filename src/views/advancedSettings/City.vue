@@ -25,6 +25,19 @@
           v-if="canCreate"
         />
       </template>
+      <template slot="select">
+        <BaseAutocomplete
+          v-model="selectedState"
+          placeholder="Seleccione:"
+          :items="states"
+          item-value="code"
+          item-text="name"
+          label="Regiones"
+          single-line
+          hide-details
+          @remove="remove"
+        />
+      </template>
     </BaseDatatable>
 
     <BaseDialog
@@ -35,11 +48,29 @@
     >
       <template slot="body">
         <BaseTextfield
+          v-model="editedItem.code"
+          label="Código"
+          @input="$v.editedItem.code.$touch()"
+          @blur="$v.editedItem.code.$touch()"
+          :error-messages="codeErrors"
+        />
+        <BaseTextfield
           v-model="editedItem.name"
           label="Nombre"
           @input="$v.editedItem.name.$touch()"
           @blur="$v.editedItem.name.$touch()"
           :error-messages="nameErrors"
+        />
+        <BaseAutocomplete
+          v-model="editedItem.state_code"
+          placeholder="Seleccione:"
+          :items="states"
+          item-value="code"
+          item-text="name"
+          label="Región"
+          @input="$v.editedItem.state_code.$touch()"
+          @blur="$v.editedItem.state_code.$touch()"
+          :error-messages="stateErrors"
         />
         <v-radio-group v-model="editedItem.active" row>
           <template v-slot:label>
@@ -63,57 +94,80 @@
 </template>
 
 <script>
-import { SpecimenHeaders } from "../../helpers/headersDatatable";
+import { CityHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import Specimen from "../../models/Specimen";
+import City from "../../models/City";
+
 
 export default {
-  name: "Specimen",
+  name: "City",
 
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
+      code: { required },
       name: { required },
+      state_code: {required},
       active: { required },
     },
   },
 
   data: () => ({
     dialog: false,
-    editedItem: new Specimen(),
+    editedItem: new City(),
     editedIndex: -1,
-    defaultItem: new Specimen(),
+    defaultItem: new City(),
     snackbar: false,
-    headers: SpecimenHeaders,
+    headers: CityHeaders,
     dialogDelete: false,
     type: SnackbarType.SUCCESS,
+    selectedState: null,
   }),
 
   async mounted() {
     await this.index();
+    await this.getStates();
   },
 
   computed: {
     ...mapGetters({
-      specimens: "specimen/specimens",
+      cities: "city/cities",
       namedPermissions: "auth/namedPermissions",
+      citiesByState: "state/citiesByState",
+      _states: "state/states",
     }),
 
+    states() {
+      if (!this._states) return [];
+      return this._states.collection
+    },
+
     items() {
-      if (!this.specimens) return [];
-      return this.specimens.collection;
+      if (!this.cities) return [];
+      if (!this.selectedState) return this.cities.collection;
+      return this.cities.collection.filter(
+        (city) => city.state_code === this.selectedState
+      );
     },
 
     formTitle() {
       return this.editedIndex === -1
-        ? "Crear toma de muestra"
-        : "Editar toma de muestra";
+        ? "Crear comuna"
+        : "Editar comuna";
+    },
+
+    codeErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.code.$dirty) return errors;
+      !this.$v.editedItem.code.required &&
+      errors.push(validationMessage.REQUIRED);
+      return errors;
     },
 
     nameErrors() {
@@ -124,37 +178,51 @@ export default {
       return errors;
     },
 
+    stateErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.state_code.$dirty) return errors;
+      !this.$v.editedItem.state_code.required &&
+      errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.create");
+      return this.namedPermissions.includes("city.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.update");
+      return this.namedPermissions.includes("city.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.delete");
+      return this.namedPermissions.includes("city.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.show");
+      return this.namedPermissions.includes("city.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "specimen/getItems",
-      indexPaginate: "specimen/getPaginatedItems",
-      store: "specimen/postItem",
-      update: "specimen/putItem",
-      delete: "specimen/deleteItem",
-      show: "specimen/showItem",
-      changeStatus: "specimen/changeStatusItem",
+      index: "city/getItems",
+      indexPaginate: "city/getPaginatedItems",
+      store: "city/postItem",
+      update: "city/putItem",
+      delete: "city/deleteItem",
+      show: "city/showItem",
+      changeStatus: "city/changeStatusItem",
+      getCitiesByState: "state/getCitiesByState",
+      getStates: "state/getItems",
     }),
+
+    remove() {
+      this.selectedState = null;
+    },
 
     async save() {
       this.$v.$touch();
