@@ -2,22 +2,22 @@
   <v-row>
     <v-col cols="12" sm="3">
       <BaseSelect
-        v-model="contact.relationship"
+        v-model="localContact.relationship"
         :items="['Padre', 'Madre', 'Hermano/a', 'Abuelo/a', 'Tío/a', 'Otro']"
         label="Relación de contacto"
       />
     </v-col>
     <v-col cols="12" sm="4">
-      <BaseTextfield v-model="contact.given" label="Nombres" />
+      <BaseTextfield v-model="localContact.given" label="Nombres" />
     </v-col>
     <v-col cols="12" sm="5">
-      <BaseTextfield v-model="contact.family" label="Apellidos" />
+      <BaseTextfield v-model="localContact.family" label="Apellidos" />
     </v-col>
     <v-col cols="12" sm="6">
-      <BaseTextfield v-model="contact.phone" label="Teléfono" />
+      <BaseTextfield v-model="localContact.phone" label="Teléfono" />
     </v-col>
     <v-col cols="12" sm="6">
-      <BaseTextfield v-model="contact.email" label="Email" />
+      <BaseTextfield v-model="localContact.email" label="Email" />
     </v-col>
   </v-row>
 </template>

@@ -4,7 +4,7 @@ export const serviceRequest = [
     name: "serviceRequest",
     component: () =>
       import(
-        /* webpackChunkName: "roles" */ "../views/serviceRequest/BaseIndex.vue"
+        /* webpackChunkName: "BaseIndex" */ "../views/serviceRequest/BaseIndex.vue"
       ),
   },
   {
@@ -12,7 +12,15 @@ export const serviceRequest = [
     name: "admitPatient",
     component: () =>
       import(
-        /* webpackChunkName: "roles" */ "../views/serviceRequest/AdmitPatient.vue"
+        /* webpackChunkName: "AdmitPatient" */ "../views/serviceRequest/AdmitPatient.vue"
+      ),
+  },
+  {
+    path: "nueva-solicitud",
+    name: "createServiceRequest",
+    component: () =>
+      import(
+        /* webpackChunkName: "CreateServiceRequest" */ "../views/serviceRequest/CreateServiceRequest.vue"
       ),
   },
 ];
