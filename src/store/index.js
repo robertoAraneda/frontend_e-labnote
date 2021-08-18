@@ -22,6 +22,7 @@ import samplingCondition from "./modules/samplingCondition";
 import patient from "./modules/patient";
 import state from "./modules/state";
 import city from "./modules/city";
+import administrativeGender from "./modules/administrativeGender";
 
 Vue.use(Vuex);
 
@@ -66,5 +67,6 @@ export default new Vuex.Store({
     patient,
     state,
     city,
+    administrativeGender,
   },
 });

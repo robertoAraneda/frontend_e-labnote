@@ -71,4 +71,12 @@ export const advancedSettings = [
         /* webpackChunkName: "cities" */ "../views/advancedSettings/City.vue"
       ),
   },
+  {
+    path: "generos",
+    name: "administrativeGenders",
+    component: () =>
+      import(
+        /* webpackChunkName: "cities" */ "../views/advancedSettings/AdministrativeGender.vue"
+      ),
+  },
 ];

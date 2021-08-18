@@ -1,7 +1,7 @@
 export default class AdministrativeGender {
-  constructor(code = "male", display = "Masculino", active = null) {
-    this.code = code;
+  constructor(display = "", code = "", active = true) {
     this.display = display;
+    this.code = code;
     this.active = active;
   }
 }

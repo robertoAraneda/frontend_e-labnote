@@ -484,3 +484,33 @@ export const CityHeaders = [
     width: "150",
   },
 ];
+
+export const AdministrativeGenderHeaders = [
+  {
+    text: "N°",
+    value: "id",
+    sortable: true,
+    width: "65",
+  },
+  {
+    text: "Nombre",
+    value: "display",
+    sortable: true,
+  },
+  {
+    text: "Código",
+    value: "code",
+    sortable: true,
+  },
+  {
+    text: "Estado",
+    value: "active",
+    sortable: true,
+  },
+  {
+    text: "Acciones",
+    value: "actions",
+    sortable: false,
+    width: "150",
+  },
+];
