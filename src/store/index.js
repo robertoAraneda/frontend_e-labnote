@@ -25,6 +25,7 @@ import city from "./modules/city";
 import administrativeGender from "./modules/administrativeGender";
 import locationPhysicalType from "./modules/locationPhysicalType";
 import locationStatus from "./modules/locationStatus";
+import locationType from "./modules/locationType";
 
 Vue.use(Vuex);
 
@@ -72,5 +73,6 @@ export default new Vuex.Store({
     administrativeGender,
     locationPhysicalType,
     locationStatus,
+    locationType,
   },
 });

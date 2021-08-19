@@ -88,11 +88,19 @@ export const advancedSettings = [
       ),
   },
   {
-    path: "estado-de-ubicacion",
+    path: "estados-de-ubicacion",
     name: "locationStatuses",
     component: () =>
       import(
         /* webpackChunkName: "locationStatuses" */ "../views/advancedSettings/LocationStatus.vue"
+      ),
+  },
+  {
+    path: "tipos-de-ubicacion",
+    name: "locationTypes",
+    component: () =>
+      import(
+        /* webpackChunkName: "locationTypes" */ "../views/advancedSettings/LocationType.vue"
       ),
   },
 ];

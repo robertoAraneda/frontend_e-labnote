@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <BaseHeaderModule
-      title="Módulo de estados de ubicación"
-      subtitle="En este módulo podrás gestionar los estados de ubicación."
+      title="Módulo de tipos de ubicación"
+      subtitle="En este módulo podrás gestionar los tipos de ubicación."
     />
 
     <BaseDatatable
@@ -21,7 +21,7 @@
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nuevo estado de ubicación"
+          label="Crear nuevo tipo de ubicación"
           v-if="canCreate"
         />
       </template>
@@ -70,17 +70,17 @@
 </template>
 
 <script>
-import { LocationSatusHeaders } from "../../helpers/headersDatatable";
+import { LocationTypeHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import LocationSatus from "../../models/LocationSatus";
+import LocationType from "../../models/LocationType";
 
 export default {
-  name: "LocationSatus",
+  name: "LocationType",
 
   mixins: [validationMixin],
 
@@ -94,11 +94,11 @@ export default {
 
   data: () => ({
     dialog: false,
-    editedItem: new LocationSatus(),
+    editedItem: new LocationType(),
     editedIndex: -1,
-    defaultItem: new LocationSatus(),
+    defaultItem: new LocationType(),
     snackbar: false,
-    headers: LocationSatusHeaders,
+    headers: LocationTypeHeaders,
     dialogDelete: false,
     type: SnackbarType.SUCCESS,
   }),
@@ -109,19 +109,19 @@ export default {
 
   computed: {
     ...mapGetters({
-      locationStatuses: "locationStatus/locationStatuses",
+      locationTypes: "locationType/locationTypes",
       namedPermissions: "auth/namedPermissions",
     }),
 
     items() {
-      if (!this.locationStatuses) return [];
-      return this.locationStatuses.collection;
+      if (!this.locationTypes) return [];
+      return this.locationTypes.collection;
     },
 
     formTitle() {
       return this.editedIndex === -1
-        ? "Crear estado de ubicación"
-        : "Editar estado de ubicación";
+        ? "Crear tipo de ubicación"
+        : "Editar tipo de ubicación";
     },
 
     displayErrors() {
@@ -142,34 +142,34 @@ export default {
 
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("locationStatus.create");
+      return this.namedPermissions.includes("locationType.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("locationStatus.update");
+      return this.namedPermissions.includes("locationType.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("locationStatus.delete");
+      return this.namedPermissions.includes("locationType.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("locationStatus.show");
+      return this.namedPermissions.includes("locationType.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "locationStatus/getItems",
-      indexPaginate: "locationStatus/getPaginatedItems",
-      store: "locationStatus/postItem",
-      update: "locationStatus/putItem",
-      delete: "locationStatus/deleteItem",
-      show: "locationStatus/showItem",
-      changeStatus: "locationStatus/changeStatusItem",
+      index: "locationType/getItems",
+      indexPaginate: "locationType/getPaginatedItems",
+      store: "locationType/postItem",
+      update: "locationType/putItem",
+      delete: "locationType/deleteItem",
+      show: "locationType/showItem",
+      changeStatus: "locationType/changeStatusItem",
     }),
 
 
