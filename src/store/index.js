@@ -23,6 +23,7 @@ import patient from "./modules/patient";
 import state from "./modules/state";
 import city from "./modules/city";
 import administrativeGender from "./modules/administrativeGender";
+import locationPhysicalType from "./modules/locationPhysicalType";
 
 Vue.use(Vuex);
 
@@ -68,5 +69,6 @@ export default new Vuex.Store({
     state,
     city,
     administrativeGender,
+    locationPhysicalType,
   },
 });

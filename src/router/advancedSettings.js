@@ -76,7 +76,15 @@ export const advancedSettings = [
     name: "administrativeGenders",
     component: () =>
       import(
-        /* webpackChunkName: "cities" */ "../views/advancedSettings/AdministrativeGender.vue"
+        /* webpackChunkName: "administrativeGenders" */ "../views/advancedSettings/AdministrativeGender.vue"
+      ),
+  },
+  {
+    path: "tipos-de-ubicacion-fisica",
+    name: "locationPhysicalTypes",
+    component: () =>
+      import(
+        /* webpackChunkName: "locationPhysicalTypes" */ "../views/advancedSettings/LocationPhysicalType.vue"
       ),
   },
 ];

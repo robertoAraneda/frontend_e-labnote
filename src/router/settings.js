@@ -53,7 +53,7 @@ export const settings = [
       ),
   },
   {
-    path: "disponibilidad",
+    path: "tipos-de-disponibilidad",
     name: "availabilities",
     component: () =>
       import(
@@ -61,7 +61,7 @@ export const settings = [
       ),
   },
   {
-    path: "tiempo-de-proceso",
+    path: "tipos-de-tiempo-de-proceso",
     name: "processTimes",
     component: () =>
       import(
@@ -69,7 +69,7 @@ export const settings = [
       ),
   },
   {
-    path: "tiempo-de-respuesta",
+    path: "tipos-de-tiempo-de-respuesta",
     name: "responseTimes",
     component: () =>
       import(
@@ -77,7 +77,7 @@ export const settings = [
       ),
   },
   {
-    path: "tipo-de-solicitud-medica",
+    path: "tipos-de-solicitud-medica",
     name: "medicalRequestTypes",
     component: () =>
       import(
@@ -93,7 +93,7 @@ export const settings = [
       ),
   },
   {
-    path: "condicion-de-toma-de-muestra",
+    path: "tipos-de-condicion-de-toma-de-muestra",
     name: "samplingConditions",
     component: () =>
       import(
@@ -109,7 +109,7 @@ export const settings = [
       ),
   },
   {
-    path: "contenedor",
+    path: "tipos-de-contenedor",
     name: "containers",
     component: () =>
       import(
