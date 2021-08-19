@@ -87,4 +87,12 @@ export const advancedSettings = [
         /* webpackChunkName: "locationPhysicalTypes" */ "../views/advancedSettings/LocationPhysicalType.vue"
       ),
   },
+  {
+    path: "estado-de-ubicacion",
+    name: "locationStatuses",
+    component: () =>
+      import(
+        /* webpackChunkName: "locationStatuses" */ "../views/advancedSettings/LocationStatus.vue"
+      ),
+  },
 ];
