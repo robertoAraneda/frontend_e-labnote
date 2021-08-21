@@ -21,7 +21,6 @@
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nuevo género"
           v-if="canCreate"
         />
       </template>

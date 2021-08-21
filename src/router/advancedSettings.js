@@ -103,4 +103,12 @@ export const advancedSettings = [
         /* webpackChunkName: "locationTypes" */ "../views/advancedSettings/LocationType.vue"
       ),
   },
+  {
+    path: "categoria-de-solicitud-de-examen",
+    name: "serviceRequestCategories",
+    component: () =>
+      import(
+        /* webpackChunkName: "serviceRequestCategories" */ "../views/advancedSettings/ServiceRequestCategory.vue"
+      ),
+  },
 ];

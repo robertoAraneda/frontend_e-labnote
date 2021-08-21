@@ -8,7 +8,10 @@
 export default {
   name: "BaseAcceptButton",
   props: {
-    label: String,
+    label: {
+      type: String,
+      default: () => "Crear nuevo registro",
+    },
     color: {
       type: String,
       default: () => "primary darken-1",

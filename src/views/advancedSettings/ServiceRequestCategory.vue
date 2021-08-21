@@ -1,8 +1,8 @@
 <template>
   <v-container>
     <BaseHeaderModule
-      title="Módulo de regiones"
-      subtitle="En este módulo podrás gestionar las regiones."
+      title="Módulo de categorías de solicitud de examen"
+      subtitle="En este módulo podrás gestionar las categorías de solicitud de examen."
     />
 
     <BaseDatatable
@@ -34,18 +34,18 @@
     >
       <template slot="body">
         <BaseTextfield
+          v-model="editedItem.display"
+          label="Nombre"
+          @input="$v.editedItem.display.$touch()"
+          @blur="$v.editedItem.display.$touch()"
+          :error-messages="displayErrors"
+        />
+        <BaseTextfield
           v-model="editedItem.code"
           label="Código"
           @input="$v.editedItem.code.$touch()"
           @blur="$v.editedItem.code.$touch()"
           :error-messages="codeErrors"
-        />
-        <BaseTextfield
-          v-model="editedItem.name"
-          label="Nombre"
-          @input="$v.editedItem.name.$touch()"
-          @blur="$v.editedItem.name.$touch()"
-          :error-messages="nameErrors"
         />
         <v-radio-group v-model="editedItem.active" row>
           <template v-slot:label>
@@ -69,35 +69,35 @@
 </template>
 
 <script>
-import { StateHeaders } from "../../helpers/headersDatatable";
+import { ServiceRequestCategoryHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import State from "../../models/State";
+import ServiceRequestCategory from "../../models/ServiceRequestCategory";
 
 export default {
-  name: "State",
+  name: "ServiceRequestCategory",
 
   mixins: [validationMixin],
 
   validations: {
     editedItem: {
+      display: { required },
       code: { required },
-      name: { required },
       active: { required },
     },
   },
 
   data: () => ({
     dialog: false,
-    editedItem: new State(),
+    editedItem: new ServiceRequestCategory(),
     editedIndex: -1,
-    defaultItem: new State(),
+    defaultItem: new ServiceRequestCategory(),
     snackbar: false,
-    headers: StateHeaders,
+    headers: ServiceRequestCategoryHeaders,
     dialogDelete: false,
     type: SnackbarType.SUCCESS,
   }),
@@ -108,25 +108,26 @@ export default {
 
   computed: {
     ...mapGetters({
-      states: "state/states",
+      serviceRequestCategories: "serviceRequestCategory/serviceRequestCategories",
       namedPermissions: "auth/namedPermissions",
     }),
 
     items() {
-      if (!this.states) return [];
-      return this.states.collection;
+      console.log('DATA', this.serviceRequestCategories);
+      if (!this.serviceRequestCategories) return [];
+      return this.serviceRequestCategories.collection;
     },
 
     formTitle() {
       return this.editedIndex === -1
-        ? "Crear región"
-        : "Editar región";
+        ? "Crear categoría de solicitud de examen"
+        : "Editar categoría de solicitud de examen";
     },
 
-    nameErrors() {
+    displayErrors() {
       const errors = [];
-      if (!this.$v.editedItem.name.$dirty) return errors;
-      !this.$v.editedItem.name.required &&
+      if (!this.$v.editedItem.display.$dirty) return errors;
+      !this.$v.editedItem.display.required &&
       errors.push(validationMessage.REQUIRED);
       return errors;
     },
@@ -141,35 +142,36 @@ export default {
 
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("state.create");
+      return this.namedPermissions.includes("serviceRequestCategory.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("state.update");
+      return this.namedPermissions.includes("serviceRequestCategory.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("state.delete");
+      return this.namedPermissions.includes("serviceRequestCategory.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("state.show");
+      return this.namedPermissions.includes("serviceRequestCategory.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "state/getItems",
-      indexPaginate: "state/getPaginatedItems",
-      store: "state/postItem",
-      update: "state/putItem",
-      delete: "state/deleteItem",
-      show: "state/showItem",
-      changeStatus: "state/changeStatusItem",
+      index: "serviceRequestCategory/getItems",
+      indexPaginate: "serviceRequestCategory/getPaginatedItems",
+      store: "serviceRequestCategory/postItem",
+      update: "serviceRequestCategory/putItem",
+      delete: "serviceRequestCategory/deleteItem",
+      show: "serviceRequestCategory/showItem",
+      changeStatus: "serviceRequestCategory/changeStatusItem",
     }),
+
 
     async save() {
       this.$v.$touch();

@@ -21,7 +21,6 @@
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nuevo estado de ubicación"
           v-if="canCreate"
         />
       </template>

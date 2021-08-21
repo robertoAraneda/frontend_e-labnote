@@ -26,6 +26,7 @@ import administrativeGender from "./modules/administrativeGender";
 import locationPhysicalType from "./modules/locationPhysicalType";
 import locationStatus from "./modules/locationStatus";
 import locationType from "./modules/locationType";
+import serviceRequestCategory from "./modules/serviceRequestCategory";
 
 Vue.use(Vuex);
 
@@ -74,5 +75,6 @@ export default new Vuex.Store({
     locationPhysicalType,
     locationStatus,
     locationType,
+    serviceRequestCategory,
   },
 });

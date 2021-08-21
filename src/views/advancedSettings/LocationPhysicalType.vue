@@ -21,7 +21,6 @@
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nueva ubicación física"
           v-if="canCreate"
         />
       </template>

@@ -21,7 +21,6 @@
         <BaseAcceptButton
           small
           @click="openDialog"
-          label="Crear nueva comuna"
           v-if="canCreate"
         />
       </template>
