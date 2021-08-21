@@ -27,6 +27,7 @@ import locationPhysicalType from "./modules/locationPhysicalType";
 import locationStatus from "./modules/locationStatus";
 import locationType from "./modules/locationType";
 import serviceRequestCategory from "./modules/serviceRequestCategory";
+import serviceRequestIntent from "./modules/serviceRequestIntent";
 
 Vue.use(Vuex);
 
@@ -76,5 +77,6 @@ export default new Vuex.Store({
     locationStatus,
     locationType,
     serviceRequestCategory,
+    serviceRequestIntent,
   },
 });

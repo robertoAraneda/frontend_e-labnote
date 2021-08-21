@@ -111,4 +111,12 @@ export const advancedSettings = [
         /* webpackChunkName: "serviceRequestCategories" */ "../views/advancedSettings/ServiceRequestCategory.vue"
       ),
   },
+  {
+    path: "intencion-de-examen",
+    name: "serviceRequestIntents",
+    component: () =>
+      import(
+        /* webpackChunkName: "serviceRequestIntents" */ "../views/advancedSettings/ServiceRequestIntent.vue"
+      ),
+  },
 ];
