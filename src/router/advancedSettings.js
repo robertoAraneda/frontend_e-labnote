@@ -104,7 +104,7 @@ export const advancedSettings = [
       ),
   },
   {
-    path: "categoria-de-solicitud-de-examen",
+    path: "categorias-de-solicitud-de-examen",
     name: "serviceRequestCategories",
     component: () =>
       import(
@@ -112,11 +112,27 @@ export const advancedSettings = [
       ),
   },
   {
-    path: "intencion-de-examen",
+    path: "intenciones-de-examen",
     name: "serviceRequestIntents",
     component: () =>
       import(
         /* webpackChunkName: "serviceRequestIntents" */ "../views/advancedSettings/ServiceRequestIntent.vue"
+      ),
+  },
+  {
+    path: "prioridades-de-examen",
+    name: "serviceRequestPriorities",
+    component: () =>
+      import(
+        /* webpackChunkName: "serviceRequestPriorities" */ "../views/advancedSettings/ServiceRequestPriority.vue"
+      ),
+  },
+  {
+    path: "estados-de-examen",
+    name: "serviceRequestStatuses",
+    component: () =>
+      import(
+        /* webpackChunkName: "serviceRequestStatuses" */ "../views/advancedSettings/ServiceRequestStatus.vue"
       ),
   },
 ];
