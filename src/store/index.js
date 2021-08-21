@@ -29,6 +29,7 @@ import locationType from "./modules/locationType";
 import serviceRequestCategory from "./modules/serviceRequestCategory";
 import serviceRequestIntent from "./modules/serviceRequestIntent";
 import serviceRequestPriority from "./modules/serviceRequestPriority";
+import serviceRequestStatus from "./modules/serviceRequestStatus";
 
 Vue.use(Vuex);
 
@@ -80,5 +81,6 @@ export default new Vuex.Store({
     serviceRequestCategory,
     serviceRequestIntent,
     serviceRequestPriority,
+    serviceRequestStatus,
   },
 });

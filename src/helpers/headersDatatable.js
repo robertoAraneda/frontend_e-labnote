@@ -694,3 +694,33 @@ export const ServiceRequestPriorityHeaders = [
     width: "150",
   },
 ];
+
+export const ServiceRequestStatusHeaders = [
+  {
+    text: "N°",
+    value: "id",
+    sortable: true,
+    width: "65",
+  },
+  {
+    text: "Nombre",
+    value: "display",
+    sortable: true,
+  },
+  {
+    text: "Código",
+    value: "code",
+    sortable: true,
+  },
+  {
+    text: "Estado",
+    value: "active",
+    sortable: true,
+  },
+  {
+    text: "Acciones",
+    value: "actions",
+    sortable: false,
+    width: "150",
+  },
+];
