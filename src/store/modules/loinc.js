@@ -1,6 +1,6 @@
 import httpRequest from "../../services/axios";
 
-const BASE_URL = "/api/v1/loincs";
+const BASE_URL = "/api/v1/loinc";
 
 export default {
   namespaced: true,
@@ -24,6 +24,14 @@ export default {
     findLoincByCode: async (_, code) => {
       try {
         return await httpRequest.getRequest(`${BASE_URL}/${code}`);
+      } catch (e) {
+        return e.response;
+      }
+    },
+
+    findLoincByCodeFHIR: async (_, code) => {
+      try {
+        return await httpRequest.getRequest(`${BASE_URL}/search/${code}`);
       } catch (e) {
         return e.response;
       }

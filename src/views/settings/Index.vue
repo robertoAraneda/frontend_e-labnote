@@ -13,36 +13,51 @@ import NavigationDrawer from "../../components/navbar/NavigationDrawer";
 
 export default {
   name: "Index",
+
   components: { NavigationDrawer },
-  data: () => ({}),
+
+  data: () => ({
+    current: null,
+  }),
   async mounted() {
-    const slug = this.splitRoute(this.$route.path);
-    await this.getModuleBySlug(slug);
-    await this.getPermissionsByModule({
-      idRol: this.roleUserLogged.id,
-      idModule: this.currentModule.id,
-    });
+    if (this.modules) {
+      const slug = this.splitRoute(this.$route.path);
+
+      //this.current = this.modules[slug];
+      this.setCurrentModule(this.modules[slug]);
+    }
   },
+
+  watch: {
+    modules() {
+      const slug = this.splitRoute(this.$route.path);
+
+      //this.current = this.modules[slug];
+      this.setCurrentModule(this.modules[slug]);
+    },
+  },
+
   computed: {
     ...mapGetters({
       menusByModule: "module/menusByModule",
-      currentModule: "module/currentModule",
+      currentModule: "auth/currentModule",
       roleUserLogged: "auth/role",
       permissionName: "auth/namedPermissions",
       namedPermissionsForMenu: "auth/namedPermissionsForMenu",
+      menusByModules: "auth/currentMenusByModules",
+      modules: "auth/modules",
     }),
-
-    menus() {
-      if (!this.currentModule) return [];
-      return this.currentModule.menus;
-    },
 
     menusPermissions() {
       if (!this.currentModule) return [];
-      return this.currentModule.menus.filter((menu) => {
-        console.log(menu.permission.name);
-        return this.namedPermissionsForMenu.includes(menu.permission.name);
-      });
+      return this.currentModule
+        .filter((menu) => {
+          return this.namedPermissionsForMenu.includes(menu.name);
+        })
+        .map(({ menu }) => {
+          console.log();
+          return menu;
+        });
     },
   },
 
@@ -51,6 +66,7 @@ export default {
       getMenusByModule: "module/getMenusByModule",
       getModuleBySlug: "module/getModuleBySlug",
       getPermissionsByModule: "module/getPermissionsByModule",
+      setCurrentModule: "auth/setCurrentModule",
     }),
     splitRoute(route) {
       const split = route.split("/");

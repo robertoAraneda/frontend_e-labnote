@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    max-width="500px"
+    :max-width="maxWidth"
     v-bind="$attrs"
     v-on="$listeners"
     v-model="dialog"
@@ -32,6 +32,10 @@ export default {
   props: {
     formTitle: String,
     dialog: Boolean,
+    maxWidth: {
+      type: String,
+      default: () => "500px",
+    },
   },
   data: () => ({}),
   methods: {

@@ -2,7 +2,7 @@
   <v-container>
     <v-row class="mt-12">
       <v-col
-        v-for="module in modulesByLaboratory"
+        v-for="module in modulesByRoles"
         :key="module.id"
         cols="12"
         sm="6"
@@ -46,16 +46,37 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   name: "Index",
   mounted() {
-    this.getModulesByLaboratory(1);
+    if (this.modulesByLaboratory.length === 0) {
+      this.getModulesByLaboratory(1);
+    }
   },
+
+  watch: {
+    modules() {
+      this.getAllMenusFromModules(this.modulesKeys);
+    },
+  },
+
   computed: {
     ...mapGetters({
       modulesByLaboratory: "laboratory/modulesByLaboratory",
+      modules: "auth/modules",
+      modulesKeys: "auth/modulesKeys",
     }),
+
+    //se muestran sólo los módulos que contengan al menos un menu con privilegios de lectura (index)
+    //extraido de los permissions al momento de hacer login
+    modulesByRoles() {
+      return this.modulesByLaboratory.filter((module) => {
+        console.log(module);
+        return Object.values(this.modulesKeys).includes(module.slug);
+      });
+    },
   },
   methods: {
     ...mapActions({
       getModulesByLaboratory: "laboratory/getModulesByLaboratory",
+      getAllMenusFromModules: "auth/allModulesWithPermissions",
     }),
   },
 };

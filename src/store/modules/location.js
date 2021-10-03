@@ -1,31 +1,24 @@
 import httpRequest from "../../services/axios";
 
-const BASE_URL = "/api/v1/service-request-observation-codes";
+const BASE_URL = "/api/v1/locations";
 
 export default {
   namespaced: true,
   state: {
-    observationServiceRequests: [],
-    isObservationServiceRequestLoading: false,
-    editObservationServiceRequest: null,
+    locations: [],
+    isLocationsLoading: false,
   },
   mutations: {
-    SET_OBSERVATION_SERVICE_REQUESTS: (state, payload) => {
-      state.observationServiceRequests = payload;
+    SET_LOCATIONS: (state, payload) => {
+      state.locations = payload;
     },
-    SET_OBSERVATION_SERVICE_REQUESTS_LOADING: (state, payload) => {
-      state.isObservationServiceRequestLoading = payload;
-    },
-    SET_EDIT_OBSERVATION_SERVICE_REQUEST: (state, payload) => {
-      state.editObservationServiceRequest = payload;
+    SET_LOCATIONS_LOADING: (state, payload) => {
+      state.isLocationsLoading = payload;
     },
   },
   getters: {
-    observationServiceRequests: (state) => state.observationServiceRequests,
-    isObservationServiceRequestLoading: (state) =>
-      state.isObservationServiceRequestLoading,
-    editObservationServiceRequest: (state) =>
-      state.editObservationServiceRequest,
+    locations: (state) => state.locations,
+    isLocationsLoading: (state) => state.isLocationsLoading,
   },
   actions: {
     showItem: async (_, url) => {
@@ -42,15 +35,15 @@ export default {
 
     getItems: async ({ commit }) => {
       try {
-        commit("SET_OBSERVATION_SERVICE_REQUESTS_LOADING", true);
+        commit("SET_LOCATIONS_LOADING", true);
         const { data } = await httpRequest.getRequest(`${BASE_URL}`);
         console.log(data);
-        commit("SET_OBSERVATION_SERVICE_REQUESTS", data);
+        commit("SET_LOCATIONS", data);
       } catch (error) {
-        commit("SET_OBSERVATION_SERVICE_REQUESTS", []);
+        commit("SET_LOCATIONS", []);
         console.log(error);
       } finally {
-        commit("SET_OBSERVATION_SERVICE_REQUESTS_LOADING", false);
+        commit("SET_LOCATIONS_LOADING", false);
       }
     },
 
@@ -86,20 +79,6 @@ export default {
         return await httpRequest.putRequest(
           `${BASE_URL}/${payload.id}/status`,
           { active: payload.active }
-        );
-      } catch (e) {
-        return e.response;
-      }
-    },
-
-    setEdit: async ({ commit }, payload) => {
-      commit("SET_EDIT_OBSERVATION_SERVICE_REQUEST", payload);
-    },
-
-    getItemBySlug: async (_, payload) => {
-      try {
-        return await httpRequest.getRequest(
-          `${BASE_URL}/search?slug=${payload}`
         );
       } catch (e) {
         return e.response;

@@ -3,26 +3,21 @@
     v-bind="$attrs"
     v-on="$listeners"
     color="primary"
-    prepend-inner-icon="mdi-filter"
+    :prepend-inner-icon="prependIcon"
   >
-    <template v-slot:selection="data">
-      <v-chip
-        v-bind="data.attrs"
-        :input-value="data.selected"
-        close
-        color="blue-grey lighten-5"
-        @click="data.select"
-        @click:close="remove()"
-      >
-        <span class="text-truncate">{{ data.item.name }}</span>
-      </v-chip>
-    </template>
   </v-autocomplete>
 </template>
 
 <script>
 export default {
   name: "BaseAutocomplete",
+
+  props: {
+    prependIcon: {
+      type: String,
+      default: () => "mdi-filter",
+    },
+  },
 
   data: () => ({
     avatar: "",

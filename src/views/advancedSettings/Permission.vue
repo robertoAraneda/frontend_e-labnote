@@ -1,64 +1,349 @@
 <template>
-  <v-row>
-    <v-col cols="12">
-      <h5>En este módulo podrás asignar permisos a los roles existentes.</h5>
-    </v-col>
-    <v-col cols="6">
-      <v-select
-        label="Rol"
-        v-model="selectedRole"
-        :items="roles"
-        return-object
-        outlined
-        item-text="name"
-        item-value="id"
-      >
-      </v-select>
-    </v-col>
-    <v-col cols="12">
-      <v-row>
-        <v-col v-for="module in modulesByLaboratory" :key="module.id" cols="6">
-          <TreeviewPermission :module="module" :role="selectedRole" />
-        </v-col>
-      </v-row>
-    </v-col>
-  </v-row>
+  <v-container>
+    <BaseHeaderModule
+      title="Módulo de permisos"
+      subtitle="En este módulo podrás gestionar los permisos del sistema."
+    />
+
+    <BaseDatatable
+      @deleteItem="handleDeleteModel($event)"
+      @editItem="handleEditModel($event)"
+      @changeStatus="handleChangeStatus($event)"
+      @searchItem="handleShowItem($event)"
+      :can-update="canUpdate"
+      :can-delete="canDelete"
+      :can-show="canShow"
+      :items="items"
+      :headers="headers"
+      sort-by="id"
+    >
+      <template slot="searchButton">
+        <BaseAcceptButton
+          small
+          @click="openDialog"
+          label="Crear nuevo tiempo de respuesta"
+          v-if="canCreate"
+        />
+      </template>
+    </BaseDatatable>
+
+    <BaseDialog
+      :dialog="dialog"
+      :form-title="formTitle"
+      @close="closeDialog"
+      @save="save"
+    >
+      <template slot="body">
+        <BaseTextfield
+          v-model="editedItem.name"
+          label="Nombre"
+          @input="$v.editedItem.name.$touch()"
+          @blur="$v.editedItem.name.$touch()"
+          :error-messages="nameErrors"
+        />
+
+        <BaseTextfield
+          v-model="editedItem.guard_name"
+          label="Nombre"
+          @input="$v.editedItem.guard_name.$touch()"
+          @blur="$v.editedItem.guard_name.$touch()"
+          :error-messages="nameGuardName"
+          disabled
+        />
+
+        <BaseTextfield
+          v-model="editedItem.model"
+          label="Nombre"
+          @input="$v.editedItem.model.$touch()"
+          @blur="$v.editedItem.model.$touch()"
+          :error-messages="nameModel"
+        />
+
+        <BaseTextfield
+          v-model="editedItem.action"
+          label="Nombre"
+          @input="$v.editedItem.action.$touch()"
+          @blur="$v.editedItem.action.$touch()"
+          :error-messages="nameAction"
+        />
+
+        <BaseTextfield
+          v-model="editedItem.description"
+          label="Nombre"
+          @input="$v.editedItem.description.$touch()"
+          @blur="$v.editedItem.description.$touch()"
+          :error-messages="nameDescription"
+        />
+
+        <v-radio-group v-model="editedItem.active" row>
+          <template v-slot:label>
+            <div class="black--text text-subtitle-1">Estado:</div>
+          </template>
+          <v-spacer />
+          <v-radio label="Inactivo" :value="false"></v-radio>
+          <v-radio label="Activo" :value="true"></v-radio>
+        </v-radio-group>
+      </template>
+    </BaseDialog>
+
+    <BaseSnackbar v-model="snackbar" :type="type" />
+
+    <BaseConfirmDelete
+      @closeDelete="closeDeleteDialog"
+      @deleteItemConfirm="deleteItemConfirm()"
+      :dialog-delete="dialogDelete"
+    />
+  </v-container>
 </template>
 
 <script>
+import { PermissionHeaders } from "../../helpers/headersDatatable";
+import { SnackbarType } from "../../helpers/SnackbarMessages";
+import { validationMessage } from "../../helpers/ValidationMessage";
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
-import TreeviewPermission from "../../components/setting/TreeviewPermission";
+import { findIndex } from "../../helpers/Functions";
+import Permission from "../../models/Permission";
 
 export default {
   name: "Permission",
-  components: { TreeviewPermission },
+
+  mixins: [validationMixin],
+
+  validations: {
+    editedItem: {
+      name: { required },
+      guard_name: { required },
+      action: { required },
+      model: { required },
+      description: { required },
+      active: { required },
+    },
+  },
+
   data: () => ({
-    selectedRole: null,
-    selectedPermissions: [],
+    dialog: false,
+    editedItem: new Permission(),
+    editedIndex: -1,
+    defaultItem: new Permission(),
+    snackbar: false,
+    headers: PermissionHeaders,
+    dialogDelete: false,
+    type: SnackbarType.SUCCESS,
   }),
-  created() {
-    this.getRoles();
+
+  async mounted() {
+    await this.index();
   },
-  mounted() {
-    if (!this.modulesByLaboratory.length) {
-      this.getModulesByLaboratory(1);
-    }
-  },
+
   computed: {
     ...mapGetters({
-      roles: "role/roles",
-      isRolesLoading: "role/isRolesLoading",
-      permissionByRole: "role/permissionByRole",
-      isPermissionByRoleLoading: "role/isPermissionByRoleLoading",
-      modulesByLaboratory: "laboratory/modulesByLaboratory",
+      permissions: "permission/permissions",
+      namedPermissions: "auth/namedPermissions",
     }),
+
+    items() {
+      if (!this.permissions) return [];
+      return this.permissions.collection;
+    },
+
+    formTitle() {
+      return this.editedIndex === -1 ? "Crear permisos" : "Editar permisos";
+    },
+
+    nameErrors() {
+      const errors = [];
+      if (!this.$v.editedItem.name.$dirty) return errors;
+      !this.$v.editedItem.name.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
+    nameModel() {
+      const errors = [];
+      if (!this.$v.editedItem.model.$dirty) return errors;
+      !this.$v.editedItem.model.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
+    nameGuardName() {
+      const errors = [];
+      if (!this.$v.editedItem.guard_name.$dirty) return errors;
+      !this.$v.editedItem.guard_name.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
+    nameDescription() {
+      const errors = [];
+      if (!this.$v.editedItem.description.$dirty) return errors;
+      !this.$v.editedItem.description.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
+    nameAction() {
+      const errors = [];
+      if (!this.$v.editedItem.action.$dirty) return errors;
+      !this.$v.editedItem.action.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
+    canCreate() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("permission.create");
+    },
+
+    canUpdate() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("permission.update");
+    },
+
+    canDelete() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("permission.delete");
+    },
+
+    canShow() {
+      if (!this.namedPermissions) return false;
+      return this.namedPermissions.includes("permission.show");
+    },
   },
+
   methods: {
     ...mapActions({
-      getPermissionByRole: "role/getPermissionByRole",
-      getRoles: "role/getRoles",
-      getModulesByLaboratory: "laboratory/getModulesByLaboratory",
+      index: "permission/getItems",
+      store: "permission/postItem",
+      update: "permission/putItem",
+      delete: "permission/deleteItem",
+      show: "permission/showItem",
+      changeStatus: "permission/changeStatusItem",
     }),
+
+    async save() {
+      this.$v.$touch();
+
+      if (!this.$v.$invalid) {
+        try {
+          let response;
+          if (this.editedIndex === -1) {
+            response = await this.store(this.editedItem);
+          } else {
+            response = await this.update(this.editedItem);
+          }
+
+          if (response) {
+            this.type = SnackbarType.SUCCESS;
+          }
+        } catch (e) {
+          this.type = SnackbarType.ERROR;
+          console.log(e);
+        } finally {
+          this.activateSnackbar();
+          this.closeDialog();
+          await this.index();
+        }
+      }
+    },
+
+    async handleChangeStatus(item) {
+      try {
+        const { status } = await this.changeStatus(item);
+
+        if (status === 200) {
+          this.type = SnackbarType.SUCCESS;
+        }
+      } catch (e) {
+        this.type = SnackbarType.ERROR;
+        console.log(e);
+      } finally {
+        this.activateSnackbar();
+        this.resetForm();
+        await this.index();
+      }
+    },
+
+    async deleteItemConfirm() {
+      if (this.editedIndex !== -1) {
+        try {
+          const { status } = await this.delete(this.editedItem);
+
+          if (status === 204) {
+            this.type = SnackbarType.SUCCESS;
+          }
+        } catch (e) {
+          this.type = SnackbarType.ERROR;
+          console.log(e);
+        } finally {
+          this.activateSnackbar();
+          this.closeDeleteDialog();
+          await this.index();
+        }
+      }
+    },
+
+    async handleShowItem(item) {
+      try {
+        await this.fillEditedItem(item);
+      } catch (e) {
+        this.type = SnackbarType.ERROR;
+        this.activateSnackbar();
+        console.log(e);
+      }
+    },
+
+    handleDeleteModel(value) {
+      this.fillEditedItem(value);
+      this.editedIndex = findIndex(value, this.items);
+      this.dialogDelete = true;
+    },
+
+    handleEditModel(value) {
+      this.fillEditedItem(value);
+      this.editedIndex = findIndex(value, this.items);
+      this.openDialog();
+    },
+
+    closeDialog() {
+      this.dialog = false;
+      this.resetForm();
+    },
+
+    openDialog() {
+      this.$v.$reset();
+      this.dialog = true;
+    },
+
+    closeDeleteDialog() {
+      this.dialogDelete = false;
+      this.resetForm();
+    },
+
+    async fillEditedItem(item) {
+      const { status, data } = await this.show(item._links.self.href);
+
+      if (status === 200) {
+        this.editedItem = Object.assign({}, data);
+      } else if (status === 403) {
+        this.type = SnackbarType.FORBIDDEN;
+        this.activateSnackbar();
+      } else {
+        this.type = SnackbarType.ERROR;
+        this.activateSnackbar();
+      }
+    },
+
+    activateSnackbar() {
+      this.snackbar = true;
+    },
+
+    resetForm() {
+      this.editedItem = Object.assign({}, this.defaultItem);
+      this.editedIndex = -1;
+    },
   },
 };
 </script>

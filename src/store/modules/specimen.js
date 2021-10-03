@@ -1,6 +1,6 @@
 import httpRequest from "../../services/axios";
 
-const BASE_URL = "/api/v1/specimens";
+const BASE_URL = "/api/v1/specimen-codes";
 
 export default {
   namespaced: true,

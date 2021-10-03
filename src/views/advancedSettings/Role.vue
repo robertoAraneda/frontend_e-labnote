@@ -17,12 +17,37 @@
       :headers="headers"
       sort-by="id"
       title="Roles"
-      :extra-buttons="false"
+      :extra-buttons="true"
     >
-      <template slot="top">
+      <template slot="searchButton">
         <BaseAcceptButton small @click="openDialog" label="Crear nuevo rol" />
       </template>
     </BaseDatatable>
+
+    <BaseDialog
+      max-width="700px"
+      :dialog="isPermissionShow"
+      form-title="Asignar permisos"
+      @close="isPermissionShow = false"
+      @save="savePermissions"
+    >
+      <template v-slot:body>
+        <v-col cols="12" v-if="isPermissionShow">
+          <v-row>
+            <v-col
+              v-for="module in modulesByLaboratory"
+              :key="module.id"
+              cols="11"
+            >
+              <TreeviewPermission
+                :permissions="selectedPermissions[module.id]"
+                :module="module"
+              />
+            </v-col>
+          </v-row>
+        </v-col>
+      </template>
+    </BaseDialog>
     <BaseDialog
       :dialog="dialog"
       :form-title="formTitle"
@@ -71,9 +96,11 @@ import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import Role from "../../models/Role";
+import TreeviewPermission from "../../components/setting/TreeviewPermission";
 
 export default {
   name: "Role",
+  components: { TreeviewPermission },
   mixins: [validationMixin],
 
   validations: {
@@ -84,6 +111,11 @@ export default {
 
   data: () => ({
     dialog: false,
+    permissionDialog: false,
+
+    selectedPermissions: {},
+    isPermissionShow: false,
+
     editedItem: new Role(),
     editedIndex: -1,
     defaultItem: new Role(),
@@ -95,6 +127,9 @@ export default {
   }),
 
   mounted() {
+    if (!this.modulesByLaboratory.length) {
+      this.getModulesByLaboratory(1);
+    }
     this.index();
   },
 
@@ -102,6 +137,7 @@ export default {
     ...mapGetters({
       roles: "role/roles",
       loggedUser: "auth/user",
+      modulesByLaboratory: "laboratory/modulesByLaboratory",
     }),
 
     formTitle() {
@@ -124,6 +160,8 @@ export default {
       put: "role/putRoles",
       delete: "role/deleteRoles",
       changeStatus: "role/changeStatusRole",
+      getModulesByLaboratory: "laboratory/getModulesByLaboratory",
+      getPermissionsByModule: "module/getPermissionsByModule",
     }),
 
     async save() {
@@ -150,6 +188,35 @@ export default {
           await this.index();
         }
       }
+    },
+
+    //TODO falta guardar los privilegios. Ya estan flateados
+    async savePermissions() {
+      const flatPermissions = Object.values(this.selectedPermissions).reduce(
+        (accumulator, module) => {
+          accumulator = [...accumulator, ...module];
+          return accumulator;
+        },
+        []
+      );
+
+      console.log(flatPermissions);
+    },
+
+    async send() {
+      this.selectedPermissions = {};
+      await Promise.all(
+        this.modulesByLaboratory.map(async (module) => {
+          this.selectedPermissions[module.id] = [
+            ...(await this.getPermissionsByModule({
+              idRol: this.editedItem.id,
+              idModule: module.id,
+            })),
+          ];
+        })
+      );
+
+      this.isPermissionShow = true;
     },
 
     async handleChangeStatus(item) {
@@ -225,8 +292,12 @@ export default {
       this.editedIndex = -1;
     },
 
-    handlePermissions(value) {
-      console.log(value);
+    async handlePermissions(value) {
+      this.fillEditedItem(value);
+      this.editedIndex = this.roles.indexOf(value);
+      await this.send();
+
+      this.permissionDialog = true;
     },
   },
 };

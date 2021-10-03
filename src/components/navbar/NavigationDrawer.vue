@@ -12,7 +12,7 @@
         role
       }}</v-avatar>
 
-      <div class="title">{{ user.roles[0].name }}</div>
+      <div class="title">{{ roleDescription }}</div>
     </v-sheet>
     <v-divider></v-divider>
 
@@ -62,6 +62,11 @@ export default {
     role() {
       if (!this.user) return "";
       return this.user.roles[0].name.charAt(0).toUpperCase();
+    },
+
+    roleDescription() {
+      if (!this.user) return "";
+      return this.user.roles[0].name;
     },
   },
 };

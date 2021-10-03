@@ -61,3 +61,14 @@ export const validateLoincCode = (code) => {
     return false;
   }
 };
+
+export function groupBy(objectArray, property) {
+  return objectArray.reduce(function (accumulator, object) {
+    let key = object[property];
+    if (!accumulator[key]) {
+      accumulator[key] = [];
+    }
+    accumulator[key].push(object);
+    return accumulator;
+  }, {});
+}

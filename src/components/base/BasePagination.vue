@@ -4,6 +4,7 @@
     v-on="$listeners"
     prev-icon="mdi-menu-left"
     next-icon="mdi-menu-right"
+    :total-visible="7"
   ></v-pagination>
 </template>
 
