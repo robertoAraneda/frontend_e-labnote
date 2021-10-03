@@ -30,6 +30,9 @@ import serviceRequestCategory from "./modules/serviceRequestCategory";
 import serviceRequestIntent from "./modules/serviceRequestIntent";
 import serviceRequestPriority from "./modules/serviceRequestPriority";
 import serviceRequestStatus from "./modules/serviceRequestStatus";
+import location from "./modules/location";
+import practitioner from "./modules/practitioner";
+import serviceRequest from "./modules/serviceRequest";
 
 Vue.use(Vuex);
 
@@ -82,5 +85,8 @@ export default new Vuex.Store({
     serviceRequestIntent,
     serviceRequestPriority,
     serviceRequestStatus,
+    location,
+    practitioner,
+    serviceRequest,
   },
 });

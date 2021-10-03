@@ -84,7 +84,7 @@
                   cache-items
                   placeholder="Seleccione:"
                   item-value="id"
-                  item-text="name"
+                  item-text="display"
                   label="Tipo de muestra"
                   @remove="selectedSpecimens = null"
                   return-object
@@ -159,22 +159,22 @@
 
               <v-col cols="12" md="6" lg="4" xl="3">
                 <BaseAutocomplete
-                  v-model="selectedWorkareas"
-                  :items="itemsWorkareas"
-                  @focus="querySelectionsWorkarea('')"
-                  :loading="loadingWorkareas"
-                  :search-input.sync="searchWorkareas"
+                  v-model="selectedLocations"
+                  :items="itemsLocations"
+                  @focus="querySelectionsLocation('')"
+                  :loading="loadingLocations"
+                  :search-input.sync="searchLocations"
                   flat
                   cache-items
                   placeholder="Seleccione:"
                   item-value="id"
                   item-text="name"
-                  label="Área de trabajo"
+                  label="Ubicación"
                   @remove="selectedWorkarea = null"
                   return-object
-                  @change="$v.selectedWorkareas.$touch()"
-                  @blur="$v.selectedWorkareas.$touch()"
-                  :error-messages="workareaErrors"
+                  @change="$v.selectedLocations.$touch()"
+                  @blur="$v.selectedLocations.$touch()"
+                  :error-messages="locationErrors"
                 ></BaseAutocomplete>
               </v-col>
 
@@ -257,7 +257,7 @@ export default {
     selectedSpecimens: { required },
     selectedMedicalRequestTypes: { required },
     selectedProcessTimes: { required },
-    selectedWorkareas: { required },
+    selectedLocations: { required },
     clinical_information: { required },
   },
 
@@ -278,7 +278,7 @@ export default {
     loadingSpecimens: false,
     loadingMedicalRequestTypes: false,
     loadingProcessTimes: false,
-    loadingWorkareas: false,
+    loadingLocations: false,
 
     selectedAvailability: null,
     selectedAnalytes: null,
@@ -286,7 +286,7 @@ export default {
     selectedSpecimens: null,
     selectedMedicalRequestTypes: null,
     selectedProcessTimes: null,
-    selectedWorkareas: null,
+    selectedLocations: null,
 
     searchMedicalRequestTypes: null,
     searchSpecimens: null,
@@ -294,7 +294,7 @@ export default {
     searchAnalytes: null,
     searchAvailability: null,
     searchProcessTimes: null,
-    searchWorkareas: null,
+    searchLocations: null,
 
     itemsContainers: [],
     itemsMedicalRequestTypes: [],
@@ -302,7 +302,7 @@ export default {
     itemsSpecimens: [],
     itemsAnalytes: [],
     itemsAvailabilities: [],
-    itemsWorkareas: [],
+    itemsLocations: [],
   }),
 
   watch: {
@@ -313,7 +313,7 @@ export default {
 
       if (test) {
         try {
-          const response = await this.findLoincByCode(val);
+          const response = await this.findLoincByCodeFHIR(val);
 
           if (response.status === 404) {
             this.items = [{ long_common_name: "Código LOINC no encontrado" }];
@@ -357,11 +357,11 @@ export default {
     },
 
     selectedSpecimens() {
-      this.editedItem.specimen_id = this.selectedSpecimens.id;
+      this.editedItem.specimen_code_id = this.selectedSpecimens.id;
     },
 
-    selectedWorkareas() {
-      this.editedItem.workarea_id = this.selectedWorkareas.id;
+    selectedLocations() {
+      this.editedItem.location_id = this.selectedLocations.id;
     },
 
     clinical_information() {
@@ -402,8 +402,10 @@ export default {
         this.querySelectionsSpecimen(val);
     },
 
-    searchWorkarea(val) {
-      val && val !== this.selectedWorkarea && this.querySelectionsWorkarea(val);
+    searchLocations(val) {
+      val &&
+        val !== this.selectedLocations &&
+        this.querySelectionsLocation(val);
     },
   },
 
@@ -414,14 +416,14 @@ export default {
       _specimens: "specimen/specimens",
       _analytes: "analyte/analytes",
       _processTimes: "processTime/processTimes",
-      _workareas: "workarea/workareas",
+      _locations: "location/locations",
       _medicalRequestTypes: "medicalRequestType/medicalRequestTypes",
       _editedItem: "observationServiceRequest/editObservationServiceRequest",
     }),
 
     name() {
       if (!this.selectedAnalytes || !this.selectedSpecimens) return "";
-      return `${this.selectedAnalytes.name}, ${this.selectedSpecimens.name}`.toUpperCase();
+      return `${this.selectedAnalytes.name}, ${this.selectedSpecimens.display}`.toUpperCase();
     },
 
     availabilities() {
@@ -454,9 +456,9 @@ export default {
       return this._specimens.collection;
     },
 
-    workareas() {
-      if (!this._workareas) return [];
-      return this._workareas.collection;
+    locations() {
+      if (!this._locations) return [];
+      return this._locations.collection;
     },
 
     loincs() {
@@ -531,10 +533,10 @@ export default {
       return errors;
     },
 
-    workareaErrors() {
+    locationErrors() {
       const errors = [];
-      if (!this.$v.selectedWorkareas.$dirty) return errors;
-      !this.$v.selectedWorkareas.required &&
+      if (!this.$v.selectedLocations.$dirty) return errors;
+      !this.$v.selectedLocations.required &&
         errors.push(validationMessage.REQUIRED);
       return errors;
     },
@@ -543,8 +545,9 @@ export default {
   methods: {
     ...mapActions({
       findLoincByCode: "loinc/findLoincByCode",
+      findLoincByCodeFHIR: "loinc/findLoincByCodeFHIR",
       getAvailabilities: "availability/getItems",
-      getWorkareas: "workarea/getItems",
+      getLocations: "location/getItems",
       getContainers: "container/getItems",
       getSpecimens: "specimen/getItems",
       getAnalytes: "analyte/getItems",
@@ -600,8 +603,9 @@ export default {
 
       this.itemsSpecimens = this.specimens.filter((specimen) => {
         return (
-          (specimen.name || "").toLowerCase().indexOf((v || "").toLowerCase()) >
-          -1
+          (specimen.display || "")
+            .toLowerCase()
+            .indexOf((v || "").toLowerCase()) > -1
         );
       });
       this.loadingSpecimens = false;
@@ -668,18 +672,18 @@ export default {
       this.loadingProcessTimes = false;
     },
 
-    async querySelectionsWorkarea(v) {
-      this.loadingWorkareas = true;
+    async querySelectionsLocation(v) {
+      this.loadingLocations = true;
       // Simulated ajax query
-      await this.getWorkareas();
+      await this.getLocations();
 
-      this.itemsWorkareas = this.workareas.filter((workarea) => {
+      this.itemsLocations = this.locations.filter((location) => {
         return (
-          (workarea.name || "").toLowerCase().indexOf((v || "").toLowerCase()) >
+          (location.name || "").toLowerCase().indexOf((v || "").toLowerCase()) >
           -1
         );
       });
-      this.loadingWorkareas = false;
+      this.loadingLocations = false;
     },
   },
 };

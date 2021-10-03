@@ -35,42 +35,46 @@
         <v-icon v-else color="success">mdi-check-circle-outline</v-icon>
       </template>
       <template v-slot:item.actions="{ item }">
-        <BaseDatatableRowButton
-          title-tooltip="Ver"
-          icon="mdi-magnify mdi-rotate-90"
-          @click="searchItem(item)"
-          v-if="canShow"
-        />
-        <BaseDatatableRowButton
-          v-if="useSlugRoute && canUpdate"
-          title-tooltip="Editar"
-          icon="mdi-pencil"
-          @click="editItem(item)"
-          :to="{
-            name: 'editObservationServiceRequest',
-            params: { slug: item.slug },
-          }"
-        />
-        <BaseDatatableRowButton
-          v-else-if="canUpdate"
-          title-tooltip="Editar"
-          icon="mdi-pencil"
-          @click="editItem(item)"
-        />
+        <v-row>
+          <v-col>
+            <BaseDatatableRowButton
+              title-tooltip="Ver"
+              icon="mdi-magnify mdi-rotate-90"
+              @click="searchItem(item)"
+              v-if="canShow"
+            />
+            <BaseDatatableRowButton
+              v-if="useSlugRoute && canUpdate"
+              title-tooltip="Editar"
+              icon="mdi-pencil"
+              @click="editItem(item)"
+              :to="{
+                name: 'editObservationServiceRequest',
+                params: { slug: item.slug },
+              }"
+            />
+            <BaseDatatableRowButton
+              v-else-if="canUpdate"
+              title-tooltip="Editar"
+              icon="mdi-pencil"
+              @click="editItem(item)"
+            />
 
-        <BaseDatatableRowButton
-          title-tooltip="Eliminar"
-          icon="mdi-delete"
-          @click="deleteItem(item)"
-          v-if="canDelete"
-        />
+            <BaseDatatableRowButton
+              title-tooltip="Eliminar"
+              icon="mdi-delete"
+              @click="deleteItem(item)"
+              v-if="canDelete"
+            />
 
-        <BaseDatatableRowButton
-          v-if="extraButtons"
-          title-tooltip="Modificar permisos"
-          icon="mdi-shield-key"
-          @click="customMethod(item)"
-        />
+            <BaseAcceptButton
+              v-if="extraButtons"
+              label="Permisos"
+              @click="customMethod(item)"
+              x-small
+            />
+          </v-col>
+        </v-row>
       </template>
       <template v-slot:item.icon="{ item }">
         <v-chip small outlined class="ma-2" color="secondary" label>
@@ -89,23 +93,26 @@
           inset
         ></v-switch>
       </template>
+      <template v-slot:footer>
+        <v-toolbar color="grey lighten-5" elevation="0" tile>
+          <v-toolbar-title class="text-body-2"
+            >Filas por página: {{ pagination.itemsPerPage }}
+          </v-toolbar-title>
+          <v-spacer />
+          <v-toolbar-title class="text-body-2">
+            Total de registros: {{ pagination.itemsLength }}
+          </v-toolbar-title>
+          <v-spacer />
+          <v-toolbar-title class="text-body-2">
+            Mostrando: {{ pagination.pageStart + 1 }} a
+            {{ pagination.pageStop }} de
+            {{ pagination.itemsLength }}
+          </v-toolbar-title>
+          <v-spacer />
+          <BasePagination v-model="page" :length="pageCount" />
+        </v-toolbar>
+      </template>
     </v-data-table>
-    <v-toolbar elevation="1" tile>
-      <v-toolbar-title class="text-body-2"
-        >Filas por página: {{ pagination.itemsPerPage }}
-      </v-toolbar-title>
-      <v-spacer />
-      <v-toolbar-title class="text-body-2">
-        Total de registros: {{ pagination.itemsLength }}
-      </v-toolbar-title>
-      <v-spacer />
-      <v-toolbar-title class="text-body-2">
-        Mostrando: {{ pagination.pageStart + 1 }} a {{ pagination.pageStop }} de
-        {{ pagination.itemsLength }}
-      </v-toolbar-title>
-      <v-spacer />
-      <BasePagination v-model="page" :length="pageCount" />
-    </v-toolbar>
   </div>
 </template>
 

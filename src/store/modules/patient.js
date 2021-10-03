@@ -276,7 +276,7 @@ export default {
         console.log(data);
 
         commit("SET_PATIENTS", data);
-        console.log("found");
+        return data;
       } catch (e) {
         commit("SET_PATIENTS", []);
         return e.response;

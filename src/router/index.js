@@ -3,7 +3,7 @@ import VueRouter from "vue-router";
 import { settings } from "./settings";
 import { advancedSettings } from "./advancedSettings";
 
-import store from "../store";
+//import store from "../store";
 import { serviceRequest } from "./serviceRequest";
 
 Vue.use(VueRouter);
@@ -79,7 +79,6 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  store.dispatch("auth/attempt");
   const loggedIn = localStorage.getItem("access_token");
 
   if (to.matched.some((record) => record.meta.requiresAuth) && !loggedIn) {

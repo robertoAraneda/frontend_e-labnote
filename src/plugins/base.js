@@ -12,6 +12,7 @@ import BaseHeaderModule from "../components/base/BaseHeaderModule";
 import BasePagination from "../components/base/BasePagination";
 import BaseSwitch from "../components/base/BaseSwitch";
 import BaseSelect from "../components/base/BaseSelect";
+import { VList } from "vuetify/lib";
 
 Vue.component("BaseDatatable", BaseDatatable);
 Vue.component("BaseDialog", BaseDialog);
@@ -26,3 +27,4 @@ Vue.component("BaseHeaderModule", BaseHeaderModule);
 Vue.component("BasePagination", BasePagination);
 Vue.component("BaseSwitch", BaseSwitch);
 Vue.component("BaseSelect", BaseSelect);
+Vue.component("VList", VList);

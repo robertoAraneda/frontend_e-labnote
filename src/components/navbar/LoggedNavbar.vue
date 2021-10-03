@@ -31,9 +31,8 @@
     <v-avatar size="32" class="ml-12 mr-2" color="white">
       <v-icon color="primary">mdi-account</v-icon>
     </v-avatar>
-    <v-toolbar-title class="white--text body-1"
-      >{{ user.names }} {{ user.lastname }}
-      {{ user.mother_lastname }}</v-toolbar-title
+    <v-toolbar-title class="white--text body-1">
+      {{ loggedUserInfo }}</v-toolbar-title
     >
     <v-btn class="ml-n3" icon>
       <v-icon color="white">mdi-chevron-down</v-icon>
@@ -52,6 +51,12 @@ export default {
     ...mapGetters({
       user: "auth/user",
     }),
+
+    loggedUserInfo() {
+      if (!this.user) return "";
+      return `${this.user.names} ${this.user.lastname} ${this.user.mother_lastname}`;
+    },
+
     drawer: {
       get() {
         return this.$store.state.drawer;

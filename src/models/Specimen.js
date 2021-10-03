@@ -1,6 +1,6 @@
 export default class Specimen {
-  constructor(name = "", active = true) {
-    this.name = name;
+  constructor(display = "", active = true) {
+    this.display = display;
     this.active = active;
   }
 }

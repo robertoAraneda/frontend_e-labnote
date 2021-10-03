@@ -2,17 +2,8 @@
   <div>
     <v-toolbar color="white" flat>
       <v-toolbar-title>{{ module.name }}</v-toolbar-title>
-      <v-spacer />
-      <v-btn
-        depressed
-        rounded
-        dark
-        color="primary"
-        @click="handlePermissionsByModule"
-        >Cargar</v-btn
-      >
     </v-toolbar>
-    <v-card max-height="350" class="scroll">
+    <v-card>
       <v-card-title class="text-subtitle-2">
         <v-treeview
           v-model="selectedPermissions"
@@ -32,49 +23,47 @@
 import { mapActions, mapGetters } from "vuex";
 
 export default {
-  name: "TreviewPermission",
+  name: "TreeviewPermission",
   props: {
     module: Object,
-    role: Object,
+    //role: Object,
+    permissions: Array,
   },
   data: () => ({
     selectedPermissions: [],
-    permissions: [],
-    types: [],
+    // permissions: [],
+    // types: [],
   }),
-  async mounted() {},
-  watch: {
-    permissions(val) {
-      this.types = val
-        .reduce((acc, cur) => {
-          const type = cur.model;
-
-          if (!acc.includes(type)) acc.push(type);
-
-          return acc;
-        }, [])
-        .sort();
-      console.log(this.types);
-    },
+  async mounted() {
+    this.selectedPermissions = this.permissions.filter(
+      (permission) => permission.checkbox
+    );
   },
+
   computed: {
     ...mapGetters({
       permissionByRole: "role/permissionByRole",
+      modules: "laboratory/modulesByLaboratory",
     }),
     items() {
-      const children = this.types.map((type) => ({
+      return this.types.map((type) => ({
         id: type,
         name: this.getName(type),
         children: this.getChildren(type),
       }));
+    },
 
-      return [
-        {
-          id: 1,
-          name: this.module.name,
-          children,
-        },
-      ];
+    types() {
+      if (this.permissions.length === 0) return [];
+      return this.permissions
+        .reduce((acc, cur) => {
+          const type = cur.model;
+
+          if (!acc.includes(type)) acc.unshift(type);
+
+          return acc;
+        }, [])
+        .sort();
     },
   },
   methods: {
@@ -83,14 +72,19 @@ export default {
       getPermissionByRole: "role/getPermissionByRole",
     }),
     async handlePermissionsByModule() {
-      this.permissions = await this.getPermissionsByModule({
-        idRol: this.role.id,
-        idModule: this.module.id,
-      });
-      this.selectedPermissions = await this.getPermissionByRole({
-        idRole: this.role.id,
-        idModule: this.module.id,
-      });
+      this.types = this.permissions
+        .reduce((acc, cur) => {
+          const type = cur.model;
+
+          if (!acc.includes(type)) acc.unshift(type);
+
+          return acc;
+        }, [])
+        .sort();
+
+      this.selectedPermissions = this.permissions.filter(
+        (permission) => permission.checkbox
+      );
     },
     getChildren(type) {
       const permissions = [];

@@ -10,18 +10,29 @@ export const RoleHeaders = [
     sortable: true,
   },
   {
-    text: "Guard",
-    value: "guardName",
+    text: "Estado",
+    value: "active",
+    sortable: true,
+    // align: "center",
+  },
+  {
+    text: "Acciones",
+    value: "actions",
+    sortable: false,
+    groupable: false,
+    width: "250",
+  },
+];
+
+export const PermissionHeaders = [
+  {
+    text: "N°",
+    value: "id",
     sortable: true,
   },
   {
-    text: "Creado por",
-    value: "createdUser",
-    sortable: true,
-  },
-  {
-    text: "Fecha de creación",
-    value: "createdAt",
+    text: "Nombre",
+    value: "name",
     sortable: true,
   },
   {
@@ -35,7 +46,7 @@ export const RoleHeaders = [
     value: "actions",
     sortable: false,
     groupable: false,
-    width: "150",
+    width: "200",
   },
 ];
 

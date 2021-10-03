@@ -16,11 +16,28 @@ export const serviceRequest = [
       ),
   },
   {
+    path: "buscar-paciente",
+    name: "findPatient",
+    component: () =>
+      import(
+        /* webpackChunkName: "FindPatient" */ "../views/serviceRequest/FindPatient.vue"
+      ),
+  },
+  {
     path: "nueva-solicitud",
     name: "createServiceRequest",
     component: () =>
       import(
         /* webpackChunkName: "CreateServiceRequest" */ "../views/serviceRequest/CreateServiceRequest.vue"
+      ),
+  },
+
+  {
+    path: "buscar-solicitud",
+    name: "searchServiceRequest",
+    component: () =>
+      import(
+        /* webpackChunkName: "SearchServiceRequest" */ "../views/serviceRequest/SearchServiceRequest"
       ),
   },
 ];

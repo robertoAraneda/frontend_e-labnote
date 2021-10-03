@@ -50,19 +50,22 @@ import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "BaseIndex",
-  mounted() {
-    this.getModulesByLaboratory(1);
-  },
+
   computed: {
     ...mapGetters({
-      currentModule: "module/currentModule",
+      //currentModule: "module/currentModule",
+      menusByModules: "auth/currentMenusByModules",
+      namedPermissionsForMenu: "auth/namedPermissionsForMenu",
+      modules: "auth/modules",
+      currentModule: "auth/currentModule",
     }),
 
     menus() {
       if (!this.currentModule) return [];
-      return this.currentModule.menus;
+      return this.currentModule.map(({ menu }) => menu);
     },
   },
+
   methods: {
     ...mapActions({
       getModulesByLaboratory: "laboratory/getModulesByLaboratory",

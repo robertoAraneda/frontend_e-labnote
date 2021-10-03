@@ -10,6 +10,10 @@ export default {
     roleLoggedUser: null,
     laboratoryLoggedUser: null,
     permissionsLoggedUser: [],
+    modules: null,
+    modulesKeys: [],
+    currentMenusByModules: [],
+    currentModule: null,
   },
   mutations: {
     SET_LOGIN_USER: (state, user) => {
@@ -24,6 +28,19 @@ export default {
     SET_PERMISSION_USER: (state, payload) => {
       state.permissionsLoggedUser = payload;
     },
+    SET_MODULES_USER: (state, payload) => {
+      state.modules = payload;
+    },
+    SET_MODULES_USER_KEYS: (state, payload) => {
+      state.modulesKeys = payload;
+    },
+    SET_CURRENT_MENUS_BY_MODULES: (state, payload) => {
+      state.currentMenusByModules = payload;
+    },
+
+    SET_CURRENT_MODULE: (state, payload) => {
+      state.currentModule = payload;
+    },
   },
   getters: {
     authenticated: (state) => state.loginUser && state.access_token,
@@ -36,6 +53,10 @@ export default {
         return permission.name;
       });
     },
+    currentModule: (state) => state.currentModule,
+    currentMenusByModules: (state) => state.currentMenusByModules,
+    modules: (state) => state.modules,
+    modulesKeys: (state) => state.modulesKeys,
     namedPermissionsForMenu: (state) => {
       return state.permissionsLoggedUser
         .map((permission) => permission.name)
@@ -80,11 +101,27 @@ export default {
           httpRequest.setToken(localToken);
           const { data } = await httpRequest.getRequest(`${BASE_URL}/user`);
 
-          console.log(data);
-
           commit("SET_LOGIN_USER", data.user);
           commit("SET_ROLE_USER", data.role);
-          commit("SET_PERMISSION_USER", data.permissions);
+          commit("SET_PERMISSION_USER", data.permissions.collection);
+
+          const modules = data.permissions.collection.reduce(function (
+            accumulator,
+            object
+          ) {
+            if (object.module) {
+              let key = object["module"]["slug"];
+              if (!accumulator[key]) {
+                accumulator[key] = [];
+              }
+              accumulator[key].push(object);
+            }
+            return accumulator;
+          },
+          {});
+
+          commit("SET_MODULES_USER_KEYS", Object.keys(modules));
+          commit("SET_MODULES_USER", modules);
 
           return { success: true };
         } else {
@@ -94,13 +131,28 @@ export default {
           commit("SET_LOGIN_USER", null);
         }
       } catch (error) {
-        console.log(error.response);
+        console.log(error);
         localStorage.removeItem("access_token");
         localStorage.removeItem("user");
         commit("SET_ACCESS_TOKEN", null);
         commit("SET_LOGIN_USER", null);
       }
     },
+
+    setCurrentModule: ({ commit }, payload) => {
+      commit("SET_CURRENT_MODULE", payload);
+    },
+
+    allModulesWithPermissions: async ({ commit }, array) => {
+      const { data } = await httpRequest.postRequest(`${BASE_URL}/menus`, {
+        modules: array,
+      });
+
+      commit("SET_CURRENT_MENUS_BY_MODULES", data);
+
+      return data;
+    },
+
     logout: async ({ commit }) => {
       try {
         httpRequest.setToken(localStorage.getItem("access_token"));

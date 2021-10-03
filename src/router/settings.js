@@ -6,6 +6,14 @@ export const settings = [
       import(/* webpackChunkName: "base" */ "../views/settings/BaseIndex.vue"),
   },
   {
+    path: "prestaciones",
+    name: "serviceRequestObservationCode",
+    component: () =>
+      import(
+        /* webpackChunkName: "base" */ "../views/settings/ServiceRequestObservationCode.vue"
+      ),
+  },
+  {
     path: "examenes",
     component: () =>
       import(
