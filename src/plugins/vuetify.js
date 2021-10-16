@@ -29,6 +29,8 @@ const options = {
         white: "#fff",
         white_: "#F2F2F2",
         black: "#262223",
+        selected: "#ECEFF1",
+        // success: "#4DB6AC",
       },
     },
   },

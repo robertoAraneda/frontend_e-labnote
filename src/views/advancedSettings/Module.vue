@@ -21,7 +21,7 @@
       sort-by="id"
       title="Módulos"
     >
-      <template slot="top">
+      <template slot="searchButton">
         <BaseAcceptButton
           small
           @click="openDialog"

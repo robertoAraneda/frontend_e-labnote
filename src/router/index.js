@@ -5,6 +5,7 @@ import { advancedSettings } from "./advancedSettings";
 
 //import store from "../store";
 import { serviceRequest } from "./serviceRequest";
+import { appointment } from "./appointment";
 
 Vue.use(VueRouter);
 
@@ -65,6 +66,15 @@ const routes = [
           ),
         meta: { requiresAuth: true },
         children: [...advancedSettings],
+      },
+      {
+        path: "/modulos/agenda",
+        component: () =>
+          import(
+            /* webpackChunkName: "appointment" */ "../views/appointments/Index.vue"
+          ),
+        meta: { requiresAuth: true },
+        children: [...appointment],
       },
     ],
   },

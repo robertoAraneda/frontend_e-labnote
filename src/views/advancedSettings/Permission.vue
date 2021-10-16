@@ -44,7 +44,7 @@
 
         <BaseTextfield
           v-model="editedItem.guard_name"
-          label="Nombre"
+          label="Guard name"
           @input="$v.editedItem.guard_name.$touch()"
           @blur="$v.editedItem.guard_name.$touch()"
           :error-messages="nameGuardName"
@@ -53,7 +53,7 @@
 
         <BaseTextfield
           v-model="editedItem.model"
-          label="Nombre"
+          label="Modelo"
           @input="$v.editedItem.model.$touch()"
           @blur="$v.editedItem.model.$touch()"
           :error-messages="nameModel"
@@ -61,7 +61,7 @@
 
         <BaseTextfield
           v-model="editedItem.action"
-          label="Nombre"
+          label="Acción"
           @input="$v.editedItem.action.$touch()"
           @blur="$v.editedItem.action.$touch()"
           :error-messages="nameAction"
@@ -69,7 +69,7 @@
 
         <BaseTextfield
           v-model="editedItem.description"
-          label="Nombre"
+          label="Descripción"
           @input="$v.editedItem.description.$touch()"
           @blur="$v.editedItem.description.$touch()"
           :error-messages="nameDescription"

@@ -124,4 +124,12 @@ export const settings = [
         /* webpackChunkName: "containers" */ "../views/settings/Container.vue"
       ),
   },
+  {
+    path: "bloques",
+    name: "slots",
+    component: () =>
+      import(
+        /* webpackChunkName: "slots" */ "../views/settings/AppointmentSlot.vue"
+      ),
+  },
 ];

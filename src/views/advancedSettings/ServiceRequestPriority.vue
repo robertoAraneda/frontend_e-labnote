@@ -18,11 +18,7 @@
       sort-by="id"
     >
       <template slot="searchButton">
-        <BaseAcceptButton
-          small
-          @click="openDialog"
-          v-if="canCreate"
-        />
+        <BaseAcceptButton small @click="openDialog" v-if="canCreate" />
       </template>
     </BaseDatatable>
 
@@ -69,14 +65,13 @@
 </template>
 
 <script>
-import { ServiceRequestCategoryHeaders, ServiceRequestPriorityHeaders } from "../../helpers/headersDatatable";
+import { ServiceRequestPriorityHeaders } from "../../helpers/headersDatatable";
 import { SnackbarType } from "../../helpers/SnackbarMessages";
 import { validationMessage } from "../../helpers/ValidationMessage";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
-import ServiceRequestCategory from "../../models/ServiceRequestCategory";
 import ServiceRequestPriority from "../../models/ServiceRequestPriority";
 
 export default {
@@ -109,7 +104,8 @@ export default {
 
   computed: {
     ...mapGetters({
-      serviceRequestPriorities: "serviceRequestPriority/serviceRequestPriorities",
+      serviceRequestPriorities:
+        "serviceRequestPriority/serviceRequestPriorities",
       namedPermissions: "auth/namedPermissions",
     }),
 
@@ -128,7 +124,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.display.$dirty) return errors;
       !this.$v.editedItem.display.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -136,7 +132,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.code.$dirty) return errors;
       !this.$v.editedItem.code.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -171,7 +167,6 @@ export default {
       show: "serviceRequestPriority/showItem",
       changeStatus: "serviceRequestPriority/changeStatusItem",
     }),
-
 
     async save() {
       this.$v.$touch();

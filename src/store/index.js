@@ -33,6 +33,8 @@ import serviceRequestStatus from "./modules/serviceRequestStatus";
 import location from "./modules/location";
 import practitioner from "./modules/practitioner";
 import serviceRequest from "./modules/serviceRequest";
+import slot from "./modules/slot";
+import appointment from "./modules/appointment";
 
 Vue.use(Vuex);
 
@@ -88,5 +90,7 @@ export default new Vuex.Store({
     location,
     practitioner,
     serviceRequest,
+    slot,
+    appointment,
   },
 });

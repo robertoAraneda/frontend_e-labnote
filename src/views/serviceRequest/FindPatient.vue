@@ -74,7 +74,6 @@
         </v-tab-item>
       </v-tabs-items>
     </v-card>
-    <v-card elevation="0"> </v-card>
     <v-data-table
       v-if="patients.length !== 0"
       :headers="headers"

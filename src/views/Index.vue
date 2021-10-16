@@ -6,7 +6,7 @@
       v-if="$route.path !== '/'"
       :items="breadcrumbs"
     ></v-breadcrumbs>
-    <v-container>
+    <v-container fluid>
       <router-view />
     </v-container>
   </v-main>
