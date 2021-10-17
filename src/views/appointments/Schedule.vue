@@ -303,18 +303,22 @@ export default {
     this.scrollToTime();
     this.updateTime();
     this.getIdentifierTypes();
+    if (this.selectedDateWhenAppointment) {
+      this.focus = this.selectedDateWhenAppointment;
+    }
   },
-
-  watch: {},
 
   computed: {
     ...mapGetters({
       patients: "patient/patients",
       identifierTypes: "patient/identifierTypes",
+      selectedDateWhenAppointment: "appointment/selectedDateWhenAppointment",
     }),
+
     cal() {
       return this.ready ? this.$refs.calendar : null;
     },
+
     nowY() {
       return this.cal ? this.cal.timeToY(this.cal.times.now) + "px" : "-10px";
     },

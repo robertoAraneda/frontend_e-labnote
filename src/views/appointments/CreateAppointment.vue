@@ -488,10 +488,14 @@ export default {
       findPatientByIdentifier: "patient/findPatientByIdentifier",
       setPatient: "serviceRequest/setPatient",
       store: "appointment/postItem",
+      setSelectedDateWhenPatientIsAppointment:
+        "appointment/setSelectedDateWhenAppointment",
     }),
 
     async handleSaveAppointment() {
       await this.store(this.appointintment);
+      this.setSelectedDateWhenPatientIsAppointment(this.date);
+      await this.$router.push({ name: "schedules" });
     },
 
     colorRow(item) {
