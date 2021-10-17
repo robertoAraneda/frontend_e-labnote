@@ -282,6 +282,9 @@ export default {
         return e.response;
       }
     },
+    setPatients: ({ commit }, payload) => {
+      commit("SET_PATIENTS", payload);
+    },
 
     setEditedPatient: ({ commit }, payload) => {
       commit("SET_EDITED_PATIENT", payload);

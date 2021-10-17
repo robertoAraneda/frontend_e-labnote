@@ -404,6 +404,7 @@ export default {
   }),
 
   mounted() {
+    this.setSelectedPatients([]);
     this.getIdentifierTypes();
   },
 
@@ -490,11 +491,14 @@ export default {
       store: "appointment/postItem",
       setSelectedDateWhenPatientIsAppointment:
         "appointment/setSelectedDateWhenAppointment",
+      setSelectedPatients: "patient/setPatients",
     }),
 
     async handleSaveAppointment() {
       await this.store(this.appointintment);
       this.setSelectedDateWhenPatientIsAppointment(this.date);
+
+      this.setSelectedPatients([]);
       await this.$router.push({ name: "schedules" });
     },
 
@@ -508,7 +512,6 @@ export default {
     },
 
     async handleSelectedPatient(item) {
-      console.log(item);
       if (this.selectedPatient.length === 1) {
         this.selectedPatient = [];
       } else {

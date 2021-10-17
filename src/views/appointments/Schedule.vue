@@ -1,5 +1,9 @@
 <template>
-  <div>
+  <v-container>
+    <BaseHeaderModule
+      title="Módulo de visualización de horas agendadas."
+      subtitle="En este módulo podrás visualizar tu agenda."
+    />
     <v-row class="fill-height">
       <v-col>
         <v-sheet height="64">
@@ -215,7 +219,7 @@
         </v-sheet>
       </v-col>
     </v-row>
-  </div>
+  </v-container>
 </template>
 
 <script>

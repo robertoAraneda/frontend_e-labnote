@@ -474,6 +474,7 @@
 import { mapActions, mapGetters } from "vuex";
 import { groupBy } from "../../helpers/Functions";
 import moment from "moment";
+import Patient from "../../models/Patient";
 
 export default {
   name: "ServiceRequest",
@@ -500,6 +501,8 @@ export default {
       observations: [],
       specimens: [],
     },
+
+    defaultModel: new Patient(),
 
     selectedSpecimenCode: "TODAS LAS MUESTRAS",
     selectedObservations: [],
@@ -566,6 +569,9 @@ export default {
     this.getObservations();
     this.getSpecimenCodes();
     this.getServiceRequestStatuses();
+  },
+  beforeDestroy() {
+    this.setPatientSelected(this.defaultModel);
   },
 
   filters: {
@@ -729,6 +735,7 @@ export default {
       getSpecimenCodes: "specimen/getItems",
       getServiceRequestStatuses: "serviceRequest/getServiceRequestPriorities",
       create: "serviceRequest/postItem",
+      setPatientSelected: "serviceRequest/setPatient",
     }),
 
     async handleCreateServiceRequest() {
@@ -743,6 +750,10 @@ export default {
       this.serviceRequest.occurrence = this.date;
 
       await this.create(this.serviceRequest);
+
+      this.setPatientSelected(this.defaultModel);
+
+      await this.$router.push({ name: "findPatient" });
 
       console.log(this.serviceRequest);
     },
