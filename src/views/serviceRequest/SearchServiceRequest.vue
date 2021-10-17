@@ -105,6 +105,22 @@
           @click="openDetailServiceRequestDialog(item)"
           >Ver</v-btn
         >
+        <v-btn
+          x-small
+          rounded
+          color="secondary"
+          depressed
+          @click="handleViewPdf(item)"
+          >PDF</v-btn
+        >
+        <v-btn
+          x-small
+          rounded
+          color="seondary"
+          depressed
+          @click="handleGenerateCodbar(item)"
+          >Etiquetas</v-btn
+        >
       </template>
 
       <template v-slot:group.header="{ group, remove }">
@@ -311,6 +327,7 @@ export default {
     InformationServiceRequest,
   },
   data: () => ({
+    dialogPdf: false,
     tabs: null,
     panel: null,
     serviceRequestIdentifier: "12233446",
@@ -397,6 +414,8 @@ export default {
         "serviceRequest/getServiceRequestByIdentifier",
       findServiceRequestByPatient: "serviceRequest/getServiceRequestByPatient",
       getPatient: "patient/showItem",
+      viewPdf: "serviceRequest/viewPdf",
+      generateCodbar: "serviceRequest/generateCodbar",
     }),
 
     prueba(value) {
@@ -467,6 +486,46 @@ export default {
 
         this.patientsFound = true;
       }
+    },
+
+    async handleViewPdf(item) {
+      const response = await this.viewPdf(item);
+
+      console.log(response);
+
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: "application/pdf" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.href = url;
+      link.setAttribute("target", "_blank");
+      link.setAttribute("title", "prueba.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      this.dialogPdf = true;
+    },
+
+    async handleGenerateCodbar(item) {
+      const response = await this.generateCodbar(item);
+
+      console.log(response);
+
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: "application/pdf" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.href = url;
+      link.setAttribute("target", "_blank");
+      link.setAttribute("title", "prueba.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      this.dialogPdf = true;
     },
 
     async handleServiceRequestByPatient(value = null) {

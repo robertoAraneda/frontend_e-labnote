@@ -33,6 +33,38 @@ export default {
     patient: (state) => state.patient,
   },
   actions: {
+    viewPdf: async (_, payload) => {
+      const config = {
+        responseType: "blob",
+        headers: {
+          Accept: "application/pdf",
+          "Content-Type": "application/json",
+        },
+      };
+
+      return await httpRequest.getRequest(
+        `${BASE_URL}/view-pdf/${payload.id}`,
+        config,
+        true
+      );
+    },
+
+    generateCodbar: async (_, payload) => {
+      const config = {
+        responseType: "blob",
+        headers: {
+          Accept: "application/pdf",
+          "Content-Type": "application/json",
+        },
+      };
+
+      return await httpRequest.getRequest(
+        `${BASE_URL}/generate-codbar/${payload.id}`,
+        config,
+        true
+      );
+    },
+
     setPatient: ({ commit }, patient) => {
       commit("SET_PATIENT", patient);
     },
