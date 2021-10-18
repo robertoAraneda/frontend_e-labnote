@@ -9,10 +9,20 @@ export default {
     patient: null,
     serviceRequestPriorities: [],
     isLoadingServiceRequestPriorities: [],
+    isServiceRequestCreatedByAppointment: false,
+    selectedAppointment: null,
   },
   mutations: {
     SET_SERVICE_REQUEST: (state, payload) => {
       state.serviceRequest = payload;
+    },
+
+    SET_SELECTED_APPOINTMENT: (state, payload) => {
+      state.selectedAppointment = payload;
+    },
+
+    SET_IS_SERVICE_REQUEST_CREATED_BY_APPOINTMENT: (state, payload) => {
+      state.isServiceRequestCreatedByAppointment = payload;
     },
 
     SET_SERVICE_REQUEST_PRIORITIES: (state, payload) => {
@@ -31,8 +41,19 @@ export default {
     serviceRequest: (state) => state.serviceRequest,
     serviceRequestPriorities: (state) => state.serviceRequestPriorities,
     patient: (state) => state.patient,
+    isServiceRequestCreatedByAppointment: (state) =>
+      state.isServiceRequestCreatedByAppointment,
+    selectedAppointment: (state) => state.selectedAppointment,
   },
   actions: {
+    setSelectedAppointment: ({ commit }, payload) => {
+      commit("SET_SELECTED_APPOINTMENT", payload);
+    },
+
+    setIsServiceRequestCreatedByAppointment: ({ commit }, payload) => {
+      commit("SET_IS_SERVICE_REQUEST_CREATED_BY_APPOINTMENT", payload);
+    },
+
     viewPdf: async (_, payload) => {
       const config = {
         responseType: "blob",

@@ -542,8 +542,6 @@ export default {
           };
         }
       );
-
-      console.log(groupBy(this.defaultObservations, "container_id"));
     },
   },
 
@@ -588,6 +586,9 @@ export default {
       _specimenCodes: "specimen/specimens",
       _serviceRequestPriorities: "serviceRequest/serviceRequestPriorities",
       patient: "serviceRequest/patient",
+      isServiceRequestCreatedByAppointment:
+        "serviceRequest/isServiceRequestCreatedByAppointment",
+      selectedAppointment: "serviceRequest/selectedAppointment",
     }),
 
     computedDateFormatted() {
@@ -753,9 +754,11 @@ export default {
 
       this.setPatientSelected(this.defaultModel);
 
-      await this.$router.push({ name: "findPatient" });
-
-      console.log(this.serviceRequest);
+      if (this.isServiceRequestCreatedByAppointment) {
+        await this.$router.push({ name: "schedules" });
+      } else {
+        await this.$router.push({ name: "findPatient" });
+      }
     },
 
     formatDate(date) {

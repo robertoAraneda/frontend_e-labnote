@@ -429,6 +429,8 @@ export default {
     ...mapGetters({
       patients: "patient/patients",
       identifierTypes: "patient/identifierTypes",
+      isServiceRequestCreatedByAppointment:
+        "serviceRequest/isServiceRequestCreatedByAppointment",
     }),
 
     availableSlot() {

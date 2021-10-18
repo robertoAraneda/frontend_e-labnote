@@ -89,30 +89,37 @@
             v-model="selectedOpen"
             :close-on-content-click="false"
             :activator="selectedElement"
-            offset-x
+            min-width="350"
+            max-width="500"
           >
-            <v-card color="grey lighten-4" min-width="350px" flat>
+            <v-card color="grey lighten-4" flat>
               <v-toolbar :color="selectedEvent.color" dark>
-                <v-btn icon>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
                 <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-btn icon>
-                  <v-icon>mdi-heart</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
               </v-toolbar>
               <v-card-text>
-                <span v-html="selectedEvent.details"></span>
+                <v-row>
+                  <v-col
+                    ><v-btn
+                      depressed
+                      rounded
+                      color="secondary"
+                      block
+                      @click="handleFinishAppointment"
+                      >Terminar atención</v-btn
+                    ></v-col
+                  >
+                  <v-col
+                    ><v-btn
+                      depressed
+                      rounded
+                      color="primary"
+                      block
+                      @click="handleCreateServiceRequest"
+                      >Crear solicitud</v-btn
+                    ></v-col
+                  >
+                </v-row>
               </v-card-text>
-              <v-card-actions>
-                <v-btn text color="secondary" @click="selectedOpen = false">
-                  Cancel
-                </v-btn>
-              </v-card-actions>
             </v-card>
           </v-menu>
           <v-dialog max-width="750" v-model="drawer">
@@ -224,6 +231,8 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import moment from "moment";
+import { EnumAppointmentStatus } from "../../enums/EnumAppointmentStatus";
 
 export default {
   name: "schedule",
@@ -310,6 +319,8 @@ export default {
     if (this.selectedDateWhenAppointment) {
       this.focus = this.selectedDateWhenAppointment;
     }
+
+    this.updateEvent();
   },
 
   computed: {
@@ -333,12 +344,53 @@ export default {
       findPatientByNames: "patient/findPatientByNames",
       getIdentifierTypes: "patient/getIdentifierTypes",
       findPatientByIdentifier: "patient/findPatientByIdentifier",
+      findPatientById: "patient/showItem",
       setPatient: "serviceRequest/setPatient",
       getAppointmentsByDate: "appointment/getAppointmentsByDate",
+      updateAppointment: "appointment/putItem",
+      setIsServiceRequestCreatedByAppointment:
+        "serviceRequest/setIsServiceRequestCreatedByAppointment",
+      setSelectedAppointment: "serviceRequest/setSelectedAppointment",
     }),
 
-    test_(value) {
-      console.log(value);
+    async handleFinishAppointment() {
+      const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
+      const start = this.selectedEvent.detail.start || currentDate;
+
+      const diff = moment().diff(moment(start), "minutes");
+
+      await this.updateAppointment({
+        id: this.selectedEvent.detail.id,
+        start: this.selectedEvent.detail.start || currentDate,
+        end: currentDate,
+        minutes_duration: diff,
+        status: EnumAppointmentStatus.CANCELLED,
+      });
+
+      await this.updateEvent();
+
+      this.selectedOpen = false;
+    },
+
+    async handleCreateServiceRequest() {
+      this.setIsServiceRequestCreatedByAppointment(true);
+      this.setSelectedAppointment(this.selectedEvent.detail);
+
+      const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
+
+      const { data } = await this.findPatientById(
+        this.selectedEvent.detail.patient._links.self.href
+      );
+
+      this.setPatient(data);
+
+      await this.updateAppointment({
+        id: this.selectedEvent.detail.id,
+        start: currentDate,
+        status: EnumAppointmentStatus.ARRIVED,
+      });
+
+      await this.$router.push({ name: "createServiceRequest" });
     },
 
     transformTdate(value) {
@@ -399,20 +451,31 @@ export default {
     },
 
     updateRange(events) {
+      console.log(events);
       this.events = events.map((event) => {
-        const name = `${event.patient[0].given} ${event.patient[0].father_family} ${event.patient[0].mother_family} (${event.status.display})`;
+        const name = `${event.patient.name[0].given} ${event.patient.name[0].father_family} ${event.patient.name[0].mother_family} (${event.status.display})`;
         return {
+          id: event.patient_id,
           name: name,
           start: new Date(this.transformTdate(event.slot.start)),
           end: new Date(this.transformTdate(event.slot.end)),
-          color: "warning",
+          color: this.setAppointmentColor(event.status.code),
           timed: true,
           category: this.categories[0],
+          detail: event,
         };
       });
     },
-    rnd(a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a;
+
+    setAppointmentColor(status) {
+      switch (status) {
+        case "pending":
+          return "warning";
+        case "arrived":
+          return "success";
+        case "cancelled":
+          return "error";
+      }
     },
 
     getCurrentTime() {
@@ -421,10 +484,7 @@ export default {
         : 0;
     },
     scrollToTime() {
-      const time = this.getCurrentTime();
-      const first = Math.max(0, time - (time % 30) - 30);
-
-      this.cal.scrollToTime(first);
+      this.cal.scrollToTime(0);
     },
     updateTime() {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
