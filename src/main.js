@@ -5,6 +5,7 @@ import store from "./store";
 import vuetify from "./plugins/vuetify";
 import "./services/subscriber";
 import "./plugins/base";
+//import "./services/pusher.config";
 
 Vue.config.productionTip = false;
 

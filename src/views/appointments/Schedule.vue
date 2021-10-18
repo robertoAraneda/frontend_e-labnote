@@ -70,12 +70,13 @@
             category-show-all
             :categories="categories"
             locale="es"
-            interval-height="120"
+            interval-height="300"
             :weekdays="weekdays"
             :short-weekdays="false"
             :short-intervals="false"
-            first-interval="8"
-            interval-count="10"
+            :show-week="true"
+            first-interval="7"
+            interval-count="11"
           >
             <template v-slot:day-body="{ date, week }">
               <div
@@ -97,6 +98,108 @@
                 <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
               </v-toolbar>
               <v-card-text>
+                <v-card
+                  v-if="selectedPatient"
+                  elevation="0"
+                  max-width="500"
+                  min-height="400"
+                  class="px-3"
+                  color="grey lighten-4"
+                >
+                  <v-card-text class="grey-text">
+                    <v-list class="ml-n6 mr-n5 grey lighten-4" two-line>
+                      <v-list-item>
+                        <v-list-item-icon>
+                          <v-icon color="primary"
+                            >mdi-account-box-outline</v-icon
+                          ></v-list-item-icon
+                        >
+
+                        <v-list-item-content>
+                          <v-list-item-title>
+                            {{ identifier.value }}
+                          </v-list-item-title>
+                          <v-list-item-subtitle>{{
+                            identifier.identifierType.display
+                          }}</v-list-item-subtitle>
+                        </v-list-item-content>
+                        <v-list-item-action class="mt-n2"
+                          >{{ age }} años</v-list-item-action
+                        >
+                      </v-list-item>
+
+                      <v-divider inset></v-divider>
+                      <v-list-item
+                        v-for="(phone, index) in telecomsPhone"
+                        :key="phone.id"
+                      >
+                        <v-list-item-icon v-if="index === 0">
+                          <v-icon color="primary"> mdi-phone </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-action v-else></v-list-item-action>
+
+                        <v-list-item-content>
+                          <v-list-item-title
+                            v-html="phone.value"
+                          ></v-list-item-title>
+                          <v-list-item-subtitle
+                            v-html="phone.system"
+                          ></v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+
+                      <v-divider inset></v-divider>
+
+                      <v-list-item
+                        v-for="(email, index) in telecomsEmail"
+                        :key="email.value"
+                      >
+                        <v-list-item-icon v-if="index === 0">
+                          <v-icon color="primary"> mdi-email </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-action v-else></v-list-item-action>
+
+                        <v-list-item-content>
+                          <v-list-item-title
+                            v-html="email.value"
+                          ></v-list-item-title>
+                          <v-list-item-subtitle
+                            v-html="email.system"
+                          ></v-list-item-subtitle>
+                        </v-list-item-content>
+                      </v-list-item>
+
+                      <v-divider inset></v-divider>
+
+                      <v-list-item
+                        v-for="(address, index) in addresses"
+                        :key="address.text"
+                      >
+                        <v-list-item-icon v-if="index === 0">
+                          <v-icon color="primary"> mdi-map-marker </v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-action v-else></v-list-item-action>
+                        <v-list-item-content>
+                          <v-list-item-title
+                            v-html="address.text"
+                          ></v-list-item-title>
+                          <v-list-item-subtitle
+                            >{{ address.city_name }},
+                            {{ address.state_name }}</v-list-item-subtitle
+                          >
+                        </v-list-item-content>
+                      </v-list-item>
+                    </v-list>
+                  </v-card-text>
+                </v-card>
+                <div class="text-center" v-else>
+                  <v-progress-circular
+                    :size="70"
+                    :width="7"
+                    color="primary"
+                    indeterminate
+                  ></v-progress-circular>
+                </div>
                 <v-row>
                   <v-col
                     ><v-btn
@@ -122,107 +225,6 @@
               </v-card-text>
             </v-card>
           </v-menu>
-          <v-dialog max-width="750" v-model="drawer">
-            <v-card>
-              <v-card elevation="0">
-                <v-tabs grow v-model="tabs" slider-color="white">
-                  <v-tabs-slider></v-tabs-slider>
-                  <v-tab href="#mobile-tabs-5-1">
-                    POR NÚMERO DE IDENTIFICACIÓN
-                  </v-tab>
-
-                  <v-tab href="#mobile-tabs-5-2">
-                    POR DATOS DEMOGRÁFICOS
-                  </v-tab>
-                </v-tabs>
-
-                <v-tabs-items v-model="tabs">
-                  <v-tab-item value="mobile-tabs-5-1">
-                    <v-card flat>
-                      <v-card-text>
-                        <v-row>
-                          <v-col cols="12" sm="4">
-                            <BaseSelect
-                              :items="identifierTypes"
-                              item-text="display"
-                              item-value="id"
-                              label="Tipo documento"
-                            />
-                          </v-col>
-                          <v-col cols="12" sm="4">
-                            <BaseTextfield
-                              v-model="editedItem.father_family"
-                              label="Primer apellido"
-                            />
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12">
-                            <base-accept-button
-                              label="Buscar"
-                              class="float-right mb-3"
-                              @click="findPatientByNames(editedItem)"
-                            ></base-accept-button>
-                          </v-col>
-                        </v-row>
-                      </v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                  <v-tab-item value="mobile-tabs-5-2">
-                    <v-card flat>
-                      <v-card-text>
-                        <v-row>
-                          <v-col cols="12" sm="4">
-                            <BaseTextfield
-                              v-model="editedItem.given"
-                              label="Nombres"
-                            />
-                          </v-col>
-                          <v-col cols="12" sm="4">
-                            <BaseTextfield
-                              v-model="editedItem.father_family"
-                              label="Primer apellido"
-                            />
-                          </v-col>
-                          <v-col cols="12" sm="4">
-                            <BaseTextfield
-                              v-model="editedItem.mother_family"
-                              label="Segundo apellido"
-                            />
-                          </v-col>
-                        </v-row>
-                        <v-row>
-                          <v-col cols="12">
-                            <base-accept-button
-                              label="Buscar"
-                              class="float-right mb-3"
-                              @click="findPatientByNames(editedItem)"
-                            ></base-accept-button>
-                          </v-col>
-                        </v-row>
-                      </v-card-text>
-                    </v-card>
-                  </v-tab-item>
-                </v-tabs-items>
-              </v-card>
-              <v-data-table
-                v-if="patients.length !== 0 && !selectedPatient"
-                :headers="headers"
-                :items="patients"
-                class="elevation-0 mt-3"
-                hide-default-footer
-              >
-                <template v-slot:item.options="{ item }">
-                  <base-accept-button
-                    @click="handleSelectedPatient(item)"
-                    small
-                    label="Seleccionar"
-                    class="float-right"
-                  ></base-accept-button>
-                </template>
-              </v-data-table>
-            </v-card>
-          </v-dialog>
         </v-sheet>
       </v-col>
     </v-row>
@@ -233,19 +235,19 @@
 import { mapActions, mapGetters } from "vuex";
 import moment from "moment";
 import { EnumAppointmentStatus } from "../../enums/EnumAppointmentStatus";
+import Pusher from "pusher-js"; // import Pusher
 
 export default {
   name: "schedule",
 
   data: () => ({
     tabs: null,
+    messages: [],
     editedItem: {
       given: "",
       father_family: "araneda",
       mother_family: "",
     },
-
-    selectedPatient: null,
 
     headers: [
       {
@@ -310,6 +312,11 @@ export default {
     ],
     ready: false,
   }),
+
+  created() {
+    this.setPatient(null);
+    this.subscribe();
+  },
   mounted() {
     this.$refs.calendar.checkChange();
     this.ready = true;
@@ -323,12 +330,51 @@ export default {
     this.updateEvent();
   },
 
+  watch: {
+    selectedOpen() {
+      if (!this.selectedOpen) {
+        this.setPatient(null);
+      }
+    },
+  },
+
   computed: {
     ...mapGetters({
       patients: "patient/patients",
       identifierTypes: "patient/identifierTypes",
       selectedDateWhenAppointment: "appointment/selectedDateWhenAppointment",
+      selectedPatient: "serviceRequest/patient",
     }),
+
+    telecomsEmail() {
+      if (!this.selectedPatient) return [];
+      return this.selectedPatient.telecom.filter(
+        (telecom) => telecom.system === "Email"
+      );
+    },
+    telecomsPhone() {
+      if (!this.selectedPatient) return [];
+      return this.selectedPatient.telecom.filter(
+        (telecom) => telecom.system === "Celular"
+      );
+    },
+    addresses() {
+      if (!this.selectedPatient) return [];
+      return this.selectedPatient.address;
+    },
+    identifier() {
+      if (!this.selectedPatient) return null;
+      return this.selectedPatient.identifier[0];
+    },
+    age() {
+      if (!this.selectedPatient) return null;
+
+      const currentDate = moment();
+
+      const age = moment(this.selectedPatient.birthdate);
+
+      return currentDate.diff(age, "year", false);
+    },
 
     cal() {
       return this.ready ? this.$refs.calendar : null;
@@ -352,6 +398,20 @@ export default {
         "serviceRequest/setIsServiceRequestCreatedByAppointment",
       setSelectedAppointment: "serviceRequest/setSelectedAppointment",
     }),
+
+    subscribe() {
+      Pusher.logToConsole = true;
+      let pusher = new Pusher(process.env.VUE_APP_PUSHER_KEY, {
+        cluster: process.env.VUE_APP_PUSHER_CLUSTER,
+      });
+
+      pusher.subscribe("patient");
+      pusher.bind("patient_arrived", (data) => {
+        this.updateEvent();
+        console.log("data", data);
+        this.messages.unshift(data);
+      });
+    },
 
     async handleFinishAppointment() {
       const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
@@ -378,12 +438,6 @@ export default {
 
       const currentDate = moment().format("YYYY-MM-DD HH:mm:ss");
 
-      const { data } = await this.findPatientById(
-        this.selectedEvent.detail.patient._links.self.href
-      );
-
-      this.setPatient(data);
-
       await this.updateAppointment({
         id: this.selectedEvent.detail.id,
         start: currentDate,
@@ -399,9 +453,6 @@ export default {
       return new Date(`${date}T${time}`);
     },
 
-    async handleSelectedPatient(item) {
-      this.selectedPatient = item;
-    },
     viewDay({ date }) {
       if (this.type !== "category") {
         this.focus = date;
@@ -420,7 +471,7 @@ export default {
     next() {
       this.$refs.calendar.next();
     },
-    showEvent({ nativeEvent, event }) {
+    async showEvent({ nativeEvent, event }) {
       const open = () => {
         this.selectedEvent = event;
         this.selectedElement = nativeEvent.target;
@@ -434,6 +485,10 @@ export default {
         requestAnimationFrame(() => requestAnimationFrame(() => open()));
       } else {
         open();
+        const { data } = await this.findPatientById(
+          this.selectedEvent.detail.patient._links.self.href
+        );
+        this.setPatient(data);
       }
 
       nativeEvent.stopPropagation();
@@ -484,7 +539,7 @@ export default {
         : 0;
     },
     scrollToTime() {
-      this.cal.scrollToTime(0);
+      this.cal.scrollToTime("08:00");
     },
     updateTime() {
       setInterval(() => this.cal.updateTimes(), 60 * 1000);
@@ -493,7 +548,18 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+.v-calendar .v-event-timed {
+  position: absolute;
+  overflow: hidden;
+  white-space: normal !important;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 4px;
+  pointer-events: all;
+}
+
 .v-current-time {
   height: 2px;
   background-color: #ea4335;
