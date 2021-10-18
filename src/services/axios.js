@@ -23,7 +23,10 @@ const postRequest = async (resource, data, headers = null) => {
   });
 };
 
-const getRequest = async (resource, headers) => {
+const getRequest = async (resource, headers, blob = false) => {
+  if (blob) {
+    return await httpInstance.get(`${resource}`, headers);
+  }
   return await httpInstance.get(`${resource}`, {
     headers: headers || defaultHeaders,
   });

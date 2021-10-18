@@ -109,6 +109,8 @@ export default {
     selectedSpecimenCode: "TODAS LAS MUESTRAS",
     selectedObservations: [],
     searchObservation: "",
+
+    defaultItem: [],
     headers: [
       {
         text: "N° Documento",
@@ -139,6 +141,11 @@ export default {
 
   mounted() {
     this.getIdentifierTypes();
+    this.setPatient();
+  },
+
+  beforeDestroy() {
+    this.setPatients([]);
   },
 
   computed: {
@@ -154,14 +161,13 @@ export default {
       getIdentifierTypes: "patient/getIdentifierTypes",
       findPatientByIdentifier: "patient/findPatientByIdentifier",
       setPatient: "serviceRequest/setPatient",
+      setPatients: "patient/setPatients",
     }),
 
     async handleSelectedPatient(item) {
       await this.setPatient(item);
 
-      console.log(item);
       this.$nextTick(() => {
-        //this.dialog = true;
         this.$router.push({ name: "createServiceRequest" });
       });
     },

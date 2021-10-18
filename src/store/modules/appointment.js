@@ -6,14 +6,19 @@ export default {
   namespaced: true,
   state: {
     appointments: [],
+    selectedDateWhenAppointment: null,
   },
   mutations: {
     SET_APPOINTMENTS: (state, payload) => {
       state.appointments = payload;
     },
+    SET_SELECTED_DATE_WHEN_APPOINTMENT: (state, payload) => {
+      state.selectedDateWhenAppointment = payload;
+    },
   },
   getters: {
     appointments: (state) => state.appointments,
+    selectedDateWhenAppointment: (state) => state.selectedDateWhenAppointment,
   },
   actions: {
     showItem: async (_, url) => {
@@ -22,6 +27,10 @@ export default {
       } catch (e) {
         return e.response;
       }
+    },
+
+    setSelectedDateWhenAppointment: ({ commit }, payload) => {
+      commit("SET_SELECTED_DATE_WHEN_APPOINTMENT", payload);
     },
 
     getPaginatedItems: async (_, payload) => {

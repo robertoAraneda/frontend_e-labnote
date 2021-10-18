@@ -474,6 +474,7 @@
 import { mapActions, mapGetters } from "vuex";
 import { groupBy } from "../../helpers/Functions";
 import moment from "moment";
+import Patient from "../../models/Patient";
 
 export default {
   name: "ServiceRequest",
@@ -500,6 +501,8 @@ export default {
       observations: [],
       specimens: [],
     },
+
+    defaultModel: new Patient(),
 
     selectedSpecimenCode: "TODAS LAS MUESTRAS",
     selectedObservations: [],
@@ -539,8 +542,6 @@ export default {
           };
         }
       );
-
-      console.log(groupBy(this.defaultObservations, "container_id"));
     },
   },
 
@@ -567,6 +568,9 @@ export default {
     this.getSpecimenCodes();
     this.getServiceRequestStatuses();
   },
+  beforeDestroy() {
+    this.setPatientSelected(this.defaultModel);
+  },
 
   filters: {
     transformDates(date) {
@@ -582,6 +586,9 @@ export default {
       _specimenCodes: "specimen/specimens",
       _serviceRequestPriorities: "serviceRequest/serviceRequestPriorities",
       patient: "serviceRequest/patient",
+      isServiceRequestCreatedByAppointment:
+        "serviceRequest/isServiceRequestCreatedByAppointment",
+      selectedAppointment: "serviceRequest/selectedAppointment",
     }),
 
     computedDateFormatted() {
@@ -729,6 +736,7 @@ export default {
       getSpecimenCodes: "specimen/getItems",
       getServiceRequestStatuses: "serviceRequest/getServiceRequestPriorities",
       create: "serviceRequest/postItem",
+      setPatientSelected: "serviceRequest/setPatient",
     }),
 
     async handleCreateServiceRequest() {
@@ -744,7 +752,13 @@ export default {
 
       await this.create(this.serviceRequest);
 
-      console.log(this.serviceRequest);
+      this.setPatientSelected(this.defaultModel);
+
+      if (this.isServiceRequestCreatedByAppointment) {
+        await this.$router.push({ name: "schedules" });
+      } else {
+        await this.$router.push({ name: "findPatient" });
+      }
     },
 
     formatDate(date) {

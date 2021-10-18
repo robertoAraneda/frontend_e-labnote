@@ -1,9 +1,5 @@
 <template>
   <div>
-    <BaseHeaderModule
-      title="Admisión de pacientes"
-      subtitle=" En éste módulo podrás gestionar los pacientes de E-labNote."
-    />
     <v-overlay :value="dial">
       <v-card color="white" width="600">
         <v-card-text class="text-center">
@@ -67,33 +63,39 @@
         </v-card-actions>
       </v-card>
     </v-overlay>
+    <v-container>
+      <BaseHeaderModule
+        title="Admisión de pacientes"
+        subtitle=" En éste módulo podrás gestionar los pacientes de E-labNote."
+      />
+      <v-sheet :elevation="elevation" rounded :class="classSheet">
+        <IdentifierPatientList />
+      </v-sheet>
 
-    <v-sheet :elevation="elevation" rounded :class="classSheet">
-      <IdentifierPatientList />
-    </v-sheet>
+      <v-sheet :elevation="elevation" rounded :class="classSheet">
+        <DemographicPatient />
+      </v-sheet>
 
-    <v-sheet :elevation="elevation" rounded :class="classSheet">
-      <DemographicPatient />
-    </v-sheet>
+      <v-sheet :elevation="elevation" rounded :class="classSheet">
+        <AddressPatientList />
+      </v-sheet>
 
-    <v-sheet :elevation="elevation" rounded :class="classSheet">
-      <AddressPatientList />
-    </v-sheet>
+      <v-sheet :elevation="elevation" rounded :class="classSheet">
+        <ContactPointList />
+      </v-sheet>
 
-    <v-sheet :elevation="elevation" rounded :class="classSheet">
-      <ContactPointList />
-    </v-sheet>
+      <v-sheet :elevation="elevation" rounded :class="classSheet">
+        <ContactPatientList />
+      </v-sheet>
 
-    <v-sheet :elevation="elevation" rounded :class="classSheet">
-      <ContactPatientList />
-    </v-sheet>
-
-    <v-sheet :elevation="elevation" rounded>
-      <v-card-actions>
-        <v-btn text> Cancelar </v-btn>
-        <v-btn color="primary" @click="savePatient"> Guardar </v-btn>
-      </v-card-actions>
-    </v-sheet>
+      <v-sheet :elevation="elevation" rounded>
+        <v-card-actions>
+          <v-spacer />
+          <v-btn text> Cancelar </v-btn>
+          <v-btn color="primary" @click="savePatient"> Guardar </v-btn>
+        </v-card-actions>
+      </v-sheet>
+    </v-container>
   </div>
 </template>
 
@@ -147,6 +149,7 @@ export default {
     states: [],
     cities: [],
     editedItem: new Patient(),
+    defaultPatient: new Patient(),
     isEditedPatient: false,
     editedPatientId: -1,
   }),
@@ -239,6 +242,8 @@ export default {
       } else {
         this.store(this.editedPatient);
       }
+
+      this.setEditedPatient(this.defaultPatient);
     },
 
     save(date) {
