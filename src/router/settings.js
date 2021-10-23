@@ -113,7 +113,7 @@ export const settings = [
     name: "specimens",
     component: () =>
       import(
-        /* webpackChunkName: "specimens" */ "../views/settings/Specimen.vue"
+        /* webpackChunkName: "specimens" */ "../views/settings/SpecimenCode.vue"
       ),
   },
   {

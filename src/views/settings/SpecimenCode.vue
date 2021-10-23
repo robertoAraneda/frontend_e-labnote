@@ -101,7 +101,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      specimens: "specimen/specimens",
+      specimens: "specimenCode/specimens",
       namedPermissions: "auth/namedPermissions",
     }),
 
@@ -126,34 +126,34 @@ export default {
 
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.create");
+      return this.namedPermissions.includes("specimenCode.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.update");
+      return this.namedPermissions.includes("specimenCode.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.delete");
+      return this.namedPermissions.includes("specimenCode.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.show");
+      return this.namedPermissions.includes("specimenCode.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "specimen/getItems",
-      indexPaginate: "specimen/getPaginatedItems",
-      store: "specimen/postItem",
-      update: "specimen/putItem",
-      delete: "specimen/deleteItem",
-      show: "specimen/showItem",
-      changeStatus: "specimen/changeStatusItem",
+      index: "specimenCode/getItems",
+      indexPaginate: "specimenCode/getPaginatedItems",
+      store: "specimenCode/postItem",
+      update: "specimenCode/putItem",
+      delete: "specimenCode/deleteItem",
+      show: "specimenCode/showItem",
+      changeStatus: "specimenCode/changeStatusItem",
     }),
 
     async save() {

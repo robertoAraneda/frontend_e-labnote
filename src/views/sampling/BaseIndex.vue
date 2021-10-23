@@ -1,9 +1,10 @@
 <template>
-  <v-container fluid>
+  <div>
     <BaseHeaderModule
-      title="Módulo de configuración."
-      subtitle=" En éste módulo podrás gestionar los recursos de E-labNote."
+      title="Módulo de toma de muestras."
+      subtitle="En éste módulo podrás gestionar la toma de muestra de tus pacientes."
     />
+
     <v-row class="mt-12">
       <v-col
         v-for="menu in menus"
@@ -40,7 +41,7 @@
         </v-hover>
       </v-col>
     </v-row>
-  </v-container>
+  </div>
 </template>
 
 <script>

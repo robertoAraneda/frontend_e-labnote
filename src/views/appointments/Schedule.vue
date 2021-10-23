@@ -317,12 +317,14 @@ export default {
     this.setPatient(null);
     this.subscribe();
   },
+
   mounted() {
     this.$refs.calendar.checkChange();
     this.ready = true;
     this.scrollToTime();
     this.updateTime();
     this.getIdentifierTypes();
+    this.setPatient(null);
     if (this.selectedDateWhenAppointment) {
       this.focus = this.selectedDateWhenAppointment;
     }

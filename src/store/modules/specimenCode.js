@@ -1,6 +1,6 @@
 import httpRequest from "../../services/axios";
 
-const BASE_URL = "/api/v1/specimens";
+const BASE_URL = "/api/v1/specimen-codes";
 
 export default {
   namespaced: true,
@@ -33,21 +33,6 @@ export default {
       return await httpRequest.getRequest(`${BASE_URL}?page=${payload.page}`);
     },
 
-    /*
-    getSpecimenByAccessionIdentifier: async (_, payload) => {
-      return await httpRequest.getRequest(
-        `${BASE_URL}/search?accession_identifier=${payload.accession_identifier}`
-      );
-    },
-
-
-     */
-    updateDateCollection: async (_, payload) => {
-      return await httpRequest.getRequest(
-        `${BASE_URL}/tracking?type=collected_at&accession_identifier=${payload.accession_identifier}&service_request_id=${payload.service_request_id}`
-      );
-    },
-
     getItems: async ({ commit }) => {
       try {
         commit("SET_SPECIMENS_LOADING", true);
@@ -73,7 +58,7 @@ export default {
     putItem: async (_, payload) => {
       try {
         return await httpRequest.putRequest(
-          `${BASE_URL}/${payload.id}?test=test`,
+          `${BASE_URL}/${payload.id}`,
           payload
         );
       } catch (e) {

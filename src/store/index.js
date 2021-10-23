@@ -15,7 +15,7 @@ import container from "./modules/container";
 import availability from "./modules/availability";
 import medicalRequestType from "./modules/medicalRequestType";
 import processTime from "./modules/processTime";
-import specimen from "./modules/specimen";
+import specimenCode from "./modules/specimenCode";
 import responseTime from "./modules/responseTime";
 import sampleQuantity from "./modules/sampleQuantity";
 import samplingCondition from "./modules/samplingCondition";
@@ -35,6 +35,7 @@ import practitioner from "./modules/practitioner";
 import serviceRequest from "./modules/serviceRequest";
 import slot from "./modules/slot";
 import appointment from "./modules/appointment";
+import specimen from "./modules/specimen";
 
 Vue.use(Vuex);
 
@@ -72,7 +73,7 @@ export default new Vuex.Store({
     availability,
     medicalRequestType,
     processTime,
-    specimen,
+    specimenCode,
     responseTime,
     sampleQuantity,
     samplingCondition,
@@ -92,5 +93,6 @@ export default new Vuex.Store({
     serviceRequest,
     slot,
     appointment,
+    specimen,
   },
 });

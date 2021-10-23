@@ -22,8 +22,6 @@ export default {
   async mounted() {
     if (this.modules) {
       const slug = this.splitRoute(this.$route.path);
-
-      //this.current = this.modules[slug];
       this.setCurrentModule(this.modules[slug]);
     }
   },
@@ -31,8 +29,6 @@ export default {
   watch: {
     modules() {
       const slug = this.splitRoute(this.$route.path);
-
-      //this.current = this.modules[slug];
       this.setCurrentModule(this.modules[slug]);
     },
   },

@@ -86,6 +86,22 @@ export default {
       );
     },
 
+    generateSingleBarcode: async (_, payload) => {
+      const config = {
+        responseType: "blob",
+        headers: {
+          Accept: "application/pdf",
+          "Content-Type": "application/json",
+        },
+      };
+
+      return await httpRequest.getRequest(
+        `${BASE_URL}/generate-codbar/${payload.id}?accession_identifier=${payload.accession_identifier}`,
+        config,
+        true
+      );
+    },
+
     setPatient: ({ commit }, patient) => {
       commit("SET_PATIENT", patient);
     },
@@ -113,6 +129,17 @@ export default {
         console.log(error);
       } finally {
         commit("SET_SAMPLING_CONDITIONS_LOADING", false);
+      }
+    },
+
+    getServiceRequestByDate: async (_, payload) => {
+      try {
+        const { data } = await httpRequest.getRequest(
+          `${BASE_URL}?date=${payload.date}`
+        );
+        return data;
+      } catch (error) {
+        console.log(error);
       }
     },
 

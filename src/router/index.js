@@ -2,10 +2,9 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import { settings } from "./settings";
 import { advancedSettings } from "./advancedSettings";
-
-//import store from "../store";
 import { serviceRequest } from "./serviceRequest";
 import { appointment } from "./appointment";
+import { samplings } from "./samplings";
 
 Vue.use(VueRouter);
 
@@ -42,12 +41,12 @@ const routes = [
       },
       {
         path: "/modulos/toma-de-muestras",
-        name: "sampling",
         component: () =>
           import(
-            /* webpackChunkName: "serviceRequest" */ "../views/serviceRequest/Index.vue"
+            /* webpackChunkName: "sampling" */ "../views/sampling/Index.vue"
           ),
         meta: { requiresAuth: true },
+        children: [...samplings],
       },
       {
         path: "/modulos/configuracion",
