@@ -35,10 +35,10 @@
     >
       <template slot="body">
         <BaseTextfield
-          v-model="editedItem.name"
+          v-model="editedItem.display"
           label="Nombre"
-          @input="$v.editedItem.name.$touch()"
-          @blur="$v.editedItem.name.$touch()"
+          @input="$v.editedItem.display.$touch()"
+          @blur="$v.editedItem.display.$touch()"
           :error-messages="nameErrors"
         />
         <v-radio-group v-model="editedItem.active" row>
@@ -79,7 +79,7 @@ export default {
 
   validations: {
     editedItem: {
-      name: { required },
+      display: { required },
       active: { required },
     },
   },
@@ -118,8 +118,8 @@ export default {
 
     nameErrors() {
       const errors = [];
-      if (!this.$v.editedItem.name.$dirty) return errors;
-      !this.$v.editedItem.name.required &&
+      if (!this.$v.editedItem.display.$dirty) return errors;
+      !this.$v.editedItem.display.required &&
         errors.push(validationMessage.REQUIRED);
       return errors;
     },

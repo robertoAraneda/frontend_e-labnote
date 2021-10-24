@@ -38,21 +38,19 @@
         <v-row class="fill-height">
           <v-col cols="12" md="6" lg="6" xl="7">
             <v-sheet class="pa-3 mt-3" rounded="lg" elevation="6">
-              <v-row justify="center" class="ma-2">
-                <v-col cols="6">
-                  <v-chip outlined>
+              <v-row>
+                <v-col class="text-center" cols="12">
+                  <v-chip class="pl-2 mr-2" outlined>
                     <v-icon left color="grey lighten-3"
                       >mdi-circle-slice-8</v-icon
                     >
-                    Paciente pendiente de atención
+                    Pendiente
                   </v-chip>
-                </v-col>
-                <v-col cols="6">
                   <v-chip outlined>
                     <v-icon left color="primary darken-1"
                       >mdi-circle-slice-8</v-icon
                     >
-                    Paciente en atención
+                    En atención
                   </v-chip>
                 </v-col>
               </v-row>
@@ -281,28 +279,22 @@
                       >Lista de contenedores</v-subheader
                     >
                     <v-row>
-                      <v-col>
-                        <v-chip outlined>
-                          <v-avatar class="mr-2">
-                            <v-icon small color="white" class="primary darken-1"
-                              >mdi-test-tube-empty</v-icon
-                            >
-                          </v-avatar>
+                      <v-col cols="12" class="text-center">
+                        <v-chip class="mr-1" outlined>
+                          <v-icon left color="primary darken-1"
+                            >mdi-test-tube-empty</v-icon
+                          >
 
                           Pendiente
                         </v-chip>
-                      </v-col>
-                      <v-col>
-                        <v-chip outlined>
-                          <v-icon color="primary darken-1"
+                        <v-chip class="mr-1" outlined>
+                          <v-icon left color="primary darken-1"
                             >mdi-test-tube</v-icon
                           >
                           Disponible
                         </v-chip>
-                      </v-col>
-                      <v-col>
                         <v-chip outlined>
-                          <v-icon color="primary darken-1"
+                          <v-icon left color="primary darken-1"
                             >mdi-test-tube-off</v-icon
                           >
                           Rechazado/Error
@@ -317,12 +309,17 @@
                             class="pa-1 mb-2"
                             rounded="lg"
                             :elevation="hover ? 10 : 0"
-                            :class="`${sample.container.color} lighten-5`"
+                            :class="`grey lighten-3`"
                             outlined
                           >
                             <v-list-item class="">
                               <v-list-item-avatar>
-                                <v-icon dark :class="sample.container.color">
+                                <v-icon
+                                  color="primary darken-1"
+                                  dark
+                                  size="42"
+                                  class="grey lighten-3"
+                                >
                                   {{
                                     sample.specimen_status.code === "pendiente"
                                       ? "mdi-test-tube-empty"
@@ -339,28 +336,33 @@
                                   sample.specimen.accession_identifier
                                 }}</v-list-item-subtitle>
                                 <v-list-item-subtitle
-                                  ><v-chip
-                                    class="mr-2"
-                                    dark
-                                    :color="sample.container.color"
-                                    style="opacity: 0.8"
-                                    small
+                                  ><v-chip class="mr-2" color="secondary" small>
+                                    <v-icon left :color="sample.container.color"
+                                      >mdi-circle</v-icon
                                     >{{ sample.container.shortname }}</v-chip
                                   ><v-chip
                                     class="mr-2"
                                     dark
-                                    :color="sample.container.color"
+                                    color="secondary"
                                     small
-                                    style="opacity: 0.8"
                                     >{{ sample.specimen_code.display }}</v-chip
                                   >
                                 </v-list-item-subtitle>
                               </v-list-item-content>
 
                               <v-list-item-action>
-                                <v-menu left bottom>
+                                <v-menu
+                                  origin="center center"
+                                  transition="scale-transition"
+                                  bottom
+                                >
                                   <template v-slot:activator="{ on, attrs }">
-                                    <v-btn icon v-bind="attrs" v-on="on">
+                                    <v-btn
+                                      class="mt-n3"
+                                      icon
+                                      v-bind="attrs"
+                                      v-on="on"
+                                    >
                                       <v-icon>mdi-dots-vertical</v-icon>
                                     </v-btn>
                                   </template>

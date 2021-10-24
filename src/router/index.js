@@ -10,11 +10,16 @@ Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
-    name: "Index",
+    path: "",
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Index.vue"),
     children: [
+      {
+        path: "/",
+        name: "Landing",
+        component: () =>
+          import(/* webpackChunkName: "about" */ "../views/landing/Index.vue"),
+      },
       {
         path: "/login",
         name: "Login",

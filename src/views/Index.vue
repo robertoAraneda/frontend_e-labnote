@@ -3,12 +3,11 @@
     <GuestNavbar v-if="!authenticated" />
     <LoggedNavbar v-else />
     <v-breadcrumbs
-      v-if="$route.path !== '/'"
+      v-if="$route.path !== '/' && $route.path !== '/login'"
       :items="breadcrumbs"
     ></v-breadcrumbs>
-    <v-container fluid>
-      <router-view />
-    </v-container>
+
+    <router-view />
   </v-main>
 </template>
 
