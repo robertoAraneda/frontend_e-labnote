@@ -42,19 +42,28 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     drawer: true,
+    isScrolling: false,
   },
   mutations: {
     SET_DRAWER: (state, payload) => {
       state.drawer = payload;
     },
+    SET_IS_SCROLLING: (state, payload) => {
+      state.isScrolling = payload;
+    },
   },
   getters: {
     drawer: (state) => state.drawer,
+    isScrolling: (state) => state.isScrolling,
   },
   actions: {
     updateDrawer({ commit, state }) {
       const drawer = state.drawer;
       commit("SET_DRAWER", !drawer);
+    },
+
+    setIsScrolling({ commit }, payload) {
+      commit("SET_IS_SCROLLING", payload);
     },
   },
   modules: {

@@ -68,7 +68,7 @@
         </v-row>
       </section>
 
-      <section id="about-me">
+      <section id="about-me" class="grey lighten-4">
         <div class="py-12"></div>
 
         <v-container class="text-center">
@@ -112,7 +112,7 @@
         <div class="py-12"></div>
       </section>
 
-      <section id="features" class="grey lighten-1">
+      <section id="features" class="grey lighten-2">
         <div class="py-12"></div>
 
         <v-container class="text-center">
@@ -151,7 +151,13 @@
           </v-row>
           <div class="my-14"></div>
 
-          <v-btn class="white" color="white" outlined x-large>
+          <v-btn
+            :to="{ name: 'Observations' }"
+            class="white"
+            color="white"
+            outlined
+            x-large
+          >
             <span
               class="
                 primary--text
@@ -241,7 +247,7 @@
         <div class="py-12"></div>
       </section>
 
-      <v-sheet id="contact" color="primary" dark tag="section" tile>
+      <v-sheet id="contact" color="secondary lighten-1" dark tag="section" tile>
         <div class="py-12"></div>
 
         <v-container>
@@ -276,7 +282,7 @@
               </v-col>
 
               <v-col class="mx-auto" cols="auto">
-                <v-btn color="secondary" x-large> Enviar </v-btn>
+                <v-btn color="primary" x-large> Enviar </v-btn>
               </v-col>
             </v-row>
           </v-theme-provider>

@@ -40,6 +40,12 @@ export default {
       return await httpRequest.getRequest(`${BASE_URL}?page=${payload.page}`);
     },
 
+    getPaginatedItemsByLetter: async (_, payload) => {
+      return await httpRequest.getRequest(
+        `/api/v1/public/service-request-observation-codes/search?letter=${payload.letter}`
+      );
+    },
+
     getItems: async ({ commit }) => {
       try {
         commit("SET_OBSERVATION_SERVICE_REQUESTS_LOADING", true);
@@ -100,6 +106,16 @@ export default {
       try {
         return await httpRequest.getRequest(
           `${BASE_URL}/search?slug=${payload}`
+        );
+      } catch (e) {
+        return e.response;
+      }
+    },
+
+    getItemBySlugPublicAuth: async (_, payload) => {
+      try {
+        return await httpRequest.getRequest(
+          `/api/v1/public/service-request-observation-codes/search?slug=${payload}`
         );
       } catch (e) {
         return e.response;

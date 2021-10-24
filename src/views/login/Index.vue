@@ -2,7 +2,14 @@
   <section class="overflow-hidden">
     <v-row no-gutters>
       <v-col
-        class="align-content-space-between layout wrap hidden-sm-and-down"
+        class="
+          align-content-space-between
+          layout
+          wrap
+          hidden-sm-and-down
+          grey
+          lighten-3
+        "
         cols="12"
         md="6"
       >

@@ -22,6 +22,14 @@
     /></v-toolbar-items>
     <v-toolbar-items>
       <BaseAcceptButton
+        v-if="showObservationPageButton"
+        label="Prestaciones"
+        @click="observations"
+        class="white--text ml-3"
+        color="primary"
+    /></v-toolbar-items>
+    <v-toolbar-items>
+      <BaseAcceptButton
         v-if="showModuleButton"
         label="Modulos"
         @click="redirectModules"
@@ -46,6 +54,7 @@ import { mapGetters } from "vuex";
 export default {
   mounted() {
     console.log("user", this.user);
+    console.log(this.$route);
   },
   computed: {
     ...mapGetters({
@@ -67,7 +76,11 @@ export default {
     },
 
     showMainPageButton() {
-      return this.$route.name !== "Index";
+      return this.$route.name !== "Landing";
+    },
+
+    showObservationPageButton() {
+      return this.$route.name !== "Observations";
     },
 
     showModuleButton() {
@@ -77,7 +90,7 @@ export default {
       return (
         this.$route.name === "Modules" ||
         this.$route.name === "Login" ||
-        this.$route.name === "Index"
+        this.$route.name === "Landing"
       );
     },
   },
@@ -92,8 +105,13 @@ export default {
       }
     },
     mainPage() {
-      if (this.$route.name !== "Index") {
-        this.$router.push({ name: "Index" });
+      if (this.$route.name !== "Landing") {
+        this.$router.push({ name: "Landing" });
+      }
+    },
+    observations() {
+      if (this.$route.name !== "Observations") {
+        this.$router.push({ name: "Observations" });
       }
     },
   },

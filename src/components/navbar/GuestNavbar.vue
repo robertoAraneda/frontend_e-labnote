@@ -15,28 +15,57 @@
             class="text-h4 white--text text-center font-weight-bold"
             >e-Labnote</v-toolbar-title
           >
-          <v-btn large text @click="$vuetify.goTo('#about-me')"
+          <v-btn
+            v-if="!hideOptionsAppBar"
+            large
+            text
+            @click="$vuetify.goTo('#about-me')"
             >ACERCA DE LABISUR</v-btn
           >
-          <v-btn text @click="$vuetify.goTo('#features')" large
+          <v-btn
+            v-if="!hideOptionsAppBar"
+            text
+            @click="$vuetify.goTo('#features')"
+            large
             >PRESTACIONES</v-btn
           >
 
-          <v-btn text @click="$vuetify.goTo('#blog')" large
+          <v-btn
+            v-if="!hideOptionsAppBar"
+            text
+            @click="$vuetify.goTo('#blog')"
+            large
             >NUESTROS FUNCIONARIOS</v-btn
           >
-          <v-btn text @click="$vuetify.goTo('#contact')" large>CONTACTO</v-btn>
+          <v-btn
+            v-if="!hideOptionsAppBar"
+            text
+            @click="$vuetify.goTo('#contact')"
+            large
+            >CONTACTO</v-btn
+          >
         </v-row>
       </v-container>
     </v-slide-x-transition>
     <v-spacer />
 
     <v-btn
-      @click="mainPage"
-      v-if="showMainPageButton"
-      color="secondary"
+      @click="observations"
+      v-if="showObservationsButton"
+      text
       rounded
       large
+      :color="isScrolling ? '' : 'secondary darken-3'"
+      >cartera de prestaciones</v-btn
+    >
+
+    <v-btn
+      @click="mainPage"
+      v-if="showMainPageButton"
+      text
+      rounded
+      large
+      :color="isScrolling ? '' : 'secondary darken-3'"
       >Página Principal</v-btn
     >
     <v-btn
@@ -52,6 +81,8 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   name: "GuestNavbar",
 
@@ -67,13 +98,29 @@ export default {
     showMainPageButton() {
       return this.$route.name !== "Landing";
     },
+    showObservationsButton() {
+      return (
+        this.$route.name !== "Observations" &&
+        this.$route.name !== "Landing" &&
+        !this.$route.path.startsWith("/catalogo-prestaciones")
+      );
+    },
+    hideOptionsAppBar() {
+      return this.$route.path.startsWith("/catalogo-prestaciones");
+    },
   },
 
   methods: {
+    ...mapActions({
+      setIsScrolling: "setIsScrolling",
+    }),
+
     onScroll() {
       const offset = window.pageYOffset;
       this.isScrolling = offset > 50;
       this.showLogo = offset > 200;
+
+      this.setIsScrolling(this.isScrolling);
     },
 
     login() {
@@ -84,6 +131,11 @@ export default {
     mainPage() {
       if (this.$route.name !== "Landing") {
         this.$router.push({ name: "Landing" });
+      }
+    },
+    observations() {
+      if (this.$route.name !== "Observations") {
+        this.$router.push({ name: "Observations" });
       }
     },
   },

@@ -18,7 +18,42 @@ const routes = [
         path: "/",
         name: "Landing",
         component: () =>
-          import(/* webpackChunkName: "about" */ "../views/landing/Index.vue"),
+          import(
+            /* webpackChunkName: "landing" */ "../views/landing/Index.vue"
+          ),
+      },
+      {
+        path: "/catalogo-prestaciones",
+        component: () =>
+          import(
+            /* webpackChunkName: "catalog" */ "../views/landing/BaseIndex.vue"
+          ),
+        children: [
+          {
+            path: "",
+            name: "Observations",
+            component: () =>
+              import(
+                /* webpackChunkName: "observations" */ "../views/landing/Observation.vue"
+              ),
+          },
+          {
+            path: "vista/:slug",
+            name: "ObservationDetail",
+            component: () =>
+              import(
+                /* webpackChunkName: "observationsDetail" */ "../views/landing/ObservationDetail.vue"
+              ),
+          },
+          {
+            path: "alfabeto/:letter",
+            name: "ObservationByLetter",
+            component: () =>
+              import(
+                /* webpackChunkName: "observationsByLetter" */ "../views/landing/ObservationByLetter.vue"
+              ),
+          },
+        ],
       },
       {
         path: "/login",

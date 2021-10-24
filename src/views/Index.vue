@@ -1,9 +1,13 @@
 <template>
-  <v-main class="blue-grey lighten-5">
+  <v-main>
     <GuestNavbar v-if="!authenticated" />
     <LoggedNavbar v-else />
     <v-breadcrumbs
-      v-if="$route.path !== '/' && $route.path !== '/login'"
+      v-if="
+        $route.path !== '/' &&
+        $route.path !== '/login' &&
+        !$route.path.startsWith('/catalogo-prestacione')
+      "
       :items="breadcrumbs"
     ></v-breadcrumbs>
 
