@@ -1,17 +1,21 @@
 <template>
   <v-main>
-    <section class="grey lighten-5">
-      <div class="py-3"></div>
-      <v-container class="align-start">
+    <section>
+      <v-container class="align-start grey lighten-3">
         <h2 class="display-1 font-weight-bold mb-3">{{ name }}</h2>
         <div class="d-flex align-start">
           <h2 class="headline font-weight-bold mb-3 mr-3 primary--text">
-            LOINC:
+            LOINC
+            <v-icon color="primary" class="mt-n3 ml-n2"
+              >mdi-registered-trademark</v-icon
+            >
+            :
           </h2>
+
           <h2 class="headline font-weight-bold mb-3 mr-3">
             {{ loinc.loinc_num }}
           </h2>
-          <h2 class="headline font-weight-bold mb-3">{{ loinc.name }}</h2>
+          <h2 class="headline font-weight-medium mb-3">{{ loinc.name }}</h2>
           <v-btn
             class="mt-n2"
             :href="`https://loinc.org/${loinc.loinc_num}/`"
@@ -124,7 +128,48 @@
       </v-container>
       <div class="py-3"></div>
     </section>
-    <section></section>
+    <section>
+      <v-responsive class="mx-auto mb-12" width="56">
+        <v-divider class="mb-1"></v-divider>
+
+        <v-divider></v-divider>
+      </v-responsive>
+      <div class="py-3"></div>
+      <v-container class="align-start">
+        <h2 class="headline font-weight-bold mb-3 mr-3 primary--text">
+          MUESTRA
+        </h2>
+        <v-card color="transparent" flat>
+          <v-card-title class="headlinefont-weight-medium text-uppercase">
+            TIPO MUESTRA Y CONTENEDOR
+          </v-card-title>
+          <v-card-text class="subtitle-1">
+            <v-simple-table>
+              <template v-slot:default>
+                <tbody>
+                  <tr>
+                    <th class="text-left">TIPO MUESTRA</th>
+                    <td class="text-left">:</td>
+                    <td class="text-left">{{ specimen }}</td>
+                  </tr>
+
+                  <tr>
+                    <th class="text-left">CONTENEDOR</th>
+                    <td class="text-left">:</td>
+                    <td class="text-left">{{ container }}</td>
+                  </tr>
+                </tbody>
+              </template>
+            </v-simple-table></v-card-text
+          >
+          <v-card-title class="headlinefont-weight-medium text-uppercase">
+            CONDICIONES DE TOMA DE MUESTRA
+          </v-card-title>
+          <v-card-text class="subtitle-1"> Paciente en ayunas </v-card-text>
+        </v-card>
+      </v-container>
+      <div class="py-12"></div>
+    </section>
     <section class="text-center">
       <h4>¿Te resultó útil esta información?</h4>
       <div class="mt-6">
@@ -197,6 +242,17 @@ export default {
     processTime() {
       if (!this.selectedObservationServiceRequest) return "";
       return this.selectedObservationServiceRequest._embedded.processTime.name;
+    },
+
+    specimen() {
+      if (!this.selectedObservationServiceRequest) return "";
+      return this.selectedObservationServiceRequest._embedded.specimenCode
+        .display;
+    },
+
+    container() {
+      if (!this.selectedObservationServiceRequest) return "";
+      return this.selectedObservationServiceRequest._embedded.container.name;
     },
   },
 

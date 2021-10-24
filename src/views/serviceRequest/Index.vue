@@ -1,7 +1,9 @@
 <template>
-  <div>
+  <div class="grey lighten-3">
     <NavigationDrawer :links="menusPermissions" />
-    <router-view />
+    <v-container>
+      <router-view />
+    </v-container>
   </div>
 </template>
 

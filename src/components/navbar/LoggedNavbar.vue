@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar clipped-left app color="primary">
+  <v-app-bar clipped-left fixed :app="isAppNavbar" color="primary">
     <v-toolbar-title
       style="width: 270px"
       class="text-h4 white--text text-center font-weight-bold"
@@ -59,6 +59,7 @@ export default {
   computed: {
     ...mapGetters({
       user: "auth/user",
+      authenticated: "auth/authenticated",
     }),
 
     loggedUserInfo() {
@@ -79,6 +80,10 @@ export default {
       return this.$route.name !== "Landing";
     },
 
+    isAppNavbar() {
+      return this.$route.path.startsWith("/modulos");
+    },
+
     showObservationPageButton() {
       return this.$route.name !== "Observations";
     },
@@ -90,7 +95,8 @@ export default {
       return (
         this.$route.name === "Modules" ||
         this.$route.name === "Login" ||
-        this.$route.name === "Landing"
+        this.$route.name === "Landing" ||
+        this.$route.path.startsWith("/catalogo-prestaciones")
       );
     },
   },

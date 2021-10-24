@@ -19,7 +19,12 @@
 
       <div class="py-12"></div>
     </section>
-    <v-footer class="justify-center" color="secondary darken-2" height="100">
+    <v-footer
+      app
+      class="justify-center"
+      color="secondary darken-2"
+      height="100"
+    >
       <div
         class="title font-weight-light grey--text text--lighten-1 text-center"
       >
@@ -28,19 +33,6 @@
       </div>
     </v-footer>
   </v-main>
-  <!--
-    <v-parallax dark height="250" :src="parallaxImg">
-      <v-row align="center" justify="center">
-        <v-col class="text-center" cols="12">
-          <h1 class="display-3 font-weight-light mb-4">SIEL</h1>
-          <h4 class="headline">
-            Sistema de información de exámenes de laboratorio
-          </h4>
-        </v-col>
-      </v-row>
-    </v-parallax>
-
-    -->
 </template>
 
 <script>
