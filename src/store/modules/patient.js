@@ -238,10 +238,10 @@ export default {
       }
     },
 
-    findPatientByIdentifier: async ({ commit }, payload) => {
+    findPatientByIdentifier: async ({ commit, getters, state }, payload) => {
       try {
         const { data } = await httpRequest.getRequest(
-          `${BASE_URL}/search?query=identifier&value=${payload}`
+          `${BASE_URL}/search?query=identifier&value=${payload.value}`
         );
 
         if (
@@ -253,12 +253,20 @@ export default {
           console.log("found");
         } else {
           console.log("not found");
+
+          console.log("payload", payload);
+
           commit("SET_PATIENT", new Patient());
           commit("SET_EDITED_PATIENT", new Patient());
 
+          console.log(getters);
+          console.log(state);
+
           const identifier = {
-            value: payload,
+            value: payload.value,
+            identifier_type_id: payload.identifier_type_id,
           };
+
           commit("SET_IDENTIFIER", { value: identifier, index: 0 });
         }
       } catch (e) {
@@ -288,6 +296,10 @@ export default {
 
     setEditedPatient: ({ commit }, payload) => {
       commit("SET_EDITED_PATIENT", payload);
+    },
+
+    setPatient: ({ commit }, payload) => {
+      commit("SET_PATIENT", payload);
     },
 
     editName: ({ commit }, payload) => {

@@ -1,9 +1,9 @@
 <template>
-  <v-row>
+  <v-row class="justify-center">
     <v-col cols="12" sm="3">
       <BaseSelect
         v-model="localIdentifier.identifier_type_id"
-        :items="identifierTypes"
+        :items="localIdentifierTypes"
         item-text="display"
         item-value="id"
         label="Tipo documento"
@@ -12,7 +12,7 @@
     <v-col cols="12" sm="4">
       <BaseTextfield
         v-if="localIdentifier.identifier_type_id === 1"
-        @blur="findPatientByIdentifier(localIdentifier.value)"
+        @blur="findPatientByIdentifier(localIdentifier)"
         v-model="localIdentifier.value"
         label="Número documento"
         v-mask="[
@@ -26,11 +26,12 @@
       />
       <BaseTextfield
         v-else
-        @blur="findPatientByIdentifier(localIdentifier.value)"
+        @blur="findPatientByIdentifier(localIdentifier)"
         v-model="localIdentifier.value"
         label="Número documento"
       />
     </v-col>
+    <!--
     <v-col cols="12" sm="4">
       <v-radio-group v-model="localIdentifier.identifier_use_id" row>
         <v-radio
@@ -41,12 +42,14 @@
         ></v-radio>
       </v-radio-group>
     </v-col>
+    -->
   </v-row>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
 import { mask } from "vue-the-mask";
+import { PatientIdentifierTypeEnum } from "../../enums/patient-identifier-type.enum";
 
 export default {
   name: "IdentifierPatientItem",
@@ -81,13 +84,24 @@ export default {
         this.editIdentifier({ index: this.index, value });
       },
     },
+    editedPatient() {
+      this.localIdentifier = { ...this.identifier };
+    },
   },
 
   computed: {
     ...mapGetters({
       identifierTypes: "patient/identifierTypes",
       identifierUses: "patient/identifierUses",
+      editedPatient: "patient/editedPatient",
     }),
+
+    localIdentifierTypes() {
+      return this.identifierTypes.filter(
+        (identifierType) =>
+          identifierType.code !== PatientIdentifierTypeEnum.CONFIDENTIAL
+      );
+    },
   },
 
   methods: {

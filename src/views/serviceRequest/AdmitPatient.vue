@@ -70,9 +70,6 @@
       />
       <v-sheet :elevation="elevation" rounded :class="classSheet">
         <IdentifierPatientList />
-      </v-sheet>
-
-      <v-sheet :elevation="elevation" rounded :class="classSheet">
         <DemographicPatient />
       </v-sheet>
 
@@ -210,6 +207,7 @@ export default {
       getStates: "patient/getStates",
       getCities: "patient/getCities",
       setEditedPatient: "patient/setEditedPatient",
+      setPatient: "patient/setPatient",
     }),
 
     handleDestroyPatient() {
@@ -224,6 +222,7 @@ export default {
       this.isEditedPatient = false;
       this.editedPatientId = -1;
       this.setEditedPatient(new Patient());
+      this.setPatient(new Patient());
     },
 
     handleSetEditedPatient() {
