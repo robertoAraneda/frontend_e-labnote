@@ -2,7 +2,7 @@
   <ContainerPatientForm subtitle="Medio de contacto">
     <template v-slot:leftButton>
       <BaseAcceptButton
-        @click="addNewItem(defaultItem)"
+        @click="handleAddNewTelecom"
         label="Agregar otro medio "
         small
       />
@@ -18,7 +18,12 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <ContactPointItem :index="index" :telecom="telecom" />
+            <ContactPointItem
+              @validated="isValid"
+              :trigger-validation="triggerValidation"
+              :index="index"
+              :telecom="telecom"
+            />
             <v-divider v-if="index < telecoms.length - 1"></v-divider>
           </v-list-item-content>
 
@@ -43,6 +48,8 @@ export default {
 
   data: () => ({
     defaultItem: new ContactPointPatient(),
+    isFormValid: false,
+    triggerValidation: false,
   }),
 
   components: { ContactPointItem, ContainerPatientForm },
@@ -58,6 +65,25 @@ export default {
       addNewItem: "patient/addNewTelecom",
       destroyItem: "patient/destroyTelecomItem",
     }),
+
+    isValid(value) {
+      console.log(value);
+
+      this.isFormValid = value;
+    },
+
+    handleAddNewTelecom() {
+      this.triggerValidation = true;
+
+      setTimeout(() => {
+        if (this.isFormValid) {
+          this.addNewItem(this.defaultItem);
+          this.isFormValid = false;
+        }
+
+        this.triggerValidation = false;
+      }, 500);
+    },
   },
 };
 </script>

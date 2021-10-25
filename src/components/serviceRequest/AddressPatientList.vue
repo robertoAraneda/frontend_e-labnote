@@ -2,9 +2,10 @@
   <ContainerPatientForm subtitle="Dirección">
     <template v-slot:leftButton>
       <BaseAcceptButton
-        @click="addNewAddress(defaultItem)"
+        @click="handleAddNewAddress"
         label="Agregar otra dirección"
         small
+        :loading="triggerValidation"
       />
     </template>
     <template v-slot:body>
@@ -18,7 +19,12 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <AddressPatientItem :index="index" :address="address" />
+            <AddressPatientItem
+              @validated="isValid"
+              :trigger-validation="triggerValidation"
+              :index="index"
+              :address="address"
+            />
             <v-divider v-if="index < addresses.length - 1"></v-divider>
           </v-list-item-content>
 
@@ -43,6 +49,8 @@ export default {
 
   data: () => ({
     defaultItem: new AddressPatient(),
+    isFormValid: false,
+    triggerValidation: false,
   }),
 
   components: { ContainerPatientForm, AddressPatientItem },
@@ -58,6 +66,25 @@ export default {
       addNewAddress: "patient/addNewAddress",
       destroyAddressItem: "patient/destroyAddressItem",
     }),
+
+    isValid(value) {
+      console.log(value);
+
+      this.isFormValid = value;
+    },
+
+    handleAddNewAddress() {
+      this.triggerValidation = true;
+
+      setTimeout(() => {
+        if (this.isFormValid) {
+          this.addNewAddress(this.defaultItem);
+          this.isFormValid = false;
+        }
+
+        this.triggerValidation = false;
+      }, 500);
+    },
   },
 };
 </script>
