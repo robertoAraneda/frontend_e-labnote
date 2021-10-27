@@ -15,6 +15,7 @@
     "laravel-echo": "^1.11.2",
     "moment": "^2.29.1",
     "pusher-js": "^7.0.3",
+    "v-mask": "^2.3.0",
     "vue": "^2.6.11",
     "vue-chartjs": "^3.5.1",
     "vue-pdf": "^4.3.0",

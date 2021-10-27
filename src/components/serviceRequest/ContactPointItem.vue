@@ -47,6 +47,7 @@ import { mapActions, mapGetters } from "vuex";
 import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
 import { validationMessage } from "../../helpers/ValidationMessage";
+import ContactPointPatient from "../../models/ContactPointPatient";
 
 export default {
   name: "ContactPointItem",
@@ -81,6 +82,7 @@ export default {
     },
     index: Number,
     triggerValidation: Boolean,
+    reset: Boolean,
   },
 
   data: (vm) => ({
@@ -98,13 +100,18 @@ export default {
     },
 
     editedPatient() {
-      this.localAddress = { ...this.address };
+      this.localTelecom = { ...this.telecom };
     },
 
     triggerValidation() {
-      console.log("trigger");
       this.$v.$touch();
       this.$emit("validated", !this.$v.$invalid);
+    },
+
+    reset() {
+      this.$v.$reset();
+
+      this.editTelecom([new ContactPointPatient()]);
     },
   },
 

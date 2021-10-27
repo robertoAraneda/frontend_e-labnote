@@ -18,11 +18,7 @@
       sort-by="id"
     >
       <template slot="searchButton">
-        <BaseAcceptButton
-          small
-          @click="openDialog"
-          v-if="canCreate"
-        />
+        <BaseAcceptButton small @click="openDialog" v-if="canCreate" />
       </template>
       <template slot="select">
         <BaseAutocomplete
@@ -102,7 +98,6 @@ import { mapActions, mapGetters } from "vuex";
 import { findIndex } from "../../helpers/Functions";
 import City from "../../models/City";
 
-
 export default {
   name: "City",
 
@@ -112,7 +107,7 @@ export default {
     editedItem: {
       code: { required },
       name: { required },
-      state_code: {required},
+      state_code: { required },
       active: { required },
     },
   },
@@ -144,7 +139,7 @@ export default {
 
     states() {
       if (!this._states) return [];
-      return this._states.collection
+      return this._states.collection;
     },
 
     items() {
@@ -156,16 +151,14 @@ export default {
     },
 
     formTitle() {
-      return this.editedIndex === -1
-        ? "Crear comuna"
-        : "Editar comuna";
+      return this.editedIndex === -1 ? "Crear comuna" : "Editar comuna";
     },
 
     codeErrors() {
       const errors = [];
       if (!this.$v.editedItem.code.$dirty) return errors;
       !this.$v.editedItem.code.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -173,7 +166,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.name.$dirty) return errors;
       !this.$v.editedItem.name.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -181,7 +174,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.state_code.$dirty) return errors;
       !this.$v.editedItem.state_code.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 

@@ -1,5 +1,11 @@
 <template>
-  <v-select v-bind="$attrs" v-on="$listeners" color="primary"></v-select>
+  <v-select
+    v-bind="$attrs"
+    v-on="$listeners"
+    color="primary"
+    outlined
+    dense
+  ></v-select>
 </template>
 
 <script>

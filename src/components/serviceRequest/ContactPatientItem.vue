@@ -3,7 +3,15 @@
     <v-col cols="12" sm="3">
       <BaseSelect
         v-model="localContact.relationship"
-        :items="['Padre', 'Madre', 'Hermano/a', 'Abuelo/a', 'Tío/a', 'Otro']"
+        :items="[
+          'PADRE',
+          'MADRE',
+          'HERMANO/A',
+          'ABUELO/A',
+          'TIO/A',
+          'HIJO/A',
+          'OTRO',
+        ]"
         label="Relación de contacto"
       />
     </v-col>
@@ -23,7 +31,8 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapGetters } from "vuex";
+import ContactPatient from "../../models/ContactPatient";
 
 export default {
   name: "ContactPatientItem",
@@ -37,6 +46,7 @@ export default {
       email: String,
     },
     index: Number,
+    reset: Boolean,
   },
 
   data: (vm) => ({
@@ -51,7 +61,22 @@ export default {
         this.editContact({ index: this.index, value });
       },
     },
+
+    editedPatient() {
+      this.localContact = { ...this.contact };
+    },
+
+    reset() {
+      this.editContact([new ContactPatient()]);
+    },
   },
+
+  computed: {
+    ...mapGetters({
+      editedPatient: "patient/editedPatient",
+    }),
+  },
+
   methods: {
     ...mapActions({
       editContact: "patient/editContact",

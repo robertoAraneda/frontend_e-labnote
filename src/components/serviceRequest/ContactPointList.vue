@@ -5,6 +5,7 @@
         @click="handleAddNewTelecom"
         label="Agregar otro medio "
         small
+        :loading="triggerValidation"
       />
     </template>
     <template v-slot:body>
@@ -23,6 +24,7 @@
               :trigger-validation="triggerValidation"
               :index="index"
               :telecom="telecom"
+              :reset="reset"
             />
             <v-divider v-if="index < telecoms.length - 1"></v-divider>
           </v-list-item-content>
@@ -54,6 +56,10 @@ export default {
 
   components: { ContactPointItem, ContainerPatientForm },
 
+  props: {
+    reset: Boolean,
+  },
+
   computed: {
     ...mapGetters({
       telecoms: "patient/telecom",
@@ -67,8 +73,6 @@ export default {
     }),
 
     isValid(value) {
-      console.log(value);
-
       this.isFormValid = value;
     },
 

@@ -3,6 +3,8 @@
     v-bind="$attrs"
     v-on="$listeners"
     color="primary"
+    outlined
+    dense
   ></v-text-field>
 </template>
 

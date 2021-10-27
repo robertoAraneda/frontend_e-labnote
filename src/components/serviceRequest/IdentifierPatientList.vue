@@ -2,12 +2,9 @@
   <ContainerPatientForm subtitle="Identificación">
     <template v-slot:body>
       <v-list color="transparent">
-        <v-list-item
-          v-for="(identifier, index) in identifiers"
-          :key="identifier.value + index"
-        >
+        <v-list-item v-for="n in identifiersLength" :key="n">
           <v-list-item-content>
-            <IdentifierPatientItem :index="index" :identifier="identifier" />
+            <IdentifierPatientItem v-bind.sync="identifiers[n - 1]" />
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -16,22 +13,46 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
 import IdentifierPatientItem from "./IdentifierPatientItem";
 import ContainerPatientForm from "./ContainerPatientForm";
+import IdentifierPatient from "../../models/IdentifierPatient";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "IdentifierPatientList",
 
   components: { ContainerPatientForm, IdentifierPatientItem },
 
-  computed: {
-    ...mapGetters({
-      identifiers: "patient/identifier",
-    }),
+  props: {
+    reset: Boolean,
   },
 
-  methods: {},
+  data: () => ({
+    isFormValid: false,
+    triggerValidation: false,
+    identifiers: [new IdentifierPatient()],
+  }),
+
+  watch: {
+    emitFormData(value) {
+      value && this.setIdentifier(this.identifiers);
+    },
+  },
+
+  computed: {
+    ...mapGetters({
+      emitFormData: "patient/emitFormData",
+    }),
+    identifiersLength() {
+      return this.identifiers.length;
+    },
+  },
+
+  methods: {
+    ...mapActions({
+      setIdentifier: "patient/editIdentifier",
+    }),
+  },
 };
 </script>
 
