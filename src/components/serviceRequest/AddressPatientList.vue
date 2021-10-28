@@ -62,7 +62,7 @@ export default {
       required,
       $each: {
         use: { required },
-        textAddress: { required },
+        text: { required },
         state_code: { required },
         city_code: { required },
       },
@@ -89,13 +89,16 @@ export default {
     },
 
     emitFormData(value) {
-      value &&
-        this.editAddresses(
-          this.localAddresses.map((address) => ({
-            ...address,
-            text: address.textAddress,
-          }))
-        );
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        value &&
+          this.editAddresses(
+            this.localAddresses.map((address) => ({
+              ...address,
+              text: address.textAddress,
+            }))
+          );
+      }
     },
   },
   computed: {

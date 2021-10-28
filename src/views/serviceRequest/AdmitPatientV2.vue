@@ -137,6 +137,15 @@ export default {
           value: { required },
         },
       },
+      address: {
+        required,
+        $each: {
+          use: { required },
+          text: { required },
+          state_code: { required },
+          city_code: { required },
+        },
+      },
     },
   },
 
@@ -228,6 +237,7 @@ export default {
       } else {
         this.openWarningMessage = true;
         console.log("invalid data");
+        this.$v.$touch();
       }
       /*
       if (this.isEditedPatient) {

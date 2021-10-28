@@ -35,7 +35,16 @@ export default {
 
   watch: {
     emitFormData(value) {
-      value && this.setIdentifier(this.identifiers);
+      this.$v.$touch();
+      if (!this.$v.$invalid) {
+        value &&
+          this.setIdentifier(
+            this.identifiers.map((identifier) => {
+              const value = identifier.valueRut || identifier.valueOther;
+              return { ...identifier, value };
+            })
+          );
+      }
     },
   },
 
