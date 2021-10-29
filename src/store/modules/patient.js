@@ -18,10 +18,35 @@ export default {
     triggerFormErrorAdmitPatient: false,
     emitFormData: false,
     showAdmitPatientForm: false,
+    isIdentifierFormValid: false,
+    isNameFormValid: false,
+    isAddressFormValid: false,
+    isTelecomFormValid: false,
+    isContactFormValid: false,
   },
   mutations: {
     SET_SHOW_ADMIT_FORM: (state, payload) => {
       state.showAdmitPatientForm = payload;
+    },
+
+    SET_IS_IDENTIFIER_FORM_VALID: (state, payload) => {
+      state.isIdentifierFormValid = payload;
+    },
+
+    SET_IS_NAME_FORM_VALID: (state, payload) => {
+      state.isNameFormValid = payload;
+    },
+
+    SET_IS_ADDRESS_FORM_VALID: (state, payload) => {
+      state.isAddressFormValid = payload;
+    },
+
+    SET_IS_TELECOM_FORM_VALID: (state, payload) => {
+      state.isTelecomFormValid = payload;
+    },
+
+    SET_IS_CONTACT_FORM_VALID: (state, payload) => {
+      state.isContactFormValid = payload;
     },
 
     SET_TRIGGER_FORM_ERROR_ADMIT_PATIENT: (state, payload) => {
@@ -138,8 +163,28 @@ export default {
     showAdmitPatientForm: (state) => state.showAdmitPatientForm,
     triggerFormErrorAdmitPatient: (state) => state.triggerFormErrorAdmitPatient,
     emitFormData: (state) => state.emitFormData,
+    isIdentifierFormValid: (state) => state.isIdentifierFormValid,
+    isNameFormValid: (state) => state.isNameFormValid,
+    isAddressFormValid: (state) => state.isAddressFormValid,
+    isTelecomFormValid: (state) => state.isTelecomFormValid,
+    isContactFormValid: (state) => state.isContactFormValid,
   },
   actions: {
+    identifierFormValid: ({ commit }, payload) => {
+      commit("SET_IS_IDENTIFIER_FORM_VALID", payload);
+    },
+    nameFormValid: ({ commit }, payload) => {
+      commit("SET_IS_NAME_FORM_VALID", payload);
+    },
+    addressFormValid: ({ commit }, payload) => {
+      commit("SET_IS_ADDRESS_FORM_VALID", payload);
+    },
+    telecomFormValid: ({ commit }, payload) => {
+      commit("SET_IS_TELECOM_FORM_VALID", payload);
+    },
+    contactFormValid: ({ commit }, payload) => {
+      commit("SET_IS_CONTACT_FORM_VALID", payload);
+    },
     triggerErrorForm: ({ commit }) => {
       commit("SET_TRIGGER_FORM_ERROR_ADMIT_PATIENT", true);
       setTimeout(() => {

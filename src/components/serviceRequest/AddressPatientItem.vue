@@ -12,9 +12,9 @@
     </v-col>
     <v-col cols="12" sm="9">
       <BaseTextfield
-        @blur="$v.localAddress.text.$touch()"
+        @blur="$v.localAddress.textAddress.$touch()"
         :error-messages="addressTextErrors"
-        @input="$v.localAddress.text.$touch()"
+        @input="$v.localAddress.textAddress.$touch()"
         v-model="textLocal"
         label="Dirección"
       />
@@ -73,7 +73,6 @@ export default {
     textAddress: String,
     city_code: String,
     state_code: String,
-
     index: Number,
   },
 

@@ -1,49 +1,67 @@
 <template>
-  <v-row class="justify-center">
-    <v-col cols="12" sm="3">
-      <BaseSelect
-        v-model="localType"
-        :items="localIdentifierTypes"
-        item-text="display"
-        item-value="id"
-        label="Tipo documento"
-      />
-    </v-col>
-    <v-col cols="12" sm="5">
-      <BaseTextfield
-        v-model="localValueRut"
-        v-if="isRut"
-        label="Rut"
-        maxlength="9"
-        @keypress.enter="handleFindPatient"
-        :error-messages="valueRutErrors"
-        @input="$v.localIdentifier.valueRut.$touch()"
-        @blur="
-          $v.localIdentifier.valueRut.$touch();
-          handleMaskRut();
-        "
-      />
-      <BaseTextfield
-        v-else
-        label="Número documento"
-        @keypress.enter="handleFindPatient"
-        v-model="localValueOther"
-        :error-messages="valueOtherErrors"
-        @input="$v.localIdentifier.valueOther.$touch()"
-        @blur="$v.localIdentifier.valueOther.$touch()"
-      />
-    </v-col>
-    <v-col cols="2">
-      <v-btn @click="handleFindPatient" block depressed color="primary"
-        >Buscar</v-btn
-      >
-    </v-col>
-    <v-col cols="2">
-      <v-btn block @click="handleResetForm" depressed color="secondary"
-        >Limpiar</v-btn
-      >
-    </v-col>
-  </v-row>
+  <div>
+    <v-row class="justify-center">
+      <v-col cols="12" sm="3">
+        <BaseSelect
+          v-model="localType"
+          :items="localIdentifierTypes"
+          item-text="display"
+          item-value="id"
+          label="Tipo documento"
+          :disabled="disabledIdentifiersForm"
+        />
+      </v-col>
+      <v-col cols="12" sm="5">
+        <BaseTextfield
+          :disabled="disabledIdentifiersForm"
+          v-model="localValueRut"
+          v-if="isRut"
+          label="Rut"
+          maxlength="9"
+          @keypress.enter="handleFindPatient"
+          :error-messages="valueRutErrors"
+          @input="$v.localIdentifier.valueRut.$touch()"
+          @blur="
+            $v.localIdentifier.valueRut.$touch();
+            handleMaskRut();
+          "
+        />
+        <BaseTextfield
+          :disabled="disabledIdentifiersForm"
+          v-else
+          label="Número documento"
+          @keypress.enter="handleFindPatient"
+          v-model="localValueOther"
+          :error-messages="valueOtherErrors"
+          @input="$v.localIdentifier.valueOther.$touch()"
+          @blur="$v.localIdentifier.valueOther.$touch()"
+        />
+      </v-col>
+      <v-col cols="2">
+        <v-btn
+          :disabled="disabledIdentifiersForm"
+          @click="handleFindPatient"
+          block
+          depressed
+          color="primary"
+          >Buscar</v-btn
+        >
+      </v-col>
+      <v-col cols="2">
+        <v-btn block @click="handleResetForm" depressed color="secondary"
+          >Limpiar</v-btn
+        >
+      </v-col>
+    </v-row>
+    <v-alert
+      type="warning"
+      border="left"
+      v-show="disabledIdentifiersForm"
+      class="caption"
+      >*El tipo y número de documento ha sido deshabilidado por
+      seguridad.</v-alert
+    >
+  </div>
 </template>
 
 <script>
@@ -91,6 +109,7 @@ export default {
   data: () => ({
     localIdentifier: new IdentifierPatient(),
     defaultItem: new Patient(),
+    disabledIdentifiersForm: false,
   }),
 
   async mounted() {
@@ -226,6 +245,8 @@ export default {
       this.localValueOther = "";
       this.triggerAdmitPatientForm(false);
       this.$v.$reset();
+
+      this.disabledIdentifiersForm = false;
     },
 
     async handleFindPatient() {
@@ -243,6 +264,8 @@ export default {
           this.triggerAdmitPatientForm(true);
         }
       }
+
+      this.disabledIdentifiersForm = true;
     },
   },
 };

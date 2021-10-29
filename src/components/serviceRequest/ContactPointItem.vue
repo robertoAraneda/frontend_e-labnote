@@ -2,7 +2,7 @@
   <v-row>
     <v-col cols="12" sm="3">
       <BaseSelect
-        v-model="localTelecom.system"
+        v-model="systemLocal"
         :items="['EMAIL', 'TELÉFONO']"
         label="Tipo"
         @input="$v.localTelecom.system.$touch()"
@@ -12,7 +12,7 @@
     </v-col>
     <v-col cols="12" sm="3">
       <BaseSelect
-        v-model="localTelecom.use"
+        v-model="useLocal"
         :items="['TRABAJO', 'PERSONAL']"
         label="Uso"
         @input="$v.localTelecom.use.$touch()"
@@ -24,18 +24,18 @@
     <v-col cols="12" sm="6">
       <BaseTextfield
         v-if="isEmail"
-        v-model="localTelecom.value"
+        v-model="valueLocal"
         label="Email"
-        @input="$v.localTelecom.value.$touch()"
-        @blur="$v.localTelecom.value.$touch()"
+        @input="$v.localTelecom.valueTelecom.$touch()"
+        @blur="$v.localTelecom.valueTelecom.$touch()"
         :error-messages="valueErrors"
       />
       <BaseTextfield
         v-else
-        @input="$v.localTelecom.value.$touch()"
-        @blur="$v.localTelecom.value.$touch()"
+        @input="$v.localTelecom.valueTelecom.$touch()"
+        @blur="$v.localTelecom.valueTelecom.$touch()"
         :error-messages="valueErrors"
-        v-model="localTelecom.value"
+        v-model="valueLocal"
         label="Teléfono"
       />
     </v-col>
@@ -60,7 +60,7 @@ export default {
         localTelecom: {
           use: { required },
           system: { required },
-          value: { email, required },
+          valueTelecom: { email, required },
         },
       };
     } else {
@@ -68,56 +68,40 @@ export default {
         localTelecom: {
           use: { required },
           system: { required },
-          value: { required },
+          valueTelecom: { required },
         },
       };
     }
   },
 
   props: {
-    telecom: {
-      use: String,
-      system: String,
-      value: String,
-    },
+    use: String,
+    system: String,
+    valueTelecom: String,
     index: Number,
-    triggerValidation: Boolean,
-    reset: Boolean,
   },
 
-  data: (vm) => ({
-    localTelecom: { ...vm.telecom },
+  data: () => ({
+    localTelecom: new ContactPointPatient(),
   }),
 
+  mounted() {
+    this.localTelecom.use = this.use;
+    this.localTelecom.valueTelecom = this.valueTelecom;
+    this.localTelecom.system = this.system;
+  },
+
   watch: {
-    localTelecom: {
-      deep: true,
-
-      handler(value) {
-        this.editTelecom({ index: this.index, value });
-        this.$emit("validated", !this.$v.$invalid);
-      },
-    },
-
-    editedPatient() {
-      this.localTelecom = { ...this.telecom };
-    },
-
-    triggerValidation() {
-      this.$v.$touch();
-      this.$emit("validated", !this.$v.$invalid);
-    },
-
-    reset() {
-      this.$v.$reset();
-
-      this.editTelecom([new ContactPointPatient()]);
+    triggerErrorForm(value) {
+      console.log("trigger error in telecom form");
+      value && this.$v.$touch();
     },
   },
 
   computed: {
     ...mapGetters({
       editedPatient: "patient/editedPatient",
+      triggerErrorForm: "patient/triggerFormErrorAdmitPatient",
     }),
     isEmail() {
       return this.localTelecom.system === "EMAIL";
@@ -142,18 +126,49 @@ export default {
 
     valueErrors() {
       const errors = [];
-      if (!this.$v.localTelecom.value.$dirty) return errors;
+      if (!this.$v.localTelecom.valueTelecom.$dirty) return errors;
 
       if (this.isEmail) {
-        !this.$v.localTelecom.value.email &&
+        !this.$v.localTelecom.valueTelecom.email &&
           errors.push(validationMessage.EMAIL);
-        !this.$v.localTelecom.value.required &&
+        !this.$v.localTelecom.valueTelecom.required &&
           errors.push(validationMessage.REQUIRED);
       } else {
-        !this.$v.localTelecom.value.required &&
+        !this.$v.localTelecom.valueTelecom.required &&
           errors.push(validationMessage.REQUIRED);
       }
       return errors;
+    },
+
+    useLocal: {
+      get() {
+        return this.use;
+      },
+      set(value) {
+        this.$emit("update:use", value);
+        this.localTelecom.use = value;
+      },
+    },
+
+    systemLocal: {
+      get() {
+        return this.system;
+      },
+      set(value) {
+        this.$emit("update:system", value);
+        this.localTelecom.system = value;
+      },
+    },
+
+    valueLocal: {
+      get() {
+        return this.valueTelecom;
+      },
+      set(value) {
+        this.$emit("update:valueTelecom", value);
+        this.localTelecom.value = value;
+        this.localTelecom.valueTelecom = value;
+      },
     },
   },
 

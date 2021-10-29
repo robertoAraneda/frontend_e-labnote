@@ -81,6 +81,10 @@
           <AddressPatientList />
         </v-sheet>
 
+        <v-sheet elevation="0" rounded class="mt-3 pb-3">
+          <ContactPointList />
+        </v-sheet>
+
         <v-sheet elevation="0" rounded>
           <v-card-actions>
             <v-spacer />
@@ -100,53 +104,20 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
 import IdentifierPatientList from "../../components/serviceRequest/IdentifierPatientList";
 import Patient from "../../models/Patient";
 import DemographicPatient from "../../components/serviceRequest/DemographicPatient";
 import AddressPatientList from "../../components/serviceRequest/AddressPatientList";
+import ContactPointList from "../../components/serviceRequest/ContactPointList";
 
 export default {
   name: "AdmitPatientV2",
 
   components: {
+    ContactPointList,
     AddressPatientList,
     DemographicPatient,
     IdentifierPatientList,
-  },
-
-  mixins: [validationMixin],
-
-  validations: {
-    defaultItem: {
-      name: {
-        required,
-        $each: {
-          given: { required },
-          mother_family: { required },
-          father_family: { required },
-        },
-      },
-      administrative_gender_id: { required },
-      birthdate: { required },
-      identifier: {
-        required,
-        $each: {
-          identifier_type_id: { required },
-          value: { required },
-        },
-      },
-      address: {
-        required,
-        $each: {
-          use: { required },
-          text: { required },
-          state_code: { required },
-          city_code: { required },
-        },
-      },
-    },
   },
 
   data: () => ({
@@ -176,7 +147,22 @@ export default {
       editedPatient: "patient/editedPatient",
       patient: "patient/patient",
       showAdmitPatientForm: "patient/showAdmitPatientForm",
+      isIdentifierFormValid: "patient/isIdentifierFormValid",
+      isNameFormValid: "patient/isNameFormValid",
+      isAddressFormValid: "patient/isAddressFormValid",
+      isTelecomFormValid: "patient/isTelecomFormValid",
+      isContactFormValid: "patient/isContactFormValid",
     }),
+
+    isValidForm() {
+      return (
+        this.isIdentifierFormValid &&
+        this.isNameFormValid &&
+        this.isAddressFormValid &&
+        this.isTelecomFormValid &&
+        this.isContactFormValid
+      );
+    },
 
     fullNamePatient() {
       if (!this.patient.name[0]) return "";
@@ -232,12 +218,11 @@ export default {
 
       this.defaultItem = { ...this.editedPatient };
 
-      if (!this.$v.$invalid) {
+      if (this.isValidForm) {
         console.log("sending data");
       } else {
         this.openWarningMessage = true;
         console.log("invalid data");
-        this.$v.$touch();
       }
       /*
       if (this.isEditedPatient) {

@@ -122,6 +122,10 @@ export default {
     emitFormData(value) {
       value && this.setName(this.name);
     },
+
+    isFormValid() {
+      this.handleNameFormValid(this.isFormValid);
+    },
   },
 
   async mounted() {
@@ -138,6 +142,10 @@ export default {
       emitFormData: "patient/emitFormData",
       triggerErrorForm: "patient/triggerFormErrorAdmitPatient",
     }),
+
+    isFormValid() {
+      return !this.$v.$invalid;
+    },
 
     nameGivenErrors() {
       const errors = [];
@@ -209,6 +217,7 @@ export default {
       setGender: "patient/editAdministrativeGender",
       getAdministrativeGenders: "patient/getAdministrativeGenders",
       setName: "patient/editName",
+      handleNameFormValid: "patient/nameFormValid",
     }),
 
     save(date) {

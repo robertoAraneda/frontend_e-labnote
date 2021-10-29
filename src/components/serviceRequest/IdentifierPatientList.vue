@@ -2,9 +2,12 @@
   <ContainerPatientForm subtitle="Identificación">
     <template v-slot:body>
       <v-list color="transparent">
-        <v-list-item v-for="n in identifiersLength" :key="n">
+        <v-list-item
+          v-for="(identifier, index) in localIdentifiers"
+          :key="index"
+        >
           <v-list-item-content>
-            <IdentifierPatientItem v-bind.sync="identifiers[n - 1]" />
+            <IdentifierPatientItem v-bind.sync="localIdentifiers[index]" />
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -18,19 +21,35 @@ import ContainerPatientForm from "./ContainerPatientForm";
 import IdentifierPatient from "../../models/IdentifierPatient";
 import { mapActions, mapGetters } from "vuex";
 
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
+import { PatientIdentifierTypeEnum } from "../../enums/patient-identifier-type.enum";
+
 export default {
   name: "IdentifierPatientList",
 
   components: { ContainerPatientForm, IdentifierPatientItem },
+
+  mixins: [validationMixin],
+
+  validations: {
+    localIdentifiers: {
+      required,
+      $each: {
+        value: { required },
+        identifier_type_id: { required },
+      },
+    },
+  },
 
   props: {
     reset: Boolean,
   },
 
   data: () => ({
-    isFormValid: false,
     triggerValidation: false,
-    identifiers: [new IdentifierPatient()],
+    openWarningMessage: false,
+    localIdentifiers: [new IdentifierPatient()],
   }),
 
   watch: {
@@ -43,23 +62,51 @@ export default {
               const value = identifier.valueRut || identifier.valueOther;
               return { ...identifier, value };
             })
-          );
+          ) &&
+          this.handleIdentifierFormValid(!this.$v.$invalid);
       }
+    },
+
+    identifiers() {
+      this.localIdentifiers = [
+        ...this.identifiers.map((identifier) => {
+          console.log("identifier", identifier);
+          if (
+            identifier.identifierType?.code === PatientIdentifierTypeEnum.RUT
+          ) {
+            return {
+              ...identifier,
+              valueRut: identifier.value,
+            };
+          }
+          return {
+            ...identifier,
+            valueOther: identifier.value,
+          };
+        }),
+      ];
+      console.log("changing address");
+    },
+
+    isFormValid() {
+      this.handleIdentifierFormValid(this.isFormValid);
     },
   },
 
   computed: {
     ...mapGetters({
-      emitFormData: "patient/emitFormData",
+      identifiers: "patient/identifier",
     }),
-    identifiersLength() {
-      return this.identifiers.length;
+
+    isFormValid() {
+      return !this.$v.$invalid;
     },
   },
 
   methods: {
     ...mapActions({
       setIdentifier: "patient/editIdentifier",
+      handleIdentifierFormValid: "patient/identifierFormValid",
     }),
   },
 };

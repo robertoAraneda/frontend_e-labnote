@@ -55,6 +55,8 @@ import { required } from "vuelidate/lib/validators";
 export default {
   name: "AddressPatientList",
 
+  components: { ContainerPatientForm, AddressPatientItem },
+
   mixins: [validationMixin],
 
   validations: {
@@ -75,8 +77,6 @@ export default {
     openWarningMessage: false,
   }),
 
-  components: { ContainerPatientForm, AddressPatientItem },
-
   watch: {
     addresses() {
       this.localAddresses = [
@@ -88,16 +88,15 @@ export default {
       console.log("changing address");
     },
 
-    emitFormData(value) {
+    emitFormData() {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        value &&
-          this.editAddresses(
-            this.localAddresses.map((address) => ({
-              ...address,
-              text: address.textAddress,
-            }))
-          );
+        this.editAddresses(
+          this.localAddresses.map((address) => ({
+            ...address,
+            text: address.textAddress,
+          }))
+        ) && this.handleAddressFormValid(!this.$v.$invalid);
       }
     },
   },
@@ -114,12 +113,11 @@ export default {
       destroyAddressItem: "patient/destroyAddressItem",
       editAddresses: "patient/editAddress",
       emitTriggerErrorForm: "patient/triggerErrorForm",
+      handleAddressFormValid: "patient/addressFormValid",
     }),
 
     handleAddNewAddress() {
       this.emitTriggerErrorForm();
-
-      console.log("test");
 
       if (!this.$v.$invalid) {
         this.localAddresses.push(new AddressPatient());
