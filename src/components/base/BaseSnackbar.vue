@@ -34,7 +34,10 @@ export default {
   props: {
     value: Boolean,
     type: String,
-    customMessage: String,
+    customMessage: {
+      type: String,
+      default: () => "default",
+    },
   },
 
   data: () => ({
@@ -56,9 +59,13 @@ export default {
         case "success":
           return SnackbarMessages().SUCCESS;
         case "warning":
-          return SnackbarMessages.WARNING;
+          if (this.customMessage === "default") {
+            return SnackbarMessages().WARNING;
+          } else {
+            return SnackbarMessages(this.customMessage).CUSTOM;
+          }
         case "error":
-          if (this.customMessage === "") {
+          if (this.customMessage === "default") {
             return SnackbarMessages().ERROR;
           } else {
             return SnackbarMessages(this.customMessage).CUSTOM;

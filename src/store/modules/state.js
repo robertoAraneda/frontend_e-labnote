@@ -56,7 +56,7 @@ export default {
       try {
         commit("SET_STATES_LOADING", true);
         const { data } = await httpRequest.getRequest(`${BASE_URL}`);
-        console.log(data);
+
         commit("SET_STATES", data);
       } catch (error) {
         commit("SET_STATES", []);

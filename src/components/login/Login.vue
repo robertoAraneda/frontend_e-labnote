@@ -1,10 +1,10 @@
 <template>
-  <div>
-    <v-card elevation="0" min-height="87vh">
+  <div style="height: 100vh" class="d-flex align-center justify-center">
+    <v-card color="transparent" elevation="0">
       <v-card-text>
-        <v-row justify="center" class="mt-10">
-          <v-col cols="10" sm="8" md="8" lg="7">
-            <v-row class="d-flex justify-space-around flex-column">
+        <v-row justify="center">
+          <v-col cols="12" sm="8" md="8" xl="6" lg="8">
+            <v-row class="flex-column">
               <p class="subtitle font-weight-bold mb-10 mx-auto">
                 Ingresa con tu usuario
               </p>
@@ -45,7 +45,7 @@
                 class="mb-6"
                 >Ingresar</v-btn
               >
-              <a href="#" class="mb-6">¿Olvidaste tu contraseña?</a>
+              <!--<a href="#" class="mb-6">¿Olvidaste tu contraseña?</a>-->
               <v-alert
                 class="mt-6"
                 border="left"
@@ -61,6 +61,7 @@
         </v-row>
       </v-card-text>
     </v-card>
+
     <v-snackbar v-model="snackbar" :timeout="timeout">
       {{ text }}
 

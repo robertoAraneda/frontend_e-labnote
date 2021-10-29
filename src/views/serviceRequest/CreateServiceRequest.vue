@@ -583,7 +583,7 @@ export default {
       _locations: "location/locations",
       _practitioners: "practitioner/practitioners",
       _observations: "observationServiceRequest/observationServiceRequests",
-      _specimenCodes: "specimen/specimens",
+      _specimenCodes: "specimenCode/specimens",
       _serviceRequestPriorities: "serviceRequest/serviceRequestPriorities",
       patient: "serviceRequest/patient",
       isServiceRequestCreatedByAppointment:
@@ -699,6 +699,8 @@ export default {
         }
       );
 
+      console.log("observations", observations);
+
       const groupedObservations = groupBy(observations, "specimen_code");
 
       const samples = Object.keys(groupedObservations);
@@ -733,7 +735,7 @@ export default {
       getLocations: "location/getItems",
       getPractitioners: "practitioner/getItems",
       getObservations: "observationServiceRequest/getItems",
-      getSpecimenCodes: "specimen/getItems",
+      getSpecimenCodes: "specimenCode/getItems",
       getServiceRequestStatuses: "serviceRequest/getServiceRequestPriorities",
       create: "serviceRequest/postItem",
       setPatientSelected: "serviceRequest/setPatient",
@@ -752,7 +754,7 @@ export default {
 
       await this.create(this.serviceRequest);
 
-      this.setPatientSelected(this.defaultModel);
+      await this.setPatientSelected(null);
 
       if (this.isServiceRequestCreatedByAppointment) {
         await this.$router.push({ name: "schedules" });

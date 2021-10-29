@@ -395,7 +395,7 @@ export const SpecimenHeaders = [
   },
   {
     text: "Nombre",
-    value: "name",
+    value: "display",
     sortable: true,
   },
   {

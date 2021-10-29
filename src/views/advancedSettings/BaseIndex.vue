@@ -19,7 +19,7 @@
             :dark="hover"
             :color="hover ? 'primary' : ''"
             :class="{ 'on-hover': hover }"
-            :elevation="hover ? 12 : 2"
+            :elevation="hover ? 12 : 0"
             flat
             :to="{ name: menu.url }"
           >
@@ -27,15 +27,14 @@
               <div class="mx-auto text-center">
                 <v-avatar
                   class="mt-6"
-                  size="64"
+                  size="48"
                   :color="!hover ? 'primary' : 'white'"
                 >
-                  <v-icon :color="hover ? 'primary' : 'white'" large>{{
+                  <v-icon :color="hover ? 'primary' : 'white'">{{
                     menu.icon
                   }}</v-icon>
                 </v-avatar>
-                <h2 class="mt-5 text-h5">{{ menu.name }}</h2>
-                <p class="text-caption mt-1">text</p>
+                <h2 class="mt-5 subtitle-1">{{ menu.name }}</h2>
               </div>
             </v-list-item-content>
           </v-card>
@@ -53,10 +52,6 @@ export default {
 
   computed: {
     ...mapGetters({
-      //currentModule: "module/currentModule",
-      menusByModules: "auth/currentMenusByModules",
-      namedPermissionsForMenu: "auth/namedPermissionsForMenu",
-      modules: "auth/modules",
       currentModule: "auth/currentModule",
     }),
 
@@ -65,7 +60,6 @@ export default {
       return this.currentModule.map(({ menu }) => menu);
     },
   },
-
   methods: {
     ...mapActions({
       getModulesByLaboratory: "laboratory/getModulesByLaboratory",

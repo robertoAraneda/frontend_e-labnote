@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar clipped-left app color="primary">
+  <v-app-bar clipped-left fixed :app="isAppNavbar" color="primary">
     <v-toolbar-title
       style="width: 270px"
       class="text-h4 white--text text-center font-weight-bold"
@@ -17,6 +17,14 @@
         v-if="showMainPageButton"
         label="Página Principal"
         @click="mainPage"
+        class="white--text ml-3"
+        color="primary"
+    /></v-toolbar-items>
+    <v-toolbar-items>
+      <BaseAcceptButton
+        v-if="showObservationPageButton"
+        label="Prestaciones"
+        @click="observations"
         class="white--text ml-3"
         color="primary"
     /></v-toolbar-items>
@@ -46,10 +54,12 @@ import { mapGetters } from "vuex";
 export default {
   mounted() {
     console.log("user", this.user);
+    console.log(this.$route);
   },
   computed: {
     ...mapGetters({
       user: "auth/user",
+      authenticated: "auth/authenticated",
     }),
 
     loggedUserInfo() {
@@ -67,7 +77,15 @@ export default {
     },
 
     showMainPageButton() {
-      return this.$route.name !== "Index";
+      return this.$route.name !== "Landing";
+    },
+
+    isAppNavbar() {
+      return this.$route.path.startsWith("/modulos");
+    },
+
+    showObservationPageButton() {
+      return this.$route.name !== "Observations";
     },
 
     showModuleButton() {
@@ -77,7 +95,8 @@ export default {
       return (
         this.$route.name === "Modules" ||
         this.$route.name === "Login" ||
-        this.$route.name === "Index"
+        this.$route.name === "Landing" ||
+        this.$route.path.startsWith("/catalogo-prestaciones")
       );
     },
   },
@@ -92,8 +111,13 @@ export default {
       }
     },
     mainPage() {
-      if (this.$route.name !== "Index") {
-        this.$router.push({ name: "Index" });
+      if (this.$route.name !== "Landing") {
+        this.$router.push({ name: "Landing" });
+      }
+    },
+    observations() {
+      if (this.$route.name !== "Observations") {
+        this.$router.push({ name: "Observations" });
       }
     },
   },

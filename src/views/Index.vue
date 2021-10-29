@@ -1,14 +1,23 @@
 <template>
-  <v-main class="blue-grey lighten-5">
+  <v-main
+    :class="
+      !authenticated || $route.path.startsWith('/catalogo-prestaciones')
+        ? 'white'
+        : 'grey lighten-3'
+    "
+  >
     <GuestNavbar v-if="!authenticated" />
     <LoggedNavbar v-else />
     <v-breadcrumbs
-      v-if="$route.path !== '/'"
+      v-if="
+        $route.path !== '/' &&
+        $route.path !== '/login' &&
+        !$route.path.startsWith('/catalogo-prestacione')
+      "
       :items="breadcrumbs"
     ></v-breadcrumbs>
-    <v-container fluid>
-      <router-view />
-    </v-container>
+
+    <router-view />
   </v-main>
 </template>
 

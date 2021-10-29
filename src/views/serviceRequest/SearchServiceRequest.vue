@@ -139,128 +139,6 @@
       v-model="detailServiceRequestDialog"
     />
 
-    <v-card
-      class="mt-3 pb-3"
-      elevation="0"
-      v-if="foundServiceRequests.length > 0"
-    >
-      <v-subheader class="subtitle-1">Lista de solicitudes</v-subheader>
-      <v-expansion-panels inset tile v-model="panel">
-        <v-expansion-panel
-          v-for="serviceRequest in foundServiceRequests"
-          :key="serviceRequest.id"
-        >
-          <v-expansion-panel-header class="elevation-0">
-            <template v-slot="{ open }">
-              <v-fade-transition leave-absolute>
-                <v-row class="align-center" v-if="open">
-                  <v-spacer />
-                  <v-col cols="3">
-                    <v-chip class="ma-2" color="error accent-4" outlined>
-                      <v-icon left> mdi-hospital-box-outline</v-icon>
-                      <strong>Prioridad &colon;</strong>
-                      {{ serviceRequest._embedded.priority.name }}
-                    </v-chip></v-col
-                  >
-                  <v-col cols="3">
-                    <v-chip class="ma-2" color="orange darken-4" outlined>
-                      <v-icon left>mdi-alert-circle-outline</v-icon>
-                      <strong>Estado &colon; </strong>
-                      {{ serviceRequest._embedded.status.name }}
-                    </v-chip></v-col
-                  >
-                  <v-col cols="3">
-                    <strong class="headline text-h4">
-                      N° {{ serviceRequest.requisition }}</strong
-                    >
-                  </v-col>
-                </v-row>
-
-                <v-row v-else align="center" class="spacer" no-gutters>
-                  <v-col cols="4" sm="2" md="1">
-                    <v-avatar size="36px">
-                      <v-icon color="primary"> mdi-cog</v-icon>
-                    </v-avatar>
-                  </v-col>
-
-                  <v-col class="hidden-xs-only" sm="4" md="2">
-                    <strong
-                      class="text-body-1"
-                      v-html="serviceRequest.requisition"
-                    ></strong>
-                  </v-col>
-
-                  <v-col cols="8" sm="4">
-                    <strong
-                      v-html="
-                        serviceRequest._embedded.patient.name[0].given +
-                        ' ' +
-                        serviceRequest._embedded.patient.name[0].father_family +
-                        ' ' +
-                        serviceRequest._embedded.patient.name[0].mother_family
-                      "
-                    ></strong>
-                    <p v-html="serviceRequest._embedded.location.name"></p>
-                  </v-col>
-                  <v-col class="text-truncate hidden-sm-and-down">
-                    <span
-                      v-html="'Fecha solicitud: ' + serviceRequest.occurrence"
-                    ></span>
-                    <p>
-                      <v-chip
-                        color="warning lighten-2"
-                        class="ml-0 mr-2 black--text"
-                        label
-                        small
-                      >
-                        Estado: {{ serviceRequest._embedded.status.name }}
-                      </v-chip>
-                      <v-chip
-                        color="success lighten-2"
-                        class="ml-0 mr-2 black--text"
-                        label
-                        small
-                      >
-                        Prioridad:
-                        {{ serviceRequest._embedded.priority.name }}
-                      </v-chip>
-                    </p>
-                  </v-col>
-                </v-row>
-              </v-fade-transition>
-            </template>
-          </v-expansion-panel-header>
-
-          <v-expansion-panel-content eager class="elevation-0">
-            <v-divider />
-            <v-row class="mt-3">
-              <v-col cols="12" sm="5">
-                <TraceabilityServiceRequest :timeline="timeline" />
-              </v-col>
-              <v-col cols="12" sm="7">
-                <v-row>
-                  <v-col cols="12">
-                    <InformationPatient
-                      :patient="serviceRequest._embedded.patient"
-                    />
-                  </v-col>
-
-                  <v-col cols="12">
-                    <InformationServiceRequest
-                      :service-request="serviceRequest"
-                    />
-                  </v-col>
-
-                  <v-col cols="12">
-                    <ObservationsServiceRequest :observations="observations" />
-                  </v-col>
-                </v-row>
-              </v-col>
-            </v-row>
-          </v-expansion-panel-content>
-        </v-expansion-panel>
-      </v-expansion-panels>
-    </v-card>
     <v-dialog
       v-model="patientsFound"
       transition="dialog-bottom-transition"
@@ -311,20 +189,12 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import InformationServiceRequest from "../../components/serviceRequest/searchServiceRequest/InformationServiceRequest";
-import InformationPatient from "../../components/serviceRequest/searchServiceRequest/InformationPatient";
-import TraceabilityServiceRequest from "../../components/serviceRequest/searchServiceRequest/TraceabilityServiceRequest";
-import ObservationsServiceRequest from "../../components/serviceRequest/searchServiceRequest/ObservationsServiceRequest";
 import DialogDetailServiceRequest from "../../components/serviceRequest/searchServiceRequest/DialogDetailServiceRequest";
 
 export default {
   name: "SearchServiceRequest",
   components: {
     DialogDetailServiceRequest,
-    ObservationsServiceRequest,
-    TraceabilityServiceRequest,
-    InformationPatient,
-    InformationServiceRequest,
   },
   data: () => ({
     dialogPdf: false,

@@ -1,22 +1,12 @@
 <template>
-  <v-container fluid class="fill-height">
-    <v-row justify="center">
-      <v-col>
-        <v-card color="grey lighten-4" elevation="0" min-height="87vh">
-          <v-card-title>
-            <span v-text="title"></span>
-          </v-card-title>
-          <v-card-text>
-            <p class="text-h4">e-Labnote</p>
-            <p class="text-h2">
-              Accede al sistema web para gestionar tus procesos.
-            </p>
-            <p>{{ text }}</p>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-row align="center" justify="center">
+    <v-col cols="10" md="6">
+      <h1 class="display-3 mb-3 font-weight-black primary--text">e-Labnote</h1>
+      <p class="title font-weight-light" style="line-height: 1.7 !important">
+        Accede al sistema web para gestionar tus procesos.
+      </p>
+    </v-col>
+  </v-row>
 </template>
 
 <script>
@@ -28,4 +18,7 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="sass" scoped>
+.v-heading
+  letter-spacing: 3px !important
+</style>

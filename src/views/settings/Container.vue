@@ -143,9 +143,9 @@ export default {
 
   watch: {
     color(value) {
-      console.log(value)
+      console.log(value);
       this.editedItem.color = value;
-    }
+    },
   },
   computed: {
     ...mapGetters({

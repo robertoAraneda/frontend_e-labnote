@@ -18,11 +18,7 @@
       sort-by="id"
     >
       <template slot="searchButton">
-        <BaseAcceptButton
-          small
-          @click="openDialog"
-          v-if="canCreate"
-        />
+        <BaseAcceptButton small @click="openDialog" v-if="canCreate" />
       </template>
     </BaseDatatable>
 
@@ -108,12 +104,13 @@ export default {
 
   computed: {
     ...mapGetters({
-      serviceRequestCategories: "serviceRequestCategory/serviceRequestCategories",
+      serviceRequestCategories:
+        "serviceRequestCategory/serviceRequestCategories",
       namedPermissions: "auth/namedPermissions",
     }),
 
     items() {
-      console.log('DATA', this.serviceRequestCategories);
+      console.log("DATA", this.serviceRequestCategories);
       if (!this.serviceRequestCategories) return [];
       return this.serviceRequestCategories.collection;
     },
@@ -128,7 +125,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.display.$dirty) return errors;
       !this.$v.editedItem.display.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -136,7 +133,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.code.$dirty) return errors;
       !this.$v.editedItem.code.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -171,7 +168,6 @@ export default {
       show: "serviceRequestCategory/showItem",
       changeStatus: "serviceRequestCategory/changeStatusItem",
     }),
-
 
     async save() {
       this.$v.$touch();

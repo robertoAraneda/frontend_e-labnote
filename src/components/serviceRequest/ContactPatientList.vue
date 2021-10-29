@@ -18,7 +18,11 @@
           </v-list-item-avatar>
 
           <v-list-item-content>
-            <ContactPatientItem :index="index" :contact="contact" />
+            <ContactPatientItem
+              :reset="reset"
+              :index="index"
+              :contact="contact"
+            />
             <v-divider v-if="index < contacts.length - 1"></v-divider>
           </v-list-item-content>
 
@@ -46,6 +50,10 @@ export default {
   }),
 
   components: { ContactPatientItem, ContainerPatientForm },
+
+  props: {
+    reset: Boolean,
+  },
 
   computed: {
     ...mapGetters({

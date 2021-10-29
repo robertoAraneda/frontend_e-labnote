@@ -18,11 +18,7 @@
       sort-by="id"
     >
       <template slot="searchButton">
-        <BaseAcceptButton
-          small
-          @click="openDialog"
-          v-if="canCreate"
-        />
+        <BaseAcceptButton small @click="openDialog" v-if="canCreate" />
       </template>
     </BaseDatatable>
 
@@ -127,7 +123,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.display.$dirty) return errors;
       !this.$v.editedItem.display.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -135,7 +131,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.code.$dirty) return errors;
       !this.$v.editedItem.code.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -170,7 +166,6 @@ export default {
       show: "serviceRequestIntent/showItem",
       changeStatus: "serviceRequestIntent/changeStatusItem",
     }),
-
 
     async save() {
       this.$v.$touch();

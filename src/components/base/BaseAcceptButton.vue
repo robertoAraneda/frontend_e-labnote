@@ -1,5 +1,5 @@
 <template>
-  <v-btn v-bind="$attrs" v-on="$listeners" :color="color" depressed rounded>{{
+  <v-btn v-bind="$attrs" v-on="$listeners" :color="color" depressed>{{
     label
   }}</v-btn>
 </template>

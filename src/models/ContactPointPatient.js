@@ -1,6 +1,7 @@
 export default class ContactPointPatient {
-  constructor(value = "", use = "", system = "") {
+  constructor(valueTelecom = "", value = "", use = "", system = "") {
     this.use = use;
+    this.valueTelecom = valueTelecom;
     this.value = value;
     this.system = system;
   }

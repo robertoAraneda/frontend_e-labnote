@@ -12,7 +12,7 @@ export const serviceRequest = [
     name: "admitPatient",
     component: () =>
       import(
-        /* webpackChunkName: "AdmitPatient" */ "../views/serviceRequest/AdmitPatient.vue"
+        /* webpackChunkName: "AdmitPatient" */ "../views/serviceRequest/AdmitPatientV2.vue"
       ),
   },
   {

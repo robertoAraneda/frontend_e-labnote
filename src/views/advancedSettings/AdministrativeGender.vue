@@ -18,11 +18,7 @@
       sort-by="id"
     >
       <template slot="searchButton">
-        <BaseAcceptButton
-          small
-          @click="openDialog"
-          v-if="canCreate"
-        />
+        <BaseAcceptButton small @click="openDialog" v-if="canCreate" />
       </template>
     </BaseDatatable>
 
@@ -118,16 +114,14 @@ export default {
     },
 
     formTitle() {
-      return this.editedIndex === -1
-        ? "Crear género"
-        : "Editar género";
+      return this.editedIndex === -1 ? "Crear género" : "Editar género";
     },
 
     displayErrors() {
       const errors = [];
       if (!this.$v.editedItem.display.$dirty) return errors;
       !this.$v.editedItem.display.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -135,7 +129,7 @@ export default {
       const errors = [];
       if (!this.$v.editedItem.code.$dirty) return errors;
       !this.$v.editedItem.code.required &&
-      errors.push(validationMessage.REQUIRED);
+        errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
@@ -170,7 +164,6 @@ export default {
       show: "administrativeGender/showItem",
       changeStatus: "administrativeGender/changeStatusItem",
     }),
-
 
     async save() {
       this.$v.$touch();

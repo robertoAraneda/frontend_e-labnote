@@ -69,30 +69,49 @@
         subtitle=" En éste módulo podrás gestionar los pacientes de E-labNote."
       />
       <v-sheet :elevation="elevation" rounded :class="classSheet">
-        <IdentifierPatientList />
+        <IdentifierPatientList
+          @triggerResetForm="handleResetForm"
+          :reset="reset"
+          :isvalid="isFormIdentifierValid"
+          @updateForm="isFormIdentifierValid = $event"
+        />
       </v-sheet>
 
       <v-sheet :elevation="elevation" rounded :class="classSheet">
-        <DemographicPatient />
+        <DemographicPatient
+          @updateForm="handleUpdateFormNames"
+          :isvalid="isFormNamesValid"
+          :reset="reset"
+        />
       </v-sheet>
 
       <v-sheet :elevation="elevation" rounded :class="classSheet">
-        <AddressPatientList />
+        <AddressPatientList
+          @updateForm="handleUpdateFormAddress"
+          :isvalid="isFormAddressValid"
+          :reset="reset"
+        />
       </v-sheet>
 
       <v-sheet :elevation="elevation" rounded :class="classSheet">
-        <ContactPointList />
+        <ContactPointList :isvalid="isFormTelecomValid" :reset="reset" />
       </v-sheet>
 
       <v-sheet :elevation="elevation" rounded :class="classSheet">
-        <ContactPatientList />
+        <ContactPatientList :reset="reset" />
       </v-sheet>
 
       <v-sheet :elevation="elevation" rounded>
         <v-card-actions>
           <v-spacer />
-          <v-btn text> Cancelar </v-btn>
-          <v-btn color="primary" @click="savePatient"> Guardar </v-btn>
+          <v-btn @click="cancelForm" text> Cancelar </v-btn>
+          <v-btn
+            :disabled="!showAdmitForm"
+            color="primary"
+            @click="savePatient"
+          >
+            Guardar
+          </v-btn>
         </v-card-actions>
       </v-sheet>
     </v-container>
@@ -100,7 +119,7 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
+import { mapActions, mapGetters, mapMutations } from "vuex";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import Patient from "../../models/Patient";
@@ -152,6 +171,11 @@ export default {
     defaultPatient: new Patient(),
     isEditedPatient: false,
     editedPatientId: -1,
+    reset: false,
+    isFormIdentifierValid: true,
+    isFormNamesValid: true,
+    isFormAddressValid: true,
+    isFormTelecomValid: true,
   }),
 
   async mounted() {
@@ -175,6 +199,7 @@ export default {
     ...mapGetters({
       editedPatient: "patient/editedPatient",
       patient: "patient/patient",
+      showAdmitForm: "patient/showAdmitForm",
     }),
 
     fullNamePatient() {
@@ -210,7 +235,25 @@ export default {
       getStates: "patient/getStates",
       getCities: "patient/getCities",
       setEditedPatient: "patient/setEditedPatient",
+      setPatient: "patient/setPatient",
     }),
+
+    ...mapMutations({
+      SET_SHOW_ADMIT_FORM: "patient/SET_SHOW_ADMIT_FORM",
+    }),
+
+    handleUpdateFormNames(value) {
+      this.isFormNamesValid = value;
+    },
+
+    handleUpdateFormAddress(value) {
+      this.isFormAddressValid = value;
+    },
+
+    handleResetForm(value) {
+      this.reset = value;
+      this.cancelForm();
+    },
 
     handleDestroyPatient() {
       this.dial = false;
@@ -224,6 +267,7 @@ export default {
       this.isEditedPatient = false;
       this.editedPatientId = -1;
       this.setEditedPatient(new Patient());
+      this.setPatient(new Patient());
     },
 
     handleSetEditedPatient() {
@@ -233,17 +277,37 @@ export default {
 
       this.$nextTick(() => {
         this.dial = false;
+        this.SET_SHOW_ADMIT_FORM(true);
       });
     },
 
     savePatient() {
+      this.isFormNamesValid = false;
+      this.isFormAddressValid = false;
+
+      /*
       if (this.isEditedPatient) {
         this.update(this.editedPatient);
       } else {
         this.store(this.editedPatient);
       }
 
+       */
+
+      setTimeout(() => {
+        //this.cancelForm();
+        this.isFormNamesValid = true;
+      }, 1000);
+    },
+
+    cancelForm() {
       this.setEditedPatient(this.defaultPatient);
+      this.setPatient(this.defaultPatient);
+      this.SET_SHOW_ADMIT_FORM(false);
+      this.reset = true;
+      setTimeout(() => {
+        this.reset = false;
+      }, 500);
     },
 
     save(date) {

@@ -7,32 +7,37 @@
         cols="12"
         sm="6"
         md="4"
-        lg="3"
+        lg="4"
+        xl="3"
+        class="text-center"
       >
         <v-hover v-slot="{ hover }">
           <v-card
+            class="py-12 px-4"
             :dark="hover"
             :color="hover ? 'primary' : ''"
             :class="{ 'on-hover': hover }"
-            :elevation="hover ? 12 : 2"
+            :elevation="hover ? 12 : 0"
             flat
             :to="{ name: module.url, params: { slug: module.slug } }"
           >
-            <v-list-item-content class="justify-center">
-              <div class="mx-auto text-center">
-                <v-avatar
-                  class="mt-6"
-                  size="64"
-                  :color="!hover ? 'primary' : 'white'"
-                >
-                  <v-icon :color="hover ? 'primary' : 'white'" large>{{
-                    module.icon
-                  }}</v-icon>
+            <v-theme-provider dark>
+              <div>
+                <v-avatar :color="!hover ? 'primary' : 'white'" size="88">
+                  <v-icon
+                    :color="hover ? 'primary' : 'white'"
+                    large
+                    v-text="module.icon"
+                  />
                 </v-avatar>
-                <h2 class="mt-5 text-h5">{{ module.name }}</h2>
-                <p class="text-caption mt-1">text</p>
               </div>
-            </v-list-item-content>
+            </v-theme-provider>
+
+            <v-card-title
+              v-text="module.name"
+              class="justify-center font-weight-black text-uppercase subtitle-1"
+              >Tiempo de respuesta</v-card-title
+            >
           </v-card>
         </v-hover>
       </v-col>

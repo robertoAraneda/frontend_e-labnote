@@ -4,6 +4,8 @@
     v-on="$listeners"
     color="primary"
     :prepend-inner-icon="prependIcon"
+    dense
+    outlined
   >
   </v-autocomplete>
 </template>

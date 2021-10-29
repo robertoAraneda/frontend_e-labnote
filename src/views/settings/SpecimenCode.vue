@@ -35,10 +35,10 @@
     >
       <template slot="body">
         <BaseTextfield
-          v-model="editedItem.name"
+          v-model="editedItem.display"
           label="Nombre"
-          @input="$v.editedItem.name.$touch()"
-          @blur="$v.editedItem.name.$touch()"
+          @input="$v.editedItem.display.$touch()"
+          @blur="$v.editedItem.display.$touch()"
           :error-messages="nameErrors"
         />
         <v-radio-group v-model="editedItem.active" row>
@@ -79,7 +79,7 @@ export default {
 
   validations: {
     editedItem: {
-      name: { required },
+      display: { required },
       active: { required },
     },
   },
@@ -101,7 +101,7 @@ export default {
 
   computed: {
     ...mapGetters({
-      specimens: "specimen/specimens",
+      specimens: "specimenCode/specimens",
       namedPermissions: "auth/namedPermissions",
     }),
 
@@ -118,42 +118,42 @@ export default {
 
     nameErrors() {
       const errors = [];
-      if (!this.$v.editedItem.name.$dirty) return errors;
-      !this.$v.editedItem.name.required &&
+      if (!this.$v.editedItem.display.$dirty) return errors;
+      !this.$v.editedItem.display.required &&
         errors.push(validationMessage.REQUIRED);
       return errors;
     },
 
     canCreate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.create");
+      return this.namedPermissions.includes("specimenCode.create");
     },
 
     canUpdate() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.update");
+      return this.namedPermissions.includes("specimenCode.update");
     },
 
     canDelete() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.delete");
+      return this.namedPermissions.includes("specimenCode.delete");
     },
 
     canShow() {
       if (!this.namedPermissions) return false;
-      return this.namedPermissions.includes("specimen.show");
+      return this.namedPermissions.includes("specimenCode.show");
     },
   },
 
   methods: {
     ...mapActions({
-      index: "specimen/getItems",
-      indexPaginate: "specimen/getPaginatedItems",
-      store: "specimen/postItem",
-      update: "specimen/putItem",
-      delete: "specimen/deleteItem",
-      show: "specimen/showItem",
-      changeStatus: "specimen/changeStatusItem",
+      index: "specimenCode/getItems",
+      indexPaginate: "specimenCode/getPaginatedItems",
+      store: "specimenCode/postItem",
+      update: "specimenCode/putItem",
+      delete: "specimenCode/deleteItem",
+      show: "specimenCode/showItem",
+      changeStatus: "specimenCode/changeStatusItem",
     }),
 
     async save() {

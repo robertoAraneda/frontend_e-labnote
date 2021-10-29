@@ -14,8 +14,49 @@ export default {
     administrativeGenders: [],
     identifierTypes: [],
     identifierUses: [],
+    showAdmitForm: false,
+    triggerFormErrorAdmitPatient: false,
+    emitFormData: false,
+    showAdmitPatientForm: false,
+    isIdentifierFormValid: false,
+    isNameFormValid: false,
+    isAddressFormValid: false,
+    isTelecomFormValid: false,
+    isContactFormValid: false,
   },
   mutations: {
+    SET_SHOW_ADMIT_FORM: (state, payload) => {
+      state.showAdmitPatientForm = payload;
+    },
+
+    SET_IS_IDENTIFIER_FORM_VALID: (state, payload) => {
+      state.isIdentifierFormValid = payload;
+    },
+
+    SET_IS_NAME_FORM_VALID: (state, payload) => {
+      state.isNameFormValid = payload;
+    },
+
+    SET_IS_ADDRESS_FORM_VALID: (state, payload) => {
+      state.isAddressFormValid = payload;
+    },
+
+    SET_IS_TELECOM_FORM_VALID: (state, payload) => {
+      state.isTelecomFormValid = payload;
+    },
+
+    SET_IS_CONTACT_FORM_VALID: (state, payload) => {
+      state.isContactFormValid = payload;
+    },
+
+    SET_TRIGGER_FORM_ERROR_ADMIT_PATIENT: (state, payload) => {
+      state.triggerFormErrorAdmitPatient = payload;
+    },
+
+    SET_EMIT_FORM_DATA: (state, payload) => {
+      state.emitFormData = payload;
+    },
+
     SET_PATIENTS: (state, payload) => {
       state.patients = payload;
     },
@@ -47,18 +88,21 @@ export default {
     },
 
     SET_NAME: (state, payload) => {
-      state.editedPatient.name = payload;
+      state.editedPatient.name = [...payload];
     },
 
     SET_IDENTIFIER: (state, payload) => {
-      state.editedPatient.identifier[payload.index] = payload.value;
+      state.editedPatient.identifier = [...payload];
     },
+
     SET_BIRTHDATE: (state, payload) => {
       state.editedPatient.birthdate = payload;
     },
+
     SET_GENDER: (state, payload) => {
       state.editedPatient.administrative_gender_id = payload;
     },
+
     SET_ACTIVE: (state, payload) => {
       state.editedPatient.active = payload;
     },
@@ -106,7 +150,7 @@ export default {
     states: (state) => state.states,
     cities: (state) => state.cities,
     address: (state) => state.editedPatient.address,
-    name: (state) => state.editedPatient.name[0],
+    name: (state) => state.editedPatient.name,
     identifier: (state) => state.editedPatient.identifier,
     telecom: (state) => state.editedPatient.telecom,
     contact: (state) => state.editedPatient.contact,
@@ -116,8 +160,48 @@ export default {
     administrativeGenders: (state) => state.administrativeGenders,
     identifierTypes: (state) => state.identifierTypes,
     identifierUses: (state) => state.identifierUses,
+    showAdmitPatientForm: (state) => state.showAdmitPatientForm,
+    triggerFormErrorAdmitPatient: (state) => state.triggerFormErrorAdmitPatient,
+    emitFormData: (state) => state.emitFormData,
+    isIdentifierFormValid: (state) => state.isIdentifierFormValid,
+    isNameFormValid: (state) => state.isNameFormValid,
+    isAddressFormValid: (state) => state.isAddressFormValid,
+    isTelecomFormValid: (state) => state.isTelecomFormValid,
+    isContactFormValid: (state) => state.isContactFormValid,
   },
   actions: {
+    identifierFormValid: ({ commit }, payload) => {
+      commit("SET_IS_IDENTIFIER_FORM_VALID", payload);
+    },
+    nameFormValid: ({ commit }, payload) => {
+      commit("SET_IS_NAME_FORM_VALID", payload);
+    },
+    addressFormValid: ({ commit }, payload) => {
+      commit("SET_IS_ADDRESS_FORM_VALID", payload);
+    },
+    telecomFormValid: ({ commit }, payload) => {
+      commit("SET_IS_TELECOM_FORM_VALID", payload);
+    },
+    contactFormValid: ({ commit }, payload) => {
+      commit("SET_IS_CONTACT_FORM_VALID", payload);
+    },
+    triggerErrorForm: ({ commit }) => {
+      commit("SET_TRIGGER_FORM_ERROR_ADMIT_PATIENT", true);
+      setTimeout(() => {
+        commit("SET_TRIGGER_FORM_ERROR_ADMIT_PATIENT", false);
+      }, 500);
+    },
+
+    showAdmitForm: ({ commit }, payload) => {
+      commit("SET_SHOW_ADMIT_FORM", payload);
+    },
+
+    emitFormData: ({ commit }) => {
+      commit("SET_EMIT_FORM_DATA", true);
+      setTimeout(() => {
+        commit("SET_EMIT_FORM_DATA", false);
+      }, 500);
+    },
     showItem: async (_, url) => {
       try {
         return await httpRequest.getRequest(url);
@@ -241,7 +325,7 @@ export default {
     findPatientByIdentifier: async ({ commit }, payload) => {
       try {
         const { data } = await httpRequest.getRequest(
-          `${BASE_URL}/search?query=identifier&value=${payload}`
+          `${BASE_URL}/search?query=identifier&value=${payload.value}`
         );
 
         if (
@@ -250,17 +334,19 @@ export default {
           data.constructor === Object
         ) {
           commit("SET_PATIENT", data);
-          console.log("found");
         } else {
-          console.log("not found");
           commit("SET_PATIENT", new Patient());
           commit("SET_EDITED_PATIENT", new Patient());
 
           const identifier = {
-            value: payload,
+            value: payload.value,
+            identifier_type_id: payload.identifier_type_id,
           };
           commit("SET_IDENTIFIER", { value: identifier, index: 0 });
+          commit("SET_SHOW_ADMIT_FORM", true);
         }
+
+        return data;
       } catch (e) {
         commit("SET_PATIENT", new Patient());
         return e.response;
@@ -288,6 +374,10 @@ export default {
 
     setEditedPatient: ({ commit }, payload) => {
       commit("SET_EDITED_PATIENT", payload);
+    },
+
+    setPatient: ({ commit }, payload) => {
+      commit("SET_PATIENT", payload);
     },
 
     editName: ({ commit }, payload) => {

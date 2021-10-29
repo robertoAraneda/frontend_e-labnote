@@ -37,7 +37,7 @@ export default {
       try {
         commit("SET_CITIES_LOADING", true);
         const { data } = await httpRequest.getRequest(`${BASE_URL}`);
-        console.log(data);
+
         commit("SET_CITIES", data);
       } catch (error) {
         commit("SET_CITIES", []);

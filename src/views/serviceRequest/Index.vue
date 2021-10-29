@@ -1,42 +1,26 @@
 <template>
-  <!-- <v-container>
-    <NavigationDrawer :links="menus" />
-    <LoggedNavbar />
-    <v-container fluid>
-      <router-view></router-view>
-    </v-container>
-  </v-container>
-  -->
-  <div>
+  <div class="grey lighten-3">
     <NavigationDrawer :links="menusPermissions" />
-    <router-view />
+    <v-container>
+      <router-view />
+    </v-container>
   </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
 import NavigationDrawer from "../../components/navbar/NavigationDrawer";
-//import LoggedNavbar from "../../components/navbar/LoggedNavbar";
 export default {
   name: "Index",
   components: {
-    //LoggedNavbar,
     NavigationDrawer,
   },
   data: () => ({
     current: null,
   }),
   mounted() {
-    /*
-    const slug = this.splitRoute(this.$route.path);
-    this.getModuleBySlug(slug);
-
-     */
-
     if (this.modules) {
       const slug = this.splitRoute(this.$route.path);
-
-      //this.current = this.modules[slug];
 
       this.setCurrentModule(this.modules[slug]);
     }
@@ -46,7 +30,6 @@ export default {
     modules() {
       const slug = this.splitRoute(this.$route.path);
 
-      //this.current = this.modules[slug];
       this.setCurrentModule(this.modules[slug]);
     },
   },

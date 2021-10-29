@@ -48,9 +48,7 @@ import { mapActions, mapGetters } from "vuex";
 
 export default {
   name: "BaseIndex",
-  mounted() {
-    //this.getModulesByLaboratory(1);
-  },
+
   computed: {
     ...mapGetters({
       currentModule: "auth/currentModule",
