@@ -22,12 +22,13 @@
               <AddressPatientItem
                 :index="index"
                 v-bind.sync="localAddresses[index]"
+                :isFormValid.sync="isValid"
               />
               <v-divider v-if="index < localAddresses.length - 1"></v-divider>
             </v-list-item-content>
 
             <v-list-item-action v-if="localAddresses.length !== 1">
-              <v-btn icon @click="destroyAddressItem(index)">
+              <v-btn icon @click="handleDestroyItem(index)">
                 <v-icon color="grey lighten-1">mdi-close</v-icon>
               </v-btn>
             </v-list-item-action>
@@ -75,10 +76,12 @@ export default {
     localAddresses: [new AddressPatient()],
     triggerValidation: false,
     openWarningMessage: false,
+    isValid: false,
   }),
 
   watch: {
     addresses() {
+      //transformamos el array de direcciones para mapearlo con textAddress. Error en vuetify al emitir evento con "text"
       this.localAddresses = [
         ...this.addresses.map((address) => ({
           ...address,
@@ -90,14 +93,15 @@ export default {
 
     emitFormData() {
       this.$v.$touch();
-      if (!this.$v.$invalid) {
-        this.editAddresses(
-          this.localAddresses.map((address) => ({
-            ...address,
-            text: address.textAddress,
-          }))
-        ) && this.handleAddressFormValid(!this.$v.$invalid);
-      }
+
+      this.handleAddressFormValid(this.isValid);
+      //transformamos el array de direcciones para mapearlo con textAddress. Error en vuetify al emitir evento con "text"
+      this.editAddresses(
+        this.localAddresses.map((address) => ({
+          ...address,
+          text: address.textAddress,
+        }))
+      );
     },
   },
   computed: {
@@ -109,17 +113,19 @@ export default {
 
   methods: {
     ...mapActions({
-      addNewAddress: "patient/addNewAddress",
-      destroyAddressItem: "patient/destroyAddressItem",
       editAddresses: "patient/editAddress",
       emitTriggerErrorForm: "patient/triggerErrorForm",
       handleAddressFormValid: "patient/addressFormValid",
     }),
 
+    handleDestroyItem(index) {
+      this.localAddresses.splice(index, 1);
+    },
+
     handleAddNewAddress() {
       this.emitTriggerErrorForm();
 
-      if (!this.$v.$invalid) {
+      if (this.isValid) {
         this.localAddresses.push(new AddressPatient());
       } else {
         this.openWarningMessage = true;

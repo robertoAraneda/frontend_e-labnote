@@ -69,7 +69,7 @@
         subtitle="En éste módulo podrás gestionar los pacientes de E-labNote."
       />
       <v-sheet elevation="0" rounded class="mt-3 pb-3">
-        <IdentifierPatientList />
+        <IdentifierPatientList :reset="reset" />
       </v-sheet>
 
       <div v-if="showAdmitPatientForm">
@@ -78,18 +78,24 @@
         </v-sheet>
 
         <v-sheet elevation="0" rounded class="mt-3 pb-3">
+          <ContactPointList />
+        </v-sheet>
+
+        <v-sheet elevation="0" rounded class="mt-3 pb-3">
           <AddressPatientList />
         </v-sheet>
 
         <v-sheet elevation="0" rounded class="mt-3 pb-3">
-          <ContactPointList />
+          <ContactPatientList />
         </v-sheet>
 
         <v-sheet elevation="0" rounded>
           <v-card-actions>
             <v-spacer />
             <v-btn @click="cancelForm" text> Cancelar </v-btn>
-            <v-btn color="primary" @click="savePatient"> Guardar </v-btn>
+            <v-btn :loading="isValidating" color="primary" @click="savePatient">
+              Guardar
+            </v-btn>
           </v-card-actions>
         </v-sheet>
       </div>
@@ -109,11 +115,13 @@ import Patient from "../../models/Patient";
 import DemographicPatient from "../../components/serviceRequest/DemographicPatient";
 import AddressPatientList from "../../components/serviceRequest/AddressPatientList";
 import ContactPointList from "../../components/serviceRequest/ContactPointList";
+import ContactPatientList from "../../components/serviceRequest/ContactPatientList";
 
 export default {
   name: "AdmitPatientV2",
 
   components: {
+    ContactPatientList,
     ContactPointList,
     AddressPatientList,
     DemographicPatient,
@@ -124,6 +132,8 @@ export default {
     openModalPatientExist: false,
     defaultItem: new Patient(),
     openWarningMessage: false,
+    isValidating: false,
+    reset: false,
   }),
 
   mounted() {
@@ -131,12 +141,15 @@ export default {
     this.getCommunes();
   },
 
+  beforeDestroy() {},
+
   watch: {
     patient(value) {
       if (value.birthdate !== "") {
         this.openModalPatientExist = true;
       } else {
-        this.isEditedPatient = false;
+        this.handleIsEditingPatient(false);
+
         this.editedPatientId = -1;
       }
     },
@@ -152,6 +165,7 @@ export default {
       isAddressFormValid: "patient/isAddressFormValid",
       isTelecomFormValid: "patient/isTelecomFormValid",
       isContactFormValid: "patient/isContactFormValid",
+      isEditingPatient: "patient/isEditingPatient",
     }),
 
     isValidForm() {
@@ -179,21 +193,22 @@ export default {
       getCommunes: "city/getItems",
       getRegions: "state/getItems",
       triggerAdmitPatientForm: "patient/showAdmitForm",
+      handleIsEditingPatient: "patient/handleIsEditingPatient",
+      store: "patient/postItem",
+      update: "patient/putItem",
+      destroy: "patient/deleteItem",
     }),
 
     handleDestroyPatient() {
-      this.openModalPatientExist = false;
-      this.isEditedPatient = false;
-      this.editedPatientId = -1;
       this.destroy(this.patient);
+      this.cancelForm();
     },
 
     handleCancelBanner() {
       this.openModalPatientExist = false;
-      this.isEditedPatient = false;
+      this.handleIsEditingPatient(false);
       this.editedPatientId = -1;
-      this.setEditedPatient(new Patient());
-      this.setPatient(new Patient());
+      this.cancelForm();
     },
 
     handleSetEditedPatient() {
@@ -201,37 +216,53 @@ export default {
 
       this.$nextTick(() => {
         this.setEditedPatient(this.patient);
-        this.isEditedPatient = true;
+        this.handleIsEditingPatient(true);
         this.editedPatientId = this.patient.id;
         this.openModalPatientExist = false;
       });
     },
 
     cancelForm() {
-      this.setEditedPatient(this.defaultItem);
-      this.setPatient(this.defaultItem);
+      this.reset = true;
+      this.openModalPatientExist = false;
+      this.handleIsEditingPatient(false);
+      this.editedPatientId = -1;
+      setTimeout(() => {
+        this.setEditedPatient(new Patient());
+        this.setPatient(new Patient());
+        this.reset = false;
+      }, 1000);
     },
 
     savePatient() {
       this.emitFormData();
       this.triggerErrorForm();
 
-      this.defaultItem = { ...this.editedPatient };
+      this.isValidating = false;
+      setTimeout(() => {
+        if (this.isValidForm) {
+          const { contact, ...rest } = this.editedPatient;
 
-      if (this.isValidForm) {
-        console.log("sending data");
-      } else {
-        this.openWarningMessage = true;
-        console.log("invalid data");
-      }
-      /*
-      if (this.isEditedPatient) {
-        this.update(this.editedPatient);
-      } else {
-        this.store(this.editedPatient);
-      }
+          let payload = this.editedPatient;
 
-       */
+          if (!contact[0].relationship) {
+            payload = rest;
+          }
+
+          if (this.isEditingPatient) {
+            this.update(payload);
+          } else {
+            this.store(payload);
+          }
+
+          this.cancelForm();
+        } else {
+          this.openWarningMessage = true;
+        }
+
+        this.isValidating = false;
+        this.handleIsEditingPatient(false);
+      }, 1000);
     },
   },
 };

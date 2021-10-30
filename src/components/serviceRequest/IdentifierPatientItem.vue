@@ -18,13 +18,10 @@
           v-if="isRut"
           label="Rut"
           maxlength="9"
-          @keypress.enter="handleFindPatient"
+          @keypress.enter="handleFindPatient()"
           :error-messages="valueRutErrors"
           @input="$v.localIdentifier.valueRut.$touch()"
-          @blur="
-            $v.localIdentifier.valueRut.$touch();
-            handleMaskRut();
-          "
+          @blur="$v.localIdentifier.valueRut.$touch()"
         />
         <BaseTextfield
           :disabled="disabledIdentifiersForm"
@@ -104,6 +101,8 @@ export default {
     valueRut: String,
     valueOther: String,
     index: Number,
+    isFormValid: Boolean,
+    resetForm: Boolean,
   },
 
   data: () => ({
@@ -115,6 +114,12 @@ export default {
   async mounted() {
     await this.getIdentifierUses();
     await this.getIdentifierTypes();
+
+    this.$emit("update:isFormValid", !this.$v.$invalid);
+  },
+
+  beforeDestroy() {
+    this.handleResetForm();
   },
 
   watch: {
@@ -124,8 +129,15 @@ export default {
     },
 
     triggerErrorForm(value) {
-      console.log("triggered in identifier form");
       value && this.$v.$touch();
+    },
+
+    isValid() {
+      this.$emit("update:isFormValid", !this.$v.$invalid);
+    },
+
+    resetForm() {
+      if (this.resetForm) this.handleResetForm();
     },
   },
 
@@ -136,6 +148,10 @@ export default {
       editedPatient: "patient/editedPatient",
       triggerErrorForm: "patient/triggerFormErrorAdmitPatient",
     }),
+
+    isValid() {
+      return !this.$v.$invalid;
+    },
 
     localType: {
       get() {
@@ -148,7 +164,7 @@ export default {
 
     localValueRut: {
       get() {
-        return this.valueRut;
+        return this.valueRut || this.localIdentifier.valueRut;
       },
       set(value) {
         this.$emit("update:valueRut", value);
@@ -158,7 +174,7 @@ export default {
 
     localValueOther: {
       get() {
-        return this.valueOther;
+        return this.valueOther || this.localIdentifier.valueOther;
       },
       set(value) {
         this.$emit("update:valueOther", value);
@@ -215,6 +231,8 @@ export default {
       setEditedPatient: "patient/setEditedPatient",
       setPatient: "patient/setPatient",
       triggerAdmitPatientForm: "patient/showAdmitForm",
+      handleIdentifierFormValid: "patient/identifierFormValid",
+      handleIsEditingPatient: "patient/handleIsEditingPatient",
     }),
 
     handleMaskRut() {
@@ -235,26 +253,31 @@ export default {
           mask = "##########";
       }
 
-      this.localValueRut = this.$options.filters.VMask(rut, mask);
+      return this.$options.filters.VMask(rut, mask);
     },
 
     handleResetForm() {
-      this.setPatient(this.defaultItem);
-      this.setEditedPatient(this.defaultItem);
+      this.setPatient(new Patient());
+      this.setEditedPatient(new Patient());
       this.localValueRut = "";
       this.localValueOther = "";
       this.triggerAdmitPatientForm(false);
-      this.$v.$reset();
 
+      this.handleIdentifierFormValid(false);
+
+      this.$v.$reset();
       this.disabledIdentifiersForm = false;
     },
 
     async handleFindPatient() {
       if (this.isRut) {
-        this.localIdentifier.value = this.localValueRut;
+        this.localIdentifier.value = this.handleMaskRut();
       } else {
         this.localIdentifier.value = this.localValueOther;
       }
+
+      this.localIdentifier.identifier_type_id = this.localType;
+
       if (this.localIdentifier.value) {
         const patient = await this.findPatientByIdentifier(
           this.localIdentifier
@@ -262,6 +285,16 @@ export default {
 
         if (!patient) {
           this.triggerAdmitPatientForm(true);
+
+          if (this.isRut) {
+            this.localValueRut = this.localIdentifier.value;
+          } else {
+            this.localValueOther = this.localIdentifier.value;
+          }
+
+          this.localType = this.localIdentifier.identifier_type_id;
+        } else {
+          this.handleIsEditingPatient(true);
         }
       }
 

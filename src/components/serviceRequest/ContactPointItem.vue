@@ -78,7 +78,9 @@ export default {
     use: String,
     system: String,
     valueTelecom: String,
+    value: String,
     index: Number,
+    isFormValid: Boolean,
   },
 
   data: () => ({
@@ -89,12 +91,19 @@ export default {
     this.localTelecom.use = this.use;
     this.localTelecom.valueTelecom = this.valueTelecom;
     this.localTelecom.system = this.system;
+
+    this.$emit("update:isFormValid", !this.$v.$invalid);
   },
 
   watch: {
     triggerErrorForm(value) {
       console.log("trigger error in telecom form");
+      this.$emit("update:isFormValid", !this.$v.$invalid);
       value && this.$v.$touch();
+    },
+
+    isValid() {
+      this.$emit("update:isFormValid", !this.$v.$invalid);
     },
   },
 
@@ -148,6 +157,10 @@ export default {
         this.$emit("update:use", value);
         this.localTelecom.use = value;
       },
+    },
+
+    isValid() {
+      return !this.$v.$invalid;
     },
 
     systemLocal: {

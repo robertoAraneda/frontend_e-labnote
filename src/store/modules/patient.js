@@ -23,10 +23,15 @@ export default {
     isAddressFormValid: false,
     isTelecomFormValid: false,
     isContactFormValid: false,
+    isEditingPatient: false,
   },
   mutations: {
     SET_SHOW_ADMIT_FORM: (state, payload) => {
       state.showAdmitPatientForm = payload;
+    },
+
+    SET_IS_EDITING_PATIENT: (state, payload) => {
+      state.isEditingPatient = payload;
     },
 
     SET_IS_IDENTIFIER_FORM_VALID: (state, payload) => {
@@ -108,7 +113,7 @@ export default {
     },
 
     SET_ADDRESS: (state, payload) => {
-      state.editedPatient.address[payload.index] = payload.value;
+      state.editedPatient.address = [...payload];
     },
 
     SET_NEW_ADDRESS: (state, payload) => {
@@ -120,7 +125,7 @@ export default {
     },
 
     SET_TELECOM: (state, payload) => {
-      state.editedPatient.telecom[payload.index] = payload.value;
+      state.editedPatient.telecom = [...payload];
     },
 
     SET_NEW_TELECOM: (state, payload) => {
@@ -132,7 +137,7 @@ export default {
     },
 
     SET_CONTACT: (state, payload) => {
-      state.editedPatient.contact[payload.index] = payload.value;
+      state.editedPatient.contact = [...payload];
     },
 
     SET_NEW_CONTACT: (state, payload) => {
@@ -168,8 +173,12 @@ export default {
     isAddressFormValid: (state) => state.isAddressFormValid,
     isTelecomFormValid: (state) => state.isTelecomFormValid,
     isContactFormValid: (state) => state.isContactFormValid,
+    isEditingPatient: (state) => state.isEditingPatient,
   },
   actions: {
+    handleIsEditingPatient: ({ commit }, payload) => {
+      commit("SET_IS_EDITING_PATIENT", payload);
+    },
     identifierFormValid: ({ commit }, payload) => {
       commit("SET_IS_IDENTIFIER_FORM_VALID", payload);
     },

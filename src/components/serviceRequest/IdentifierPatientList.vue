@@ -7,7 +7,11 @@
           :key="index"
         >
           <v-list-item-content>
-            <IdentifierPatientItem v-bind.sync="localIdentifiers[index]" />
+            <IdentifierPatientItem
+              :isFormValid.sync="isValid"
+              v-bind.sync="localIdentifiers[index]"
+              :resetForm="reset"
+            />
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -50,27 +54,26 @@ export default {
     triggerValidation: false,
     openWarningMessage: false,
     localIdentifiers: [new IdentifierPatient()],
+    isValid: false,
   }),
 
   watch: {
-    emitFormData(value) {
+    emitFormData() {
       this.$v.$touch();
-      if (!this.$v.$invalid) {
-        value &&
-          this.setIdentifier(
-            this.identifiers.map((identifier) => {
-              const value = identifier.valueRut || identifier.valueOther;
-              return { ...identifier, value };
-            })
-          ) &&
-          this.handleIdentifierFormValid(!this.$v.$invalid);
-      }
+
+      this.handleIdentifierFormValid(this.isValid);
+
+      this.setIdentifier(
+        this.localIdentifiers.map((identifier) => {
+          const value = identifier.valueRut || identifier.valueOther;
+          return { ...identifier, value };
+        })
+      );
     },
 
     identifiers() {
       this.localIdentifiers = [
         ...this.identifiers.map((identifier) => {
-          console.log("identifier", identifier);
           if (
             identifier.identifierType?.code === PatientIdentifierTypeEnum.RUT
           ) {
@@ -85,22 +88,18 @@ export default {
           };
         }),
       ];
-      console.log("changing address");
     },
 
-    isFormValid() {
-      this.handleIdentifierFormValid(this.isFormValid);
+    reset() {
+      if (this.reset) this.$emit("update:reset", false);
     },
   },
 
   computed: {
     ...mapGetters({
       identifiers: "patient/identifier",
+      emitFormData: "patient/emitFormData",
     }),
-
-    isFormValid() {
-      return !this.$v.$invalid;
-    },
   },
 
   methods: {

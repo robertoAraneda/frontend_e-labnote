@@ -3,13 +3,13 @@
     app
     v-bind="$attrs"
     v-on="$listeners"
-    color="white"
+    color="grey lighten-5"
     v-model="active"
     :timeout="timeout"
     transition="scale-transition"
     :content-class="setClass"
   >
-    <div class="d-flex justtify-content-between">
+    <div class="d-flex justtzify-content-between">
       <v-icon size="30" :color="setColor" dark>{{ setIcon }}</v-icon>
       <v-spacer />
       <span class="ml-3 mr-10 mt-1 black--text text-subtitle-1">{{

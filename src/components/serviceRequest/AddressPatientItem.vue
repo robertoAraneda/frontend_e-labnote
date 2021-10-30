@@ -74,6 +74,7 @@ export default {
     city_code: String,
     state_code: String,
     index: Number,
+    isFormValid: Boolean,
   },
 
   data: () => ({
@@ -85,12 +86,21 @@ export default {
     this.localAddress.textAddress = this.textAddress;
     this.localAddress.city_code = this.city_code;
     this.localAddress.state_code = this.state_code;
+
+    //emitimos evento al montar el componente
+    this.$emit("update:isFormValid", !this.$v.$invalid);
   },
 
   watch: {
+    //se utiliza para emitir un evento de errores desde un componente externo.
     triggerErrorForm(value) {
-      console.log("trigger error in address form");
       value && this.$v.$touch();
+      this.$emit("update:isFormValid", !this.$v.$invalid);
+    },
+
+    //se utiliza para revisar si el formulario address anterior esta correcto antes de crear un nuevo form
+    isValid() {
+      this.$emit("update:isFormValid", !this.$v.$invalid);
     },
   },
 
@@ -101,6 +111,10 @@ export default {
       editedPatient: "patient/editedPatient",
       triggerErrorForm: "patient/triggerFormErrorAdmitPatient",
     }),
+
+    isValid() {
+      return !this.$v.$invalid;
+    },
 
     states() {
       if (this._states.length) return [];

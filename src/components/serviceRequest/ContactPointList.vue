@@ -23,12 +23,13 @@
               <ContactPointItem
                 :index="index"
                 v-bind.sync="localTelecoms[index]"
+                :isFormValid.sync="isValid"
               />
               <v-divider v-if="index < localTelecoms.length - 1"></v-divider>
             </v-list-item-content>
 
             <v-list-item-action v-if="localTelecoms.length !== 1">
-              <v-btn icon @click="destroyItem(index)">
+              <v-btn icon @click="handleDestroyItem(index)">
                 <v-icon color="grey lighten-1">mdi-close</v-icon>
               </v-btn>
             </v-list-item-action>
@@ -75,43 +76,35 @@ export default {
     triggerValidation: false,
     openWarningMessage: false,
     localTelecoms: [new ContactPointPatient()],
+    isValid: false,
   }),
 
   watch: {
     telecoms: {
       deep: true,
       handler() {
+        //transformamos el array de contactos para mapearlo con valueTelecom. Error en vuetify al emitir evento con "value"
         this.localTelecoms = [
           ...this.telecoms.map((telecom) => ({
             ...telecom,
             valueTelecom: telecom.value,
           })),
         ];
-        console.log("changing telecom");
-      },
-    },
-
-    localTelecoms: {
-      deep: true,
-      handler() {
-        console.log("changing telecom deep true");
       },
     },
 
     emitFormData() {
       this.$v.$touch();
-      if (!this.$v.$invalid) {
-        this.editTelecom(
-          this.localTelecoms.map((telecom) => ({
-            ...telecom,
-            value: telecom.valueTelecom,
-          }))
-        ) && this.handleTelecomFormValid(!this.$v.$invalid);
-      }
-    },
 
-    isFormValid() {
-      this.handleTelecomFormValid(this.isFormValid);
+      this.handleTelecomFormValid(this.isValid);
+
+      //transformamos el array de contactos para mapearlo con valueTelecom. Error en vuetify al emitir evento con "value"
+      this.editTelecom(
+        this.localTelecoms.map((telecom) => ({
+          ...telecom,
+          value: telecom.valueTelecom,
+        }))
+      );
     },
   },
 
@@ -120,25 +113,23 @@ export default {
       telecoms: "patient/telecom",
       emitFormData: "patient/emitFormData",
     }),
-
-    isFormValid() {
-      return !this.$v.$invalid;
-    },
   },
 
   methods: {
     ...mapActions({
-      addNewItem: "patient/addNewTelecom",
-      destroyItem: "patient/destroyTelecomItem",
       editTelecom: "patient/editTelecom",
       emitTriggerErrorForm: "patient/triggerErrorForm",
       handleTelecomFormValid: "patient/telecomFormValid",
     }),
 
+    handleDestroyItem(index) {
+      this.localTelecoms.splice(index, 1);
+    },
+
     handleAddNewTelecom() {
       this.emitTriggerErrorForm();
 
-      if (!this.$v.$invalid) {
+      if (this.isValid) {
         this.localTelecoms.push(new ContactPointPatient());
       } else {
         this.openWarningMessage = true;
