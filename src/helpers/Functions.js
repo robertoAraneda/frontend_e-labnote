@@ -81,7 +81,7 @@ export const getTimes = (time) => {
     if (i < 10) {
       i = `0${i}`;
     }
-    times.push(i);
+    times.push(`${i}`);
   }
   return times;
 };

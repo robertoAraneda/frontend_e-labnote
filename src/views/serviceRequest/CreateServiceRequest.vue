@@ -151,13 +151,18 @@
             </v-row>
           </v-col>
           <v-col cols="8">
-            <v-chip-group color="error" column center-active v-model="priority">
+            <v-chip-group
+              mandatory
+              color="error"
+              column
+              center-active
+              v-model="priority"
+            >
               <v-chip
                 v-for="priority in serviceRequestPriorities"
                 :key="priority.id"
                 filter
                 outlined
-                v
               >
                 {{ priority.display }}
               </v-chip>
@@ -177,6 +182,9 @@
                   item-value="id"
                   item-text="name"
                   label="Ubicación"
+                  @input="$v.serviceRequest.location_id.$touch()"
+                  @blur="$v.serviceRequest.location_id.$touch()"
+                  :error-messages="locationErrors"
                 ></BaseAutocomplete>
               </v-col>
               <v-col cols="1"></v-col>
@@ -191,6 +199,9 @@
                   item-value="id"
                   item-text="name"
                   label="Profesional solicitante"
+                  @input="$v.serviceRequest.performer_id.$touch()"
+                  @blur="$v.serviceRequest.performer_id.$touch()"
+                  :error-messages="performerErrors"
                 ></BaseAutocomplete>
               </v-col>
               <v-col cols="12">
@@ -308,13 +319,19 @@
 
       <v-card-actions
         ><v-spacer /><v-btn
+          @click="handleCancelServiceRequest"
+          text
+          color="secondary"
+          >Cancelar</v-btn
+        ><v-btn
+          :loading="createServiceRequestLoadingButton"
           @click="handleCreateServiceRequest"
           color="primary"
-          rounded
           >Crear solicitud</v-btn
         ></v-card-actions
       >
     </v-card>
+
     <v-dialog v-model="advancedSelectionDialog">
       <v-card>
         <v-card-text style="height: 800px">
@@ -723,6 +740,7 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
     <v-fab-transition>
       <v-btn
         v-if="isScrolling"
@@ -738,6 +756,12 @@
         <v-icon>mdi-chevron-up</v-icon>
       </v-btn>
     </v-fab-transition>
+
+    <BaseSnackbar
+      :custom-message="messageSnackbar"
+      type="error"
+      v-model="openWarningMessage"
+    />
   </v-container>
 </template>
 
@@ -747,18 +771,37 @@ import { getTimes, groupBy } from "../../helpers/Functions";
 import moment from "moment";
 import Patient from "../../models/Patient";
 
+import { validationMixin } from "vuelidate";
+import { required } from "vuelidate/lib/validators";
+import { validationMessage } from "../../helpers/ValidationMessage";
+
 export default {
   name: "ServiceRequest",
 
+  mixins: [validationMixin],
+
+  validations: {
+    serviceRequest: {
+      patient_id: { required },
+      location_id: { required },
+      performer_id: { required },
+      observations: {
+        required,
+        $each: {
+          service_request_observation_code_id: { required },
+        },
+      },
+    },
+  },
+
   data: (vm) => ({
+    createServiceRequestLoadingButton: false,
     infoButton: false,
+    messageSnackbar: "Faltan datos obligatorios",
+    openWarningMessage: false,
     serviceRequest: {
       patient: {
-        name: {
-          given: "",
-          mother_family: "",
-          father_family: "",
-        },
+        name: "",
         telecom: [],
         identifier: "",
         birthdate: "",
@@ -889,6 +932,30 @@ export default {
       selectedAppointment: "serviceRequest/selectedAppointment",
       isScrolling: "isScrolling",
     }),
+
+    locationErrors() {
+      const errors = [];
+      if (!this.$v.serviceRequest.location_id.$dirty) return errors;
+      !this.$v.serviceRequest.location_id.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
+    performerErrors() {
+      const errors = [];
+      if (!this.$v.serviceRequest.performer_id.$dirty) return errors;
+      !this.$v.serviceRequest.performer_id.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
+    observationsErrors() {
+      const errors = [];
+      if (!this.$v.serviceRequest.observations.$dirty) return errors;
+      !this.$v.serviceRequest.observations.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
 
     name() {
       if (!this.selectedObservationServiceRequest) return "";
@@ -1028,8 +1095,6 @@ export default {
         }
       );
 
-      console.log("observations", observations);
-
       const groupedObservations = groupBy(observations, "specimen_code");
 
       const samples = Object.keys(groupedObservations);
@@ -1080,33 +1145,69 @@ export default {
       this.infoButton = true;
     },
 
-    async handleCreateServiceRequest() {
-      this.serviceRequest.observations = Object.keys(
-        groupBy(this.defaultObservations, "id")
-      ).map((observation) => {
-        return {
-          service_request_observation_code_id: parseInt(observation),
-        };
-      });
-      this.serviceRequest.specimens = this.selectedSpecimens;
+    handleCancelServiceRequest() {
+      this.resetFormServiceRequest();
+    },
 
-      if (!this.selection) {
-        this.selection = moment().format("HH");
-      }
-
-      const date = moment(this.date).format("YYYY-MM-DD");
-      this.serviceRequest.occurrence = `${date} ${this.selection}:00:00`;
-      this.serviceRequest.service_request_priority_id =
-        this.serviceRequestPriorities[this.priority].id;
-
-      await this.create(this.serviceRequest);
-
-      await this.setPatientSelected(null);
+    resetFormServiceRequest() {
+      this.setPatientSelected(null);
 
       if (this.isServiceRequestCreatedByAppointment) {
-        await this.$router.push({ name: "schedules" });
+        this.$router.push({ name: "schedules" });
       } else {
-        await this.$router.push({ name: "findPatient" });
+        this.$router.push({ name: "findPatient" });
+      }
+    },
+
+    async handleCreateServiceRequest() {
+      this.createServiceRequestLoadingButton = true;
+      if (this.selectedObservations.length !== 0) {
+        this.serviceRequest.observations = this.selectedObservations.map(
+          (observation) => {
+            return {
+              service_request_observation_code_id: parseInt(observation),
+            };
+          }
+        );
+      } else {
+        this.serviceRequest.observations = [];
+      }
+      console.log(this.serviceRequest.observations);
+
+      this.serviceRequest.specimens = this.selectedSpecimens;
+      this.$v.$touch();
+
+      if (this.$v.$invalid) {
+        if (this.observationsErrors.length === 0) {
+          console.log("aca");
+          this.messageSnackbar = "Faltan datos obligatorios";
+        } else {
+          this.messageSnackbar = "Debe seleccionar al menos un examen.";
+        }
+
+        this.openWarningMessage = true;
+        this.createServiceRequestLoadingButton = false;
+      } else {
+        if (!this.selection) {
+          this.selection = moment().format("HH");
+        }
+
+        const date = moment(this.date).format("YYYY-MM-DD");
+        this.serviceRequest.occurrence = `${date} ${this.selection}:00:00`;
+        this.serviceRequest.service_request_priority_id =
+          this.serviceRequestPriorities[this.priority].id;
+
+        const { note, ...rest } = this.serviceRequest;
+        let payload = this.serviceRequest;
+        if (!note) {
+          payload = rest;
+        }
+
+        await this.create(payload);
+
+        this.createServiceRequestLoadingButton = false;
+
+        this.resetFormServiceRequest();
       }
     },
 
