@@ -139,6 +139,13 @@ export default {
     resetForm() {
       if (this.resetForm) this.handleResetForm();
     },
+
+    disabledIdentifiersForm() {
+      if (this.disabledIdentifiersForm) {
+        this.$emit("update:valueRut", this.localIdentifier.valueRut);
+        this.$emit("update:valueOther", this.localIdentifier.valueOther);
+      }
+    },
   },
 
   computed: {

@@ -1,76 +1,172 @@
 <template>
-  <v-container>
-    <v-card>
-      <v-container fluid>
-        <v-card elevation="0">
-          <v-subheader class="font-weight-bold">Datos demográficos</v-subheader>
-          <v-card-text>
+  <v-container id="main-header">
+    <BaseHeaderModule
+      title="Solicitud de exámenes"
+      subtitle=" En éste módulo podrás generar solicitudes de exámenes."
+    />
+
+    <v-card v-if="patient">
+      <v-card-text>
+        <v-card-title>
+          <v-spacer />
+          <v-subheader
+            class="font-weight-bold text-uppercase primary--text text-h4"
+            >{{ serviceRequest.patient.name.text }}</v-subheader
+          >
+          <v-spacer />
+        </v-card-title>
+        <v-sheet class="mx-auto" max-width="900">
+          <v-row>
+            <v-col cols="6">
+              <v-list two-line class="transparent">
+                <v-list-item>
+                  <v-list-item-icon size="24">
+                    <v-icon size="24">mdi-account-box</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title class="title font-weight-medium">{{
+                      serviceRequest.patient.identifier.value
+                    }}</v-list-item-title>
+                    <v-list-item-subtitle>{{
+                      serviceRequest.patient.identifier.identifierType.display
+                    }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon size="24">
+                    <v-icon size="24">mdi-calendar-account</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title>{{
+                      serviceRequest.patient.birthdate | transformDates
+                    }}</v-list-item-title>
+                    <v-list-item-subtitle
+                      >Fecha de nacimiento</v-list-item-subtitle
+                    >
+                  </v-list-item-content>
+                </v-list-item>
+                <v-list-item>
+                  <v-list-item-icon size="24">
+                    <v-icon size="24"> mdi-calendar-check</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-content>
+                    <v-list-item-title
+                      >{{ serviceRequest.patient.age }} años</v-list-item-title
+                    >
+                    <v-list-item-subtitle>Edad</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-col>
+            <v-col cols="6">
+              <v-list two-line class="transparent">
+                <v-list-item
+                  v-for="(telecom, index) in serviceRequest.patient.telecom"
+                  :key="index"
+                >
+                  <v-list-item-icon size="24">
+                    <v-icon size="24">{{
+                      telecom.system === "EMAIL" ? "mdi-email" : "mdi-phone"
+                    }}</v-icon>
+                  </v-list-item-icon>
+                  <v-list-item-action></v-list-item-action>
+                  <v-list-item-content>
+                    <v-list-item-title>{{ telecom.value }}</v-list-item-title>
+                    <v-list-item-subtitle>{{
+                      telecom.system
+                    }}</v-list-item-subtitle>
+                  </v-list-item-content>
+                </v-list-item>
+              </v-list>
+            </v-col>
+          </v-row>
+        </v-sheet>
+      </v-card-text>
+    </v-card>
+
+    <v-card class="mt-3">
+      <v-card-text>
+        <v-row>
+          <v-col cols="4">
             <v-row>
-              <v-col cols="12" md="4">
-                <v-text-field
-                  outlined
-                  dense
-                  v-model="serviceRequest.patient.name.given"
-                  label="Nombre"
-                  disabled
-                ></v-text-field>
-              </v-col>
+              <v-col cols="12">
+                <v-card>
+                  <v-card-text>
+                    <span class="subheading font-weight-medium text--primary"
+                      >Fecha:</span
+                    >
+                    <v-menu
+                      v-model="issuedDateMenu"
+                      :close-on-content-click="false"
+                      transition="scale-transition"
+                      offset-y
+                      max-width="290px"
+                      min-width="auto"
+                    >
+                      <template v-slot:activator="{ on, attrs }">
+                        <v-text-field
+                          dense
+                          solo
+                          hide-details
+                          v-model="computedDateFormatted"
+                          label="Fecha"
+                          prepend-inner-icon="mdi-calendar"
+                          class="mt-2"
+                          readonly
+                          v-bind="attrs"
+                          v-on="on"
+                        ></v-text-field>
+                      </template>
+                      <v-date-picker
+                        v-model="date"
+                        no-title
+                        @input="issuedDateMenu = false"
+                        :min="
+                          new Date(
+                            Date.now() - new Date().getTimezoneOffset() * 60000
+                          )
+                            .toISOString()
+                            .substr(0, 10)
+                        "
+                      ></v-date-picker>
+                    </v-menu>
+                  </v-card-text>
 
-              <v-col cols="12" md="4">
-                <v-text-field
-                  outlined
-                  dense
-                  disabled
-                  v-model="serviceRequest.patient.name.father_family"
-                  label="Primer apellido"
-                ></v-text-field>
-              </v-col>
+                  <v-divider class="mx-4"></v-divider>
 
-              <v-col cols="12" md="4">
-                <v-text-field
-                  outlined
-                  dense
-                  disabled
-                  v-model="serviceRequest.patient.name.mother_family"
-                  label="Segundo apellido"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="3">
-                <v-text-field
-                  outlined
-                  dense
-                  disabled
-                  v-model="serviceRequest.patient.birthdate"
-                  label="Fecha de nacimiento"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="2">
-                <v-text-field
-                  outlined
-                  dense
-                  v-model="serviceRequest.patient.age"
-                  disabled
-                  label="Edad"
-                ></v-text-field>
-              </v-col>
-              <v-col cols="12" md="3">
-                <v-select
-                  dense
-                  outlined
-                  v-model="serviceRequest.patient.insurance"
-                  label="Previsión"
-                  :items="['FONASA', 'ISAPRE']"
-                ></v-select>
+                  <v-card-text>
+                    <span class="subheading">Seleccione una hora</span>
+
+                    <v-chip-group
+                      v-model="selection"
+                      active-class="primary--text text--darken-2"
+                    >
+                      <v-chip v-for="size in sizes" :key="size" :value="size">
+                        {{ size }}
+                      </v-chip>
+                    </v-chip-group>
+                  </v-card-text>
+                </v-card>
               </v-col>
             </v-row>
-          </v-card-text>
-        </v-card>
+          </v-col>
+          <v-col cols="8">
+            <v-chip-group color="error" column center-active v-model="priority">
+              <v-chip
+                v-for="priority in serviceRequestPriorities"
+                :key="priority.id"
+                filter
+                outlined
+                v
+              >
+                {{ priority.display }}
+              </v-chip>
+            </v-chip-group>
 
-        <v-card elevation="0">
-          <v-subheader class="font-weight-bold">Datos procedencia</v-subheader>
-          <v-card-text>
-            <v-row>
-              <v-col cols="12" md="4">
+            <v-divider class="my-4" />
+
+            <v-row no-gutters>
+              <v-col cols="6">
                 <BaseAutocomplete
                   dense
                   outlined
@@ -83,8 +179,8 @@
                   label="Ubicación"
                 ></BaseAutocomplete>
               </v-col>
-
-              <v-col cols="12" md="4">
+              <v-col cols="1"></v-col>
+              <v-col cols="5">
                 <BaseAutocomplete
                   dense
                   outlined
@@ -97,41 +193,10 @@
                   label="Profesional solicitante"
                 ></BaseAutocomplete>
               </v-col>
-
-              <v-col cols="12" md="4">
-                <v-menu
-                  v-model="issuedDateMenu"
-                  :close-on-content-click="false"
-                  transition="scale-transition"
-                  offset-y
-                  max-width="290px"
-                  min-width="auto"
-                >
-                  <template v-slot:activator="{ on, attrs }">
-                    <v-text-field
-                      dense
-                      outlined
-                      v-model="computedDateFormatted"
-                      label="Fecha"
-                      hint="Formato DD/MM/YYYY"
-                      persistent-hint
-                      prepend-icon="mdi-calendar"
-                      readonly
-                      v-bind="attrs"
-                      v-on="on"
-                    ></v-text-field>
-                  </template>
-                  <v-date-picker
-                    v-model="date"
-                    no-title
-                    @input="issuedDateMenu = false"
-                  ></v-date-picker>
-                </v-menu>
-              </v-col>
-              <v-col cols="12" md="4">
+              <v-col cols="12">
                 <v-text-field dense outlined label="Diagnóstico"></v-text-field>
               </v-col>
-              <v-col cols="12" md="4">
+              <v-col cols="12">
                 <v-text-field
                   v-model="serviceRequest.note"
                   dense
@@ -139,44 +204,26 @@
                   label="Observaciones"
                 ></v-text-field>
               </v-col>
-
-              <v-col cols="12" md="4">
-                <BaseAutocomplete
-                  dense
-                  outlined
-                  v-model="serviceRequest.service_request_priority_id"
-                  :items="serviceRequestPriorities"
-                  flat
-                  placeholder="Seleccione:"
-                  item-value="id"
-                  item-text="display"
-                  label="Prioridad"
-                ></BaseAutocomplete>
-              </v-col>
             </v-row>
-          </v-card-text>
-        </v-card>
-      </v-container>
+          </v-col>
+        </v-row>
+      </v-card-text>
     </v-card>
 
-    <v-card class="mt-4">
+    <v-card class="mt-3">
       <v-card-title>
-        <v-subheader class="font-weight-bold"
+        <v-subheader class="font-weight-bold text-uppercase"
           >Selección de exámenes</v-subheader
         >
         <v-spacer />
-        <v-btn
-          @click="handleOpenAdvancedSelecionDialog"
-          color="primary"
-          rounded
-          small
+        <v-btn @click="handleOpenAdvancedSelecionDialog" color="primary"
           >Selección avanzada
         </v-btn>
       </v-card-title>
 
-      <v-toolbar elevation="0" tile dark color="primary">
+      <v-toolbar elevation="0" tile color="transparent">
+        <v-spacer />
         <BaseAutocomplete
-          solo-inverted
           hide-no-data
           hide-details
           v-model="selectedSpecimenCode"
@@ -186,9 +233,8 @@
           placeholder="Seleccione:"
           label="Tipo muestra"
         ></BaseAutocomplete>
-        <v-spacer />
+
         <BaseAutocomplete
-          solo-inverted
           hide-no-data
           hide-details
           :items="observations"
@@ -201,65 +247,65 @@
           label="Exámenes"
           prepend-icon="mdi-magnify"
           @change="test"
+          class="ml-3"
         ></BaseAutocomplete>
+        <v-spacer />
       </v-toolbar>
-      <v-card-text class="overflow-y-auto" :style="{ height: '350px' }">
-        <v-card elevation="0" v-if="defaultObservations.length > 0">
-          <v-list
-            :style="{ position: 'sticky' }"
-            height="60"
-            dense
-            color="grey lighten-3"
+      <v-row justify="center">
+        <v-col cols="10">
+          <span
+            class="subheading font-weight-medium text--primary text-uppercase"
+            >Seleccionados: {{ defaultObservations.length }}</span
           >
-            <v-list-item class="font-weight-bold">
-              <v-list-item-avatar> N° </v-list-item-avatar>
-              <v-list-item-avatar width="100"> LOINC </v-list-item-avatar>
-              <v-list-item-content>
-                <v-list-item-title>
-                  NOMBRE EXAMEN
-                  <v-chip class="ml-2" color="secondary" label x-small>
-                    TIPO MUESTRA
-                  </v-chip></v-list-item-title
-                >
-              </v-list-item-content>
-              <v-list-item-action>OPCIONES</v-list-item-action>
-            </v-list-item>
-          </v-list>
-          <v-slide-y-transition class="py-0" group tag="v-list">
-            <template v-for="(observation, i) in defaultObservations">
-              <v-divider v-if="i !== 0" :key="`${i}-divider`"></v-divider>
-              <v-list-item link dense :key="observation.id">
-                <v-list-item-avatar>
-                  {{ i + 1 }}
-                </v-list-item-avatar>
-                <v-list-item-avatar width="100">
-                  {{ observation.loinc_num }}
-                </v-list-item-avatar>
-                <v-list-item-content>
-                  <v-list-item-title>
-                    {{ observation.core_name }}
-                    <v-chip class="ml-2" color="warning" label x-small>
-                      {{ observation.specimen_code }}
-                    </v-chip></v-list-item-title
-                  >
-                </v-list-item-content>
+          <v-card-text
+            class="overflow-y-auto"
+            :style="{ 'max-height': '500px' }"
+          >
+            <v-card elevation="3">
+              <v-slide-y-transition class="py-0" group tag="v-list">
+                <template v-for="(observation, i) in defaultObservations">
+                  <v-divider v-if="i !== 0" :key="`${i}-divider`"></v-divider>
+                  <v-list-item :key="observation.id">
+                    <v-list-item-avatar width="100">
+                      <span class="body-1 font-weight-light">{{
+                        observation.loinc_num
+                      }}</span>
+                    </v-list-item-avatar>
 
-                <v-scroll-x-transition>
-                  <v-btn icon>
-                    <v-icon
-                      @click="deleteObservation(observation)"
-                      v-if="observation.id"
-                      color="error"
-                    >
-                      mdi-delete
-                    </v-icon>
-                  </v-btn>
-                </v-scroll-x-transition>
-              </v-list-item>
-            </template>
-          </v-slide-y-transition>
-        </v-card>
-      </v-card-text>
+                    <v-list-item-content>
+                      <v-list-item-title>
+                        {{ observation.core_name }}
+                      </v-list-item-title>
+                      <v-list-item-subtitle>
+                        {{ observation.specimen_code
+                        }}<v-icon
+                          @click="
+                            handleFindObservationServiceRequestInfo(observation)
+                          "
+                          class="ml-2"
+                          color="primary"
+                          >mdi-information
+                        </v-icon></v-list-item-subtitle
+                      >
+                    </v-list-item-content>
+
+                    <v-list-item-action>
+                      <v-icon
+                        @click="deleteObservation(observation)"
+                        v-if="observation.id"
+                        left
+                      >
+                        mdi-delete
+                      </v-icon>
+                    </v-list-item-action>
+                  </v-list-item>
+                </template>
+              </v-slide-y-transition>
+            </v-card>
+          </v-card-text>
+        </v-col>
+      </v-row>
+
       <v-card-actions
         ><v-spacer /><v-btn
           @click="handleCreateServiceRequest"
@@ -269,10 +315,10 @@
         ></v-card-actions
       >
     </v-card>
-    <v-dialog scrollable v-model="advancedSelectionDialog">
+    <v-dialog v-model="advancedSelectionDialog">
       <v-card>
         <v-card-text style="height: 800px">
-          <v-subheader class="font-weight-bold"
+          <v-subheader class="text-uppercase headline font-weight-bold"
             >Selección avanzada de exámenes</v-subheader
           >
 
@@ -410,10 +456,12 @@
                 <v-toolbar elevation="0">
                   <v-spacer></v-spacer>
                   <v-btn
+                    small
+                    depressed
+                    color="primary"
                     @click="advancedSelectionDialog = false"
-                    icon
                     class="mr-n6 mt-n8"
-                    ><v-icon>mdi-close</v-icon></v-btn
+                    ><v-icon left>mdi-close</v-icon> cerrar</v-btn
                   ></v-toolbar
                 >
 
@@ -437,7 +485,7 @@
                     height="670"
                   >
                     <template v-slot:default="{ item, index }">
-                      <v-list-item>
+                      <v-list-item dense link>
                         <v-list-item-avatar>
                           {{ index + 1 }}
                         </v-list-item-avatar>
@@ -446,15 +494,15 @@
                             v-html="item.name"
                           ></v-list-item-title>
                           <v-list-item-subtitle>
-                            LOINC: {{ item.loinc_num }}
+                            {{ item.loinc_num }}
                           </v-list-item-subtitle>
                         </v-list-item-content>
                         <v-list-item-action>
                           <v-icon
                             @click="deleteObservation(item)"
-                            color="error"
+                            color="secondary"
                           >
-                            mdi-close
+                            mdi-close-box
                           </v-icon>
                         </v-list-item-action>
                       </v-list-item>
@@ -467,12 +515,235 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+
+    <v-dialog scrollable v-model="infoButton">
+      <v-card>
+        <v-card-title
+          ><v-spacer /><v-btn
+            color="primary"
+            depressed
+            @click="infoButton = false"
+            >Cerrar</v-btn
+          ></v-card-title
+        >
+        <v-card-text>
+          <section class="white lighten-1">
+            <div class="py-12"></div>
+
+            <v-container class="text-center">
+              <h2 class="display-2 font-weight-bold mb-3">SIEL</h2>
+              <h2 class="display-1 font-weight-light mb-3">
+                Sistema de información de exámenes de laboratorio
+              </h2>
+
+              <v-responsive class="mx-auto mb-12" width="56">
+                <v-divider class="mb-1"></v-divider>
+
+                <v-divider></v-divider>
+              </v-responsive>
+            </v-container>
+          </section>
+          <section>
+            <v-container class="align-start grey lighten-3">
+              <h2 class="display-1 font-weight-bold mb-3">{{ name }}</h2>
+              <div class="d-flex align-start">
+                <h2 class="headline font-weight-bold mb-3 mr-3 primary--text">
+                  LOINC
+                  <v-icon color="primary" class="mt-n3 ml-n2"
+                    >mdi-registered-trademark</v-icon
+                  >
+                  :
+                </h2>
+
+                <h2 class="headline font-weight-bold mb-3 mr-3">
+                  {{ loinc.loinc_num }}
+                </h2>
+                <h2 class="headline font-weight-medium mb-3">
+                  {{ loinc.name }}
+                </h2>
+                <v-btn
+                  class="mt-n2"
+                  :href="`https://loinc.org/${loinc.loinc_num}/`"
+                  target="_blank"
+                  depressed
+                  icon
+                >
+                  <v-icon color="orange darken-4"> mdi-open-in-new </v-icon>
+                </v-btn>
+              </div>
+
+              <v-row>
+                <v-col cols="12" md="4"> </v-col>
+              </v-row>
+            </v-container>
+            <div class="py-3"></div>
+          </section>
+          <section>
+            <div class="py-3"></div>
+            <v-container class="align-start">
+              <h2 class="headline font-weight-bold mb-3 mr-3 primary--text">
+                INFORMACIÓN GENERAL
+              </h2>
+              <div class="primary" style="height: 2px"></div>
+              <v-card flat>
+                <v-card-title class="headlinefont-weight-medium text-uppercase">
+                  Utilidad clínica
+                </v-card-title>
+                <v-card-text
+                  style="text-align: justify; text-justify: inter-word"
+                  v-text="clinicalInformation"
+                  class="subtitle-1"
+                >
+                </v-card-text>
+                <v-card-title class="headlinefont-weight-medium text-uppercase">
+                  Recepción, procesamiento y tiempo de respuesta
+                </v-card-title>
+                <v-row>
+                  <v-col cols="12" md="4" class="text-center">
+                    <v-card class="py-12 px-4" color="grey lighten-5" flat>
+                      <v-theme-provider dark>
+                        <div>
+                          <v-avatar color="primary" size="88">
+                            <v-icon large>mdi-check</v-icon>
+                          </v-avatar>
+                        </div>
+                      </v-theme-provider>
+
+                      <v-card-title
+                        class="justify-center font-weight-black text-uppercase"
+                        >Recepción</v-card-title
+                      >
+
+                      <v-card-text class="subtitle-1"
+                        >Las muestras se recepcionan en dependencias de nuestro
+                        laboratorio
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="12" md="4" class="text-center">
+                    <v-card class="py-12 px-4" color="grey lighten-5" flat>
+                      <v-theme-provider dark>
+                        <div>
+                          <v-avatar color="primary" size="88">
+                            <v-icon large>mdi-biohazard</v-icon>
+                          </v-avatar>
+                        </div>
+                      </v-theme-provider>
+
+                      <v-card-title
+                        class="justify-center font-weight-black text-uppercase"
+                        >Procesamiento</v-card-title
+                      >
+
+                      <v-card-text class="subtitle-1"
+                        >Procesamiento analítico en horario<br />
+                        <v-chip dark color="orange darken-4" class="mt-3"
+                          ><span class="font-weight-bold">{{
+                            processTime
+                          }}</span></v-chip
+                        >
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                  <v-col cols="12" md="4" class="text-center">
+                    <v-card class="py-12 px-4" color="grey lighten-5" flat>
+                      <v-theme-provider dark>
+                        <div>
+                          <v-avatar color="primary" size="88">
+                            <v-icon large> mdi-clock</v-icon>
+                          </v-avatar>
+                        </div>
+                      </v-theme-provider>
+
+                      <v-card-title
+                        class="justify-center font-weight-black text-uppercase"
+                        >Tiempo de respuesta</v-card-title
+                      >
+
+                      <v-card-text class="subtitle-1"
+                        >El tiempo de respuesta es de <br />
+                        <v-chip dark color="orange darken-4" class="mt-3"
+                          ><span class="font-weight-bold"
+                            >1 DÍA HÁBIL</span
+                          ></v-chip
+                        >
+                      </v-card-text>
+                    </v-card>
+                  </v-col>
+                </v-row>
+              </v-card>
+            </v-container>
+            <div class="py-3"></div>
+          </section>
+          <section>
+            <v-responsive class="mx-auto mb-12" width="56">
+              <v-divider class="mb-1"></v-divider>
+
+              <v-divider></v-divider>
+            </v-responsive>
+            <div class="py-3"></div>
+            <v-container class="align-start">
+              <h2 class="headline font-weight-bold mb-3 mr-3 primary--text">
+                MUESTRA
+              </h2>
+              <div class="primary" style="height: 2px"></div>
+              <v-card color="transparent" flat>
+                <v-card-title class="headlinefont-weight-medium text-uppercase">
+                  TIPO MUESTRA Y CONTENEDOR
+                </v-card-title>
+                <v-card-text class="subtitle-1">
+                  <v-simple-table class="grey lighten-5">
+                    <template v-slot:default>
+                      <tbody>
+                        <tr>
+                          <th class="text-left">TIPO MUESTRA</th>
+                          <td class="text-left">:</td>
+                          <td class="text-left">{{ specimen }}</td>
+                        </tr>
+
+                        <tr>
+                          <th class="text-left">CONTENEDOR</th>
+                          <td class="text-left">:</td>
+                          <td class="text-left">{{ container }}</td>
+                        </tr>
+                      </tbody>
+                    </template>
+                  </v-simple-table></v-card-text
+                >
+                <v-card-title class="headlinefont-weight-medium text-uppercase">
+                  CONDICIONES DE TOMA DE MUESTRA
+                </v-card-title>
+                <v-card-text class="subtitle-1">
+                  Paciente en ayunas
+                </v-card-text>
+              </v-card>
+            </v-container>
+            <div class="py-12"></div>
+          </section>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
+    <v-fab-transition>
+      <v-btn
+        v-if="isScrolling"
+        color="primary"
+        fab
+        large
+        dark
+        bottom
+        right
+        fixed
+        @click="$vuetify.goTo('#main-header')"
+      >
+        <v-icon>mdi-chevron-up</v-icon>
+      </v-btn>
+    </v-fab-transition>
   </v-container>
 </template>
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import { groupBy } from "../../helpers/Functions";
+import { getTimes, groupBy } from "../../helpers/Functions";
 import moment from "moment";
 import Patient from "../../models/Patient";
 
@@ -480,6 +751,7 @@ export default {
   name: "ServiceRequest",
 
   data: (vm) => ({
+    infoButton: false,
     serviceRequest: {
       patient: {
         name: {
@@ -487,6 +759,8 @@ export default {
           mother_family: "",
           father_family: "",
         },
+        telecom: [],
+        identifier: "",
         birthdate: "",
         age: "",
         insurance: "",
@@ -502,8 +776,10 @@ export default {
       specimens: [],
     },
 
-    defaultModel: new Patient(),
+    selectedObservationServiceRequest: null,
 
+    defaultModel: new Patient(),
+    priority: "",
     selectedSpecimenCode: "TODAS LAS MUESTRAS",
     selectedObservations: [],
     selectedSpecimens: [],
@@ -520,6 +796,8 @@ export default {
         .toISOString()
         .substr(0, 10)
     ),
+    selection: "",
+    sizes: [],
   }),
 
   watch: {
@@ -543,6 +821,17 @@ export default {
         }
       );
     },
+
+    date() {
+      const currentDate = moment().format("YYYY-MM-DD");
+      const selectedDate = moment(this.date).format("YYYY-MM-DD");
+
+      if (currentDate === selectedDate) {
+        this.sizes = getTimes(moment().format("HH"));
+      } else {
+        this.sizes = getTimes("00");
+      }
+    },
   },
 
   mounted() {
@@ -552,6 +841,8 @@ export default {
       this.serviceRequest.patient.name = this.patient.name[0];
       this.serviceRequest.patient.birthdate = this.patient.birthdate;
       this.serviceRequest.patient_id = this.patient.id;
+      this.serviceRequest.patient.identifier = this.patient.identifier[0];
+      this.serviceRequest.patient.telecom = this.patient.telecom;
 
       const currentDate = moment();
       const momentBirthDatePatient = moment(this.patient.birthdate);
@@ -560,8 +851,15 @@ export default {
         momentBirthDatePatient,
         "years"
       ); // 1
-    }
 
+      this.selection = currentDate.format("HH");
+
+      this.priority = this.serviceRequestPriorities.findIndex(
+        (priority) => priority.display === "RUTINA"
+      );
+
+      this.sizes = getTimes(moment().format("HH"));
+    }
     this.getLocations();
     this.getPractitioners();
     this.getObservations();
@@ -575,7 +873,7 @@ export default {
   filters: {
     transformDates(date) {
       const [year, month, day] = date.split("-");
-      return `${day}-${month} ${year}`;
+      return `${day}-${month}-${year}`;
     },
   },
   computed: {
@@ -589,7 +887,38 @@ export default {
       isServiceRequestCreatedByAppointment:
         "serviceRequest/isServiceRequestCreatedByAppointment",
       selectedAppointment: "serviceRequest/selectedAppointment",
+      isScrolling: "isScrolling",
     }),
+
+    name() {
+      if (!this.selectedObservationServiceRequest) return "";
+      return this.selectedObservationServiceRequest.name;
+    },
+
+    loinc() {
+      if (!this.selectedObservationServiceRequest) return "";
+      return this.selectedObservationServiceRequest._embedded.loinc;
+    },
+    clinicalInformation() {
+      if (!this.selectedObservationServiceRequest) return "";
+      return this.selectedObservationServiceRequest.clinical_information;
+    },
+
+    processTime() {
+      if (!this.selectedObservationServiceRequest) return "";
+      return this.selectedObservationServiceRequest._embedded.processTime.name;
+    },
+
+    specimen() {
+      if (!this.selectedObservationServiceRequest) return "";
+      return this.selectedObservationServiceRequest._embedded.specimenCode
+        .display;
+    },
+
+    container() {
+      if (!this.selectedObservationServiceRequest) return "";
+      return this.selectedObservationServiceRequest._embedded.container.name;
+    },
 
     computedDateFormatted() {
       return this.formatDate(this.date);
@@ -739,7 +1068,17 @@ export default {
       getServiceRequestStatuses: "serviceRequest/getServiceRequestPriorities",
       create: "serviceRequest/postItem",
       setPatientSelected: "serviceRequest/setPatient",
+      findObservationServiceRequest: "observationServiceRequest/showItem",
     }),
+
+    async handleFindObservationServiceRequestInfo(item) {
+      const { data } = await this.findObservationServiceRequest(
+        item._links.self.href
+      );
+
+      this.selectedObservationServiceRequest = data;
+      this.infoButton = true;
+    },
 
     async handleCreateServiceRequest() {
       this.serviceRequest.observations = Object.keys(
@@ -750,7 +1089,15 @@ export default {
         };
       });
       this.serviceRequest.specimens = this.selectedSpecimens;
-      this.serviceRequest.occurrence = this.date;
+
+      if (!this.selection) {
+        this.selection = moment().format("HH");
+      }
+
+      const date = moment(this.date).format("YYYY-MM-DD");
+      this.serviceRequest.occurrence = `${date} ${this.selection}:00:00`;
+      this.serviceRequest.service_request_priority_id =
+        this.serviceRequestPriorities[this.priority].id;
 
       await this.create(this.serviceRequest);
 
