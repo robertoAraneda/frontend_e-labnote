@@ -65,7 +65,12 @@ export default {
 
       this.setIdentifier(
         this.localIdentifiers.map((identifier) => {
-          const value = identifier.valueRut || identifier.valueOther;
+          let value = identifier.valueOther;
+          if (
+            identifier.identifierType?.code === PatientIdentifierTypeEnum.RUT
+          ) {
+            value = identifier.valueRut;
+          }
           return { ...identifier, value };
         })
       );

@@ -72,3 +72,16 @@ export function groupBy(objectArray, property) {
     return accumulator;
   }, {});
 }
+
+export const getTimes = (time) => {
+  const parsedTime = parseInt(time);
+  let times = [];
+
+  for (let i = parsedTime; i < 24; i++) {
+    if (i < 10) {
+      i = `0${i}`;
+    }
+    times.push(`${i}`);
+  }
+  return times;
+};

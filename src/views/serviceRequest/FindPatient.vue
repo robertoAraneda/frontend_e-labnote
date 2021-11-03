@@ -19,12 +19,19 @@
                     item-text="display"
                     item-value="id"
                     label="Tipo documento"
+                    v-model="identifierType"
                   />
                 </v-col>
                 <v-col cols="12" sm="4">
                   <BaseTextfield
-                    v-model="editedItem.father_family"
-                    label="Primer apellido"
+                    v-if="isRut"
+                    v-model="identifierValue"
+                    label="N° Identificación"
+                  />
+                  <BaseTextfield
+                    v-else
+                    v-model="identifierValue"
+                    label="N° Identificación"
                   />
                 </v-col>
               </v-row>
@@ -33,7 +40,7 @@
                   <base-accept-button
                     label="Buscar"
                     class="float-right mb-3"
-                    @click="findPatientByNames(editedItem)"
+                    @click="handleFindPatientByIdentifier"
                   ></base-accept-button>
                 </v-col>
               </v-row>
@@ -95,6 +102,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
+import { PatientIdentifierTypeEnum } from "../../enums/patient-identifier-type.enum";
 
 export default {
   name: "FindPatient",
@@ -106,6 +114,9 @@ export default {
       father_family: "araneda",
       mother_family: "",
     },
+
+    identifierType: 1,
+    identifierValue: "",
     selectedSpecimenCode: "TODAS LAS MUESTRAS",
     selectedObservations: [],
     searchObservation: "",
@@ -148,11 +159,25 @@ export default {
     this.setPatients([]);
   },
 
+  watch: {
+    identifierType() {
+      this.identifierValue = "";
+    },
+  },
+
   computed: {
     ...mapGetters({
       patients: "patient/patients",
       identifierTypes: "patient/identifierTypes",
     }),
+
+    isRut() {
+      if (this.identifierTypes.length === 0) return false;
+      const identifierType = this.identifierTypes.filter(
+        (type) => this.identifierType === type.id
+      )[0];
+      return identifierType.code === PatientIdentifierTypeEnum.RUT;
+    },
   },
 
   methods: {
@@ -163,6 +188,40 @@ export default {
       setPatient: "serviceRequest/setPatient",
       setPatients: "patient/setPatients",
     }),
+
+    handleMaskRut(value) {
+      const rut = value.replace("-", "");
+
+      let mask = "";
+      switch (rut.length) {
+        case 7:
+          mask = "######-N";
+          break;
+        case 8:
+          mask = "#######-N";
+          break;
+        case 9:
+          mask = "########-N";
+          break;
+        default:
+          mask = "##########";
+      }
+
+      return this.$options.filters.VMask(rut, mask);
+    },
+
+    async handleFindPatientByIdentifier() {
+      if (this.isRut) {
+        this.identifierValue = this.handleMaskRut(this.identifierValue);
+      }
+
+      const patients = await this.findPatientByIdentifier({
+        value: this.identifierValue,
+        type: this.identifierType,
+      });
+
+      this.setPatients([patients]);
+    },
 
     async handleSelectedPatient(item) {
       await this.setPatient(item);
