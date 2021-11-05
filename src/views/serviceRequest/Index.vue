@@ -1,7 +1,7 @@
 <template>
   <div class="grey lighten-3">
     <NavigationDrawer :links="menusPermissions" />
-    <v-container>
+    <v-container :fluid="$vuetify.breakpoint.mobile">
       <router-view />
     </v-container>
   </div>
@@ -42,6 +42,11 @@ export default {
       namedPermissionsForMenu: "auth/namedPermissionsForMenu",
       modules: "auth/modules",
     }),
+
+    mobileBreakpoint() {
+      return this.$vuetify.breakpoint.mobile;
+    },
+
     menus() {
       if (!this.currentModule) return [];
       return this.currentModule.menus;

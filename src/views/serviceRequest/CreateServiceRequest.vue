@@ -5,7 +5,7 @@
       subtitle=" En éste módulo podrás generar solicitudes de exámenes."
     />
 
-    <v-card v-if="patient">
+    <v-card v-if="serviceRequest.patient.identifier !== ''">
       <v-card-text>
         <v-card-title>
           <v-spacer />

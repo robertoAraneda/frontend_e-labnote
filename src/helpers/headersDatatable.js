@@ -50,6 +50,42 @@ export const PermissionHeaders = [
   },
 ];
 
+export const PractitionerHeaders = [
+  {
+    text: "N°",
+    value: "id",
+    sortable: true,
+    width: "65",
+  },
+  {
+    text: "RUN",
+    value: "rut",
+    sortable: true,
+    width: "120",
+  },
+  {
+    text: "NOMBRE",
+    value: "given",
+    sortable: true,
+  },
+  {
+    text: "NOMBRE",
+    value: "given",
+    sortable: true,
+  },
+  {
+    text: "APELLIDOS",
+    value: "family",
+    sortable: true,
+  },
+  {
+    text: "ACCIONES",
+    value: "actions",
+    sortable: false,
+    width: "150",
+  },
+];
+
 export const UserHeaders = [
   {
     text: "N°",

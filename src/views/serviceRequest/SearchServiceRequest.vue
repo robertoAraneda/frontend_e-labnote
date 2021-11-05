@@ -208,16 +208,13 @@ export default {
       father_family: "araneda",
       mother_family: "",
     },
-
     searchedObservation: [],
     search: "",
     detailServiceRequestDialog: false,
     serviceRequestSelected: null,
-
     events: [],
     input: null,
     nonce: 0,
-
     headers: [
       { text: "N° Solicitud", value: "requisition", groupable: false },
       { text: "Nombre", value: "_embedded.patient", groupable: false },
@@ -226,22 +223,21 @@ export default {
       { text: "Prioridad", value: "_embedded.priority.name" },
       { text: "Opciones", value: "options", groupable: false },
     ],
-
     observations: [],
-
     foundServiceRequests: [],
-
     setButtonName: true,
-
     patientsFound: false,
-
     loadingPatientFoundButton: false,
-
     patients: [],
   }),
 
   mounted() {
     this.getIdentifierTypes();
+  },
+
+  beforeDestroy() {
+    this.setPatient(null);
+    this.setPatients([]);
   },
 
   watch: {
@@ -286,6 +282,7 @@ export default {
       getPatient: "patient/showItem",
       viewPdf: "serviceRequest/viewPdf",
       generateCodbar: "serviceRequest/generateCodbar",
+      setPatients: "patient/setPatients",
     }),
 
     prueba(value) {
@@ -429,7 +426,6 @@ export default {
     async handleSelectedPatient(item) {
       await this.setPatient(item);
 
-      console.log(item);
       this.$nextTick(() => {
         //this.dialog = true;
         this.$router.push({ name: "createServiceRequest" });

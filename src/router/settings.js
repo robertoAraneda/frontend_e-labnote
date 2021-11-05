@@ -108,6 +108,14 @@ export const settings = [
       ),
   },
   {
+    path: "profesionales",
+    name: "practitioners",
+    component: () =>
+      import(
+        /* webpackChunkName: "practitioners" */ "../views/settings/Practitioner.vue"
+      ),
+  },
+  {
     path: "bloques",
     name: "slots",
     component: () =>

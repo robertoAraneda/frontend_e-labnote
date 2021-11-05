@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <section>
     <v-card elevation="0">
       <v-tabs grow v-model="tabs" slider-color="white">
         <v-tabs-slider></v-tabs-slider>
@@ -97,7 +97,7 @@
         ></base-accept-button>
       </template>
     </v-data-table>
-  </v-container>
+  </section>
 </template>
 
 <script>

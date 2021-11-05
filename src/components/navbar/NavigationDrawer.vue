@@ -1,12 +1,5 @@
 <template>
-  <v-navigation-drawer
-    app
-    v-model="drawer"
-    width="300"
-    mobile-breakpoint="960"
-    v-bind="$attrs"
-    clipped
-  >
+  <v-navigation-drawer app v-model="drawer" width="300" v-bind="$attrs" clipped>
     <v-sheet color="white" class="pa-4 text-center">
       <v-avatar ou class="mb-4 white--text text-h4" color="primary" size="64">{{
         role
