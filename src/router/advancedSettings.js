@@ -7,14 +7,7 @@ export const advancedSettings = [
         /* webpackChunkName: "roles" */ "../views/advancedSettings/BaseIndex.vue"
       ),
   },
-  {
-    path: "roles",
-    name: "roles",
-    component: () =>
-      import(
-        /* webpackChunkName: "roles" */ "../views/advancedSettings/Role.vue"
-      ),
-  },
+
   {
     path: "permisos",
     name: "permissions",
@@ -45,14 +38,6 @@ export const advancedSettings = [
     component: () =>
       import(
         /* webpackChunkName: "menus" */ "../views/advancedSettings/Menu.vue"
-      ),
-  },
-  {
-    path: "prestaciones",
-    name: "analytes",
-    component: () =>
-      import(
-        /* webpackChunkName: "analytes" */ "../views/advancedSettings/Analyte.vue"
       ),
   },
   {

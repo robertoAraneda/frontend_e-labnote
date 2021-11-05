@@ -66,9 +66,12 @@ export default {
       this.setIdentifier(
         this.localIdentifiers.map((identifier) => {
           let value = identifier.valueOther;
-          if (
-            identifier.identifierType?.code === PatientIdentifierTypeEnum.RUT
-          ) {
+
+          const [identifierType] = this.identifierTypes.filter(
+            (identifierType) =>
+              identifierType.id === identifier.identifier_type_id
+          );
+          if (identifierType.code === PatientIdentifierTypeEnum.RUN) {
             value = identifier.valueRut;
           }
           return { ...identifier, value };
@@ -80,7 +83,7 @@ export default {
       this.localIdentifiers = [
         ...this.identifiers.map((identifier) => {
           if (
-            identifier.identifierType?.code === PatientIdentifierTypeEnum.RUT
+            identifier.identifierType?.code === PatientIdentifierTypeEnum.RUN
           ) {
             return {
               ...identifier,
@@ -104,6 +107,7 @@ export default {
     ...mapGetters({
       identifiers: "patient/identifier",
       emitFormData: "patient/emitFormData",
+      identifierTypes: "patient/identifierTypes",
     }),
   },
 

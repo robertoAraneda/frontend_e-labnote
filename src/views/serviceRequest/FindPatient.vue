@@ -176,7 +176,7 @@ export default {
       const identifierType = this.identifierTypes.filter(
         (type) => this.identifierType === type.id
       )[0];
-      return identifierType.code === PatientIdentifierTypeEnum.RUT;
+      return identifierType.code === PatientIdentifierTypeEnum.RUN;
     },
   },
 

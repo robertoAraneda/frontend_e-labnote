@@ -1,6 +1,5 @@
 export const PatientIdentifierTypeEnum = {
-  RUT: "rut",
+  RUN: "run",
   PASSPORT: "passport-number",
-  MEDICAL_RECORD: "medical-record-number",
   CONFIDENTIAL: "confidential",
 };

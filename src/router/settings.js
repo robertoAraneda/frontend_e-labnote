@@ -6,7 +6,7 @@ export const settings = [
       import(/* webpackChunkName: "base" */ "../views/settings/BaseIndex.vue"),
   },
   {
-    path: "prestaciones",
+    path: "examenes",
     name: "serviceRequestObservationCode",
     component: () =>
       import(
@@ -14,43 +14,26 @@ export const settings = [
       ),
   },
   {
-    path: "examenes",
+    path: "roles",
+    name: "roles",
     component: () =>
       import(
-        /* webpackChunkName: "users" */ "../views/settings/observationServiceRequest/Index.vue"
+        /* webpackChunkName: "roles" */ "../views/advancedSettings/Role.vue"
       ),
-    children: [
-      {
-        path: "",
-        name: "observationServiceRequests",
-        component: () =>
-          import(
-            /* webpackChunkName: "users" */ "../views/settings/observationServiceRequest/List.vue"
-          ),
-      },
-      {
-        path: "editar/:slug",
-        name: "editObservationServiceRequest",
-        component: () =>
-          import(
-            /* webpackChunkName: "edit" */ "../views/settings/observationServiceRequest/Edit.vue"
-          ),
-      },
-      {
-        path: "crear",
-        name: "createObservationServiceRequest",
-        component: () =>
-          import(
-            /* webpackChunkName: "create" */ "../views/settings/observationServiceRequest/Create.vue"
-          ),
-      },
-    ],
   },
   {
     path: "usuarios",
     name: "users",
     component: () =>
       import(/* webpackChunkName: "users" */ "../views/settings/User.vue"),
+  },
+  {
+    path: "prestaciones-base",
+    name: "analytes",
+    component: () =>
+      import(
+        /* webpackChunkName: "analytes" */ "../views/settings/Analyte.vue"
+      ),
   },
   {
     path: "area-de-trabajo",

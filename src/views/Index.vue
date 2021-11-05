@@ -12,7 +12,7 @@
       v-if="
         $route.path !== '/' &&
         $route.path !== '/login' &&
-        !$route.path.startsWith('/catalogo-prestacione')
+        !$route.path.startsWith('/catalogo-prestaciones')
       "
       :items="breadcrumbs"
     ></v-breadcrumbs>
