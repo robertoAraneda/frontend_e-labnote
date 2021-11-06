@@ -81,20 +81,28 @@ export default {
 
     identifiers() {
       this.localIdentifiers = [
-        ...this.identifiers.map((identifier) => {
-          if (
-            identifier.identifierType?.code === PatientIdentifierTypeEnum.RUN
-          ) {
+        ...this.identifiers
+          .map((identifier) => {
+            if (
+              identifier.identifierType?.code === PatientIdentifierTypeEnum.RUN
+            ) {
+              return {
+                ...identifier,
+                valueRut: identifier.value,
+              };
+            }
             return {
               ...identifier,
-              valueRut: identifier.value,
+              valueOther: identifier.value,
             };
-          }
-          return {
-            ...identifier,
-            valueOther: identifier.value,
-          };
-        }),
+          })
+          .filter(
+            (identifier) =>
+              identifier.identifierType?.code ===
+                PatientIdentifierTypeEnum.RUN ||
+              identifier.identifierType?.code ===
+                PatientIdentifierTypeEnum.PASSPORT
+          ),
       ];
     },
 
