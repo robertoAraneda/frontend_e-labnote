@@ -1,7 +1,7 @@
 <template>
-  <v-dialog max-width="1200" persistent :value="value">
+  <v-dialog persistent :value="value">
     <v-card elevation="0">
-      <v-container>
+      <v-container fluid>
         <v-toolbar color="primary" dark>
           <v-toolbar-title
             >N° solicitud: {{ serviceRequest.requisition }}</v-toolbar-title
@@ -13,10 +13,10 @@
         </v-toolbar>
         <v-card-text>
           <v-row class="mt-3">
-            <v-col cols="12" sm="5">
+            <v-col cols="12" sm="6">
               <TraceabilityServiceRequest :timeline="timeline" />
             </v-col>
-            <v-col cols="12" sm="7">
+            <v-col cols="12" sm="6">
               <v-row>
                 <v-col cols="12">
                   <InformationPatient

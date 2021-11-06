@@ -31,6 +31,14 @@ export const serviceRequest = [
         /* webpackChunkName: "CreateServiceRequest" */ "../views/serviceRequest/CreateServiceRequest.vue"
       ),
   },
+  {
+    path: "editar-solicitud",
+    name: "UpdateServiceRequest",
+    component: () =>
+      import(
+        /* webpackChunkName: "UpdateServiceRequest" */ "../views/serviceRequest/UpdateServiceRequest.vue"
+      ),
+  },
 
   {
     path: "buscar-solicitud",

@@ -1,5 +1,5 @@
 <template>
-  <v-container>
+  <section>
     <v-card elevation="0">
       <v-tabs grow v-model="tabs" slider-color="white">
         <v-tabs-slider></v-tabs-slider>
@@ -87,40 +87,27 @@
     <v-data-table
       :headers="headers"
       :items="foundServiceRequests"
-      class="elevation-0 mt-3"
+      class="elevation-2 mt-3"
       show-group-by
     >
       <template v-slot:top>
-        <v-subheader class="subtitle-1">Lista de solicitudes</v-subheader>
+        <v-subheader class="subtitle-1 text-uppercase"
+          >Lista de solicitudes</v-subheader
+        >
       </template>
       <template v-slot:item._embedded.patient="{ item }">
         {{ prueba(item._embedded.patient) }}
       </template>
       <template v-slot:item.options="{ item }">
-        <v-btn
-          x-small
-          rounded
-          color="primary"
-          depressed
-          @click="openDetailServiceRequestDialog(item)"
-          >Ver</v-btn
+        <v-icon @click="openDetailServiceRequestDialog(item)"
+          >mdi-magnify</v-icon
         >
-        <v-btn
-          x-small
-          rounded
-          color="secondary"
-          depressed
-          @click="handleViewPdf(item)"
-          >PDF</v-btn
+        <v-icon
+          v-if="item._embedded.status.code !== 'completo'"
+          @click="handleEditServiceRequest(item)"
+          >mdi-pencil</v-icon
         >
-        <v-btn
-          x-small
-          rounded
-          color="seondary"
-          depressed
-          @click="handleGenerateCodbar(item)"
-          >Etiquetas</v-btn
-        >
+        <v-icon color="red" @click="handleViewPdf(item)">mdi-pdf-box</v-icon>
       </template>
 
       <template v-slot:group.header="{ group, remove }">
@@ -139,11 +126,7 @@
       v-model="detailServiceRequestDialog"
     />
 
-    <v-dialog
-      v-model="patientsFound"
-      transition="dialog-bottom-transition"
-      max-width="800"
-    >
+    <v-dialog v-model="patientsFound" transition="dialog-bottom-transition">
       <template v-slot:default="dialog">
         <v-card>
           <v-toolbar color="primary" dark>Seleccione un paciente</v-toolbar>
@@ -184,7 +167,7 @@
         </v-card>
       </template>
     </v-dialog>
-  </v-container>
+  </section>
 </template>
 
 <script>
@@ -283,6 +266,7 @@ export default {
       viewPdf: "serviceRequest/viewPdf",
       generateCodbar: "serviceRequest/generateCodbar",
       setPatients: "patient/setPatients",
+      setEditedServiceRequest: "serviceRequest/handleEditServiceRequest",
     }),
 
     prueba(value) {
@@ -326,6 +310,11 @@ export default {
           icon: "mdi-lightbulb",
         });
       }
+    },
+
+    handleEditServiceRequest(serviceRequest) {
+      this.setEditedServiceRequest(serviceRequest);
+      this.$router.push({ name: "UpdateServiceRequest" });
     },
 
     async handleServiceRequestByIdentifier() {

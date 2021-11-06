@@ -5,7 +5,7 @@ const BASE_URL = "/api/v1/service-requests";
 export default {
   namespaced: true,
   state: {
-    serviceRequest: null,
+    editedServiceRequest: null,
     patient: null,
     serviceRequestPriorities: [],
     isLoadingServiceRequestPriorities: [],
@@ -13,8 +13,8 @@ export default {
     selectedAppointment: null,
   },
   mutations: {
-    SET_SERVICE_REQUEST: (state, payload) => {
-      state.serviceRequest = payload;
+    SET_EDITED_SERVICE_REQUEST: (state, payload) => {
+      state.editedServiceRequest = payload;
     },
 
     SET_SELECTED_APPOINTMENT: (state, payload) => {
@@ -38,7 +38,7 @@ export default {
     },
   },
   getters: {
-    serviceRequest: (state) => state.serviceRequest,
+    editedServiceRequest: (state) => state.editedServiceRequest,
     serviceRequestPriorities: (state) => state.serviceRequestPriorities,
     patient: (state) => state.patient,
     isServiceRequestCreatedByAppointment: (state) =>
@@ -48,6 +48,10 @@ export default {
   actions: {
     setSelectedAppointment: ({ commit }, payload) => {
       commit("SET_SELECTED_APPOINTMENT", payload);
+    },
+
+    handleEditServiceRequest: ({ commit }, payload) => {
+      commit("SET_EDITED_SERVICE_REQUEST", payload);
     },
 
     setIsServiceRequestCreatedByAppointment: ({ commit }, payload) => {

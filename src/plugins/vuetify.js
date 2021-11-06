@@ -16,7 +16,7 @@ Vue.use(Vuetify, {
 
 const options = {
   breakpoint: {
-    mobileBreakpoint: 1200, // This is equivalent to a value of 960
+    mobileBreakpoint: 1024, // This is equivalent to a value of 960
   },
   lang: {
     locales: { es, en },
