@@ -76,23 +76,44 @@
               </v-list>
             </v-col>
           </v-row>
+          <v-row v-if="serviceRequest.is_confidential" class="text-center">
+            <v-col>
+              <v-alert text dense color="error" border="left">
+                <h3 class="text-h5">Solicitud de examen confidencial</h3>
+                <div>
+                  Toda la información del paciente estará asociada su clave o
+                  código de identificación.
+                </div>
+
+                <v-divider
+                  class="my-4 warning"
+                  style="opacity: 0.22"
+                ></v-divider>
+
+                <v-row align="center" no-gutters>
+                  <v-col class="grow">
+                    <span class="title font-weight-bold">
+                      Código de identificación: {{ confidentialCode }}</span
+                    >
+                  </v-col>
+                </v-row>
+              </v-alert>
+            </v-col>
+          </v-row>
         </v-sheet>
       </v-card-text>
     </v-card>
 
     <v-card class="mt-3">
       <v-card-text>
-        <v-card-title>
-          <v-subheader
-            class="font-weight-bold text-uppercase secondary--text text-h6"
-            >N° solicitud: {{ serviceRequest.requisition }}</v-subheader
-          >
-          <v-spacer />
-          <v-subheader
-            class="font-weight-medium text-uppercase secondary--text text-h6"
-            >Creación: {{ serviceRequest.authoredOn }}</v-subheader
-          >
-        </v-card-title>
+        <v-alert text type="warning">
+          Estás editando la solicitud
+          <span class="font-weight-bold">{{ serviceRequest.requisition }}</span>
+          creada el
+          <span class="font-weight-medium text--darkent-3">{{
+            serviceRequest.authoredOn
+          }}</span>
+        </v-alert>
         <v-divider class="mb-3" />
         <v-row>
           <v-col cols="12" sm="4">
@@ -161,7 +182,7 @@
           <v-col cols="12" sm="8">
             <v-chip-group
               mandatory
-              color="error"
+              color="primary"
               column
               center-active
               v-model="priority"
@@ -213,7 +234,15 @@
                 ></BaseAutocomplete>
               </v-col>
               <v-col cols="12">
-                <v-text-field dense outlined label="Diagnóstico"></v-text-field>
+                <v-text-field
+                  v-model="serviceRequest.diagnosis"
+                  @input="$v.serviceRequest.diagnosis.$touch()"
+                  @blur="$v.serviceRequest.diagnosis.$touch()"
+                  :error-messages="diagnosisErrors"
+                  dense
+                  outlined
+                  label="Diagnóstico"
+                ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
@@ -230,6 +259,11 @@
     </v-card>
 
     <v-card class="mt-3">
+      <v-card-text>
+        <v-alert v-if="serviceRequest.is_confidential" text type="warning">
+          En esta solicitud sólo podrán seleccionarse exámenes confidenciales.
+        </v-alert>
+      </v-card-text>
       <v-card-title>
         <v-subheader class="font-weight-bold text-uppercase"
           >Selección de exámenes</v-subheader
@@ -790,6 +824,7 @@ export default {
     serviceRequest: {
       location_id: { required },
       performer_id: { required },
+      diagnosis: { required },
       observations: {
         required,
         $each: {
@@ -817,7 +852,9 @@ export default {
       patient_id: "",
       location_id: null,
       performer_id: null,
+      diagnosis: "",
       occurrence: "",
+      is_confidential: false,
       service_request_priority_id: null,
       isReady: false,
       observations: [],
@@ -897,7 +934,9 @@ export default {
       this.serviceRequest.id = this.editedServiceReaquest.id;
       this.serviceRequest.patient.name = patient.name[0];
       this.serviceRequest.patient.birthdate = patient.birthdate;
-      this.serviceRequest.patient.identifier = patient.identifier[0];
+      this.serviceRequest.patient.identifier = patient.identifier.filter(
+        (identifier) => identifier.type === "RUN"
+      )[0];
       this.serviceRequest.patient.telecom = patient.telecom;
       this.serviceRequest.requisition = this.editedServiceReaquest.requisition;
       this.serviceRequest.authoredOn = this.editedServiceReaquest.authored_on;
@@ -906,6 +945,9 @@ export default {
       this.serviceRequest.service_request_priority_id = priority.id;
       this.serviceRequest.performer_id = performer.id;
       this.serviceRequest.patient_id = patient.id;
+      this.serviceRequest.is_confidential =
+        this.editedServiceReaquest.is_confidential;
+      this.serviceRequest.diagnosis = this.editedServiceReaquest.diagnosis;
 
       this.selectedObservations = observations.map(
         (observation) => observation.id
@@ -960,10 +1002,28 @@ export default {
       editedServiceReaquest: "serviceRequest/editedServiceRequest",
     }),
 
+    confidentialCode() {
+      if (this.serviceRequest?.is_confidential) {
+        return this.editedServiceReaquest._embedded.patient.identifier.filter(
+          (identifier) => identifier.type === "CONFIDENCIAL"
+        )[0].value;
+      } else {
+        return "";
+      }
+    },
+
     locationErrors() {
       const errors = [];
       if (!this.$v.serviceRequest.location_id.$dirty) return errors;
       !this.$v.serviceRequest.location_id.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
+    diagnosisErrors() {
+      const errors = [];
+      if (!this.$v.serviceRequest.diagnosis.$dirty) return errors;
+      !this.$v.serviceRequest.diagnosis.required &&
         errors.push(validationMessage.REQUIRED);
       return errors;
     },
@@ -1039,6 +1099,13 @@ export default {
     observations() {
       if (this._observations.length === 0) return [];
       return this._observations.collection
+        .filter((observation) => {
+          if (this.editedServiceReaquest.is_confidential) {
+            return observation.isConfidential === true;
+          } else {
+            return observation.isConfidential === false;
+          }
+        })
         .map((observation) => {
           return {
             id: observation.id,
@@ -1077,6 +1144,7 @@ export default {
       if (this._observations.length === 0) return [];
 
       const observation = this._observations.collection
+        .filter((observation) => observation.isConfidential)
         .map((observation) => {
           return {
             id: observation.id,
