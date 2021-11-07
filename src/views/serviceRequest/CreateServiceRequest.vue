@@ -210,6 +210,9 @@
                   dense
                   outlined
                   label="Diagnóstico"
+                  @input="$v.serviceRequest.diagnosis.$touch()"
+                  @blur="$v.serviceRequest.diagnosis.$touch()"
+                  :error-messages="diagnosisErrors"
                 ></v-text-field>
               </v-col>
               <v-col cols="12">
@@ -779,6 +782,7 @@ import Patient from "../../models/Patient";
 import { validationMixin } from "vuelidate";
 import { required } from "vuelidate/lib/validators";
 import { validationMessage } from "../../helpers/ValidationMessage";
+import { ConfidentialStatusEnum } from "../../enums/confidential-status.enum";
 
 export default {
   name: "ServiceRequest",
@@ -790,6 +794,7 @@ export default {
       patient_id: { required },
       location_id: { required },
       performer_id: { required },
+      diagnosis: { required },
       observations: {
         required,
         $each: {
@@ -823,7 +828,10 @@ export default {
       service_request_priority_id: null,
       isReady: false,
       observations: [],
-      specimens: [],
+      not_confidential_observations: [],
+      confidential_observations: [],
+      not_confidential_specimens: [],
+      confidential_specimens: [],
     },
 
     selectedObservationServiceRequest: null,
@@ -832,7 +840,11 @@ export default {
     priority: "",
     selectedSpecimenCode: "TODAS LAS MUESTRAS",
     selectedObservations: [],
+    selectedConfidentialObservations: [],
+    selectedNotConfidentialObservations: [],
     selectedSpecimens: [],
+    selectedConfidentialSpecimens: [],
+    selectedNotConfidentialSpecimens: [],
     searchObservation: "",
     advancedSelectionDialog: false,
     selectedObservation: "",
@@ -870,6 +882,54 @@ export default {
           };
         }
       );
+
+      //filtro de exámenes confidenciales para crear una solicitud exclusiva
+      this.selectedConfidentialObservations = this.defaultObservations.filter(
+        (observation) =>
+          observation.isConfidential === ConfidentialStatusEnum.TRUE
+      );
+
+      const groupedConfidentialObservationByContainer = groupBy(
+        this.selectedConfidentialObservations,
+        "container_id"
+      );
+
+      //filtro de muestras confidenciales para crear una solicitud exclusiva
+      this.selectedConfidentialSpecimens = Object.keys(
+        groupedConfidentialObservationByContainer
+      ).map((container) => {
+        return {
+          container_id: parseInt(container),
+          specimen_code_id:
+            groupedConfidentialObservationByContainer[container][0].specimen_id,
+          patient_id: this.serviceRequest.patient_id,
+        };
+      });
+
+      //filtro de exámenes no confidenciales para crear una solicitud exclusiva
+      this.selectedNotConfidentialObservations =
+        this.defaultObservations.filter(
+          (observation) =>
+            observation.isConfidential === ConfidentialStatusEnum.FALSE
+        );
+
+      const groupedNotConfidentialObservationByContainer = groupBy(
+        this.selectedNotConfidentialObservations,
+        "container_id"
+      );
+
+      //filtro de muestras no confidenciales para crear una solicitud exclusiva
+      this.selectedNotConfidentialSpecimens = Object.keys(
+        groupedNotConfidentialObservationByContainer
+      ).map((container) => {
+        return {
+          container_id: parseInt(container),
+          specimen_code_id:
+            groupedNotConfidentialObservationByContainer[container][0]
+              .specimen_id,
+          patient_id: this.serviceRequest.patient_id,
+        };
+      });
     },
 
     date() {
@@ -952,6 +1012,14 @@ export default {
       const errors = [];
       if (!this.$v.serviceRequest.performer_id.$dirty) return errors;
       !this.$v.serviceRequest.performer_id.required &&
+        errors.push(validationMessage.REQUIRED);
+      return errors;
+    },
+
+    diagnosisErrors() {
+      const errors = [];
+      if (!this.$v.serviceRequest.diagnosis.$dirty) return errors;
+      !this.$v.serviceRequest.diagnosis.required &&
         errors.push(validationMessage.REQUIRED);
       return errors;
     },
@@ -1168,6 +1236,7 @@ export default {
 
     async handleCreateServiceRequest() {
       this.createServiceRequestLoadingButton = true;
+      /*
       if (this.selectedObservations.length !== 0) {
         this.serviceRequest.observations = this.selectedObservations.map(
           (observation) => {
@@ -1182,6 +1251,46 @@ export default {
       console.log(this.serviceRequest.observations);
 
       this.serviceRequest.specimens = this.selectedSpecimens;
+       */
+
+      if (this.selectedObservations.length !== 0) {
+        //se agregan todos los examenes para efectos de validación. Tiene que existir al menos un examen seleccionado
+        this.serviceRequest.observations = this.selectedObservations.map(
+          (observation) => ({
+            service_request_observation_code_id: parseInt(observation),
+          })
+        );
+
+        //se agregan los exámenes no confidenciales
+        this.serviceRequest.not_confidential_observations =
+          this.selectedNotConfidentialObservations.map(
+            (notConfidentialObservation) => ({
+              service_request_observation_code_id: parseInt(
+                notConfidentialObservation.id
+              ),
+            })
+          );
+
+        //se agregan los exámenes confidenciales
+        this.serviceRequest.confidential_observations =
+          this.selectedConfidentialObservations.map(
+            (confidentialObservation) => ({
+              service_request_observation_code_id: parseInt(
+                confidentialObservation.id
+              ),
+            })
+          );
+        //se agregan las muestras confidenciales
+        this.serviceRequest.confidential_specimens =
+          this.selectedConfidentialSpecimens;
+
+        //se agregan las muestras no confidenciales.
+        this.serviceRequest.not_confidential_specimens =
+          this.selectedNotConfidentialSpecimens;
+      } else {
+        this.serviceRequest.observations = [];
+      }
+
       this.$v.$touch();
 
       if (this.$v.$invalid) {
@@ -1214,7 +1323,7 @@ export default {
 
         this.createServiceRequestLoadingButton = false;
 
-        this.resetFormServiceRequest();
+        //  this.resetFormServiceRequest();
       }
     },
 
