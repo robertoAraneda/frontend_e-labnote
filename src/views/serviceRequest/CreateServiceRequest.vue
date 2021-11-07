@@ -205,7 +205,12 @@
                 ></BaseAutocomplete>
               </v-col>
               <v-col cols="12">
-                <v-text-field dense outlined label="Diagnóstico"></v-text-field>
+                <v-text-field
+                  v-model="serviceRequest.diagnosis"
+                  dense
+                  outlined
+                  label="Diagnóstico"
+                ></v-text-field>
               </v-col>
               <v-col cols="12">
                 <v-text-field
@@ -808,6 +813,8 @@ export default {
         age: "",
         insurance: "",
       },
+      diagnosis: "",
+      is_confidential: false,
       note: "",
       patient_id: "",
       location_id: null,
