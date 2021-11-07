@@ -86,7 +86,7 @@
 
     <v-data-table
       :headers="headers"
-      :items="foundServiceRequests"
+      :items="serviceRequests"
       class="elevation-2 mt-3"
       show-group-by
     >
@@ -95,15 +95,13 @@
           >Lista de solicitudes</v-subheader
         >
       </template>
-      <template v-slot:item._embedded.patient="{ item }">
-        {{ prueba(item._embedded.patient) }}
-      </template>
+
       <template v-slot:item.options="{ item }">
         <v-icon @click="openDetailServiceRequestDialog(item)"
           >mdi-magnify</v-icon
         >
         <v-icon
-          v-if="item._embedded.status.code !== 'completo'"
+          v-if="item.status !== 'completo'"
           @click="handleEditServiceRequest(item)"
           >mdi-pencil</v-icon
         >
@@ -183,12 +181,12 @@ export default {
     dialogPdf: false,
     tabs: null,
     panel: null,
-    serviceRequestIdentifier: "12233446",
+    serviceRequestIdentifier: "",
     editedItem: {
       identifierType: "",
-      identifier: "15654738-7",
+      identifier: "",
       given: "",
-      father_family: "araneda",
+      father_family: "",
       mother_family: "",
     },
     searchedObservation: [],
@@ -200,10 +198,10 @@ export default {
     nonce: 0,
     headers: [
       { text: "N° Solicitud", value: "requisition", groupable: false },
-      { text: "Nombre", value: "_embedded.patient", groupable: false },
-      { text: "Procedencia", value: "_embedded.location.name" },
-      { text: "Estado", value: "_embedded.status.name" },
-      { text: "Prioridad", value: "_embedded.priority.name" },
+      { text: "Nombre/Código", value: "name", groupable: false },
+      { text: "Procedencia", value: "location" },
+      { text: "Estado", value: "status" },
+      { text: "Prioridad", value: "priority" },
       { text: "Opciones", value: "options", groupable: false },
     ],
     observations: [],
@@ -250,6 +248,28 @@ export default {
 
     timeline() {
       return this.events.slice().reverse();
+    },
+
+    serviceRequests() {
+      if (this.foundServiceRequests.length === 0) return [];
+      return this.foundServiceRequests.map((serviceRequest) => {
+        const confidentialName =
+          serviceRequest._embedded.patient.identifier.filter(
+            (identifier) => identifier.type === "CONFIDENCIAL"
+          )[0];
+        const name = serviceRequest._embedded.patient.name[0];
+
+        return {
+          requisition: serviceRequest.requisition,
+          name: serviceRequest.is_confidential
+            ? confidentialName.value
+            : name.text,
+          location: serviceRequest._embedded.location.name,
+          status: serviceRequest._embedded.status.name,
+          priority: serviceRequest._embedded.priority.name,
+          raw: serviceRequest,
+        };
+      });
     },
   },
 
@@ -313,7 +333,7 @@ export default {
     },
 
     handleEditServiceRequest(serviceRequest) {
-      this.setEditedServiceRequest(serviceRequest);
+      this.setEditedServiceRequest(serviceRequest.raw);
       this.$router.push({ name: "UpdateServiceRequest" });
     },
 
@@ -345,7 +365,7 @@ export default {
     },
 
     async handleViewPdf(item) {
-      const response = await this.viewPdf(item);
+      const response = await this.viewPdf(item.raw);
 
       console.log(response);
 
@@ -365,7 +385,7 @@ export default {
     },
 
     async handleGenerateCodbar(item) {
-      const response = await this.generateCodbar(item);
+      const response = await this.generateCodbar(item.raw);
 
       console.log(response);
 
