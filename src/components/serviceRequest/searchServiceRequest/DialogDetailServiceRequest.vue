@@ -1,5 +1,5 @@
 <template>
-  <v-dialog persistent :value="value">
+  <v-dialog max-width="1150" persistent :value="value">
     <v-card elevation="0">
       <v-container fluid>
         <v-toolbar color="primary" dark>
@@ -12,6 +12,23 @@
           >
         </v-toolbar>
         <v-card-text>
+          <v-alert v-if="isConfidential" text dense color="error" border="left">
+            <h3 class="text-h5">Solicitud de examen confidencial</h3>
+            <div>
+              Toda la información del paciente estará asociada su clave o código
+              de identificación.
+            </div>
+
+            <v-divider class="my-4 warning" style="opacity: 0.22"></v-divider>
+
+            <v-row align="center" no-gutters>
+              <v-col class="grow">
+                <span class="title font-weight-bold">
+                  Código de identificación: {{ confidentialCode }}</span
+                >
+              </v-col>
+            </v-row>
+          </v-alert>
           <v-row class="mt-3">
             <v-col cols="12" sm="6">
               <TraceabilityServiceRequest :timeline="timeline" />
@@ -19,9 +36,30 @@
             <v-col cols="12" sm="6">
               <v-row>
                 <v-col cols="12">
-                  <InformationPatient
-                    :patient="serviceRequest._embedded.patient"
-                  />
+                  <ContainerDetailServiceRequest title="Información paciente">
+                    <template v-slot:default>
+                      <v-list class="transparent" three-line>
+                        <v-list-item>
+                          <v-list-item-avatar>
+                            <v-icon size="48">mdi-account-circle</v-icon>
+                          </v-list-item-avatar>
+                          <v-list-item-content>
+                            <v-list-item-title>{{
+                              namePatient
+                            }}</v-list-item-title>
+
+                            <v-list-item-subtitle class="subtitle-1"
+                              >Cruz Blanca</v-list-item-subtitle
+                            >
+
+                            <v-list-item-subtitle class="subtitle-1">{{
+                              location
+                            }}</v-list-item-subtitle>
+                          </v-list-item-content>
+                        </v-list-item>
+                      </v-list>
+                    </template>
+                  </ContainerDetailServiceRequest>
                 </v-col>
 
                 <v-col cols="12">
@@ -44,65 +82,71 @@
 
 <script>
 import TraceabilityServiceRequest from "./TraceabilityServiceRequest";
-import InformationPatient from "./InformationPatient";
 import InformationServiceRequest from "./InformationServiceRequest";
 import ObservationsServiceRequest from "./ObservationsServiceRequest";
+import ContainerDetailServiceRequest from "./ContainerDetailServiceRequest";
 export default {
   name: "DialogDetailServiceRequest",
   components: {
+    ContainerDetailServiceRequest,
     ObservationsServiceRequest,
     InformationServiceRequest,
-    InformationPatient,
     TraceabilityServiceRequest,
   },
   props: {
     dialog: Boolean,
     serviceRequest: Object,
+    traceability: Array,
     value: Boolean,
   },
-
-  mounted() {
-    setTimeout(() => {
-      this.comment();
-    }, 500);
-  },
-
-  data: () => ({
-    events: [],
-  }),
+  data: () => ({}),
 
   computed: {
     timeline() {
-      return this.events.slice().reverse();
+      return this.traceability.slice().reverse();
+    },
+
+    isConfidential() {
+      return this.serviceRequest?.is_confidential;
+    },
+
+    confidentialCode() {
+      const [confidentialCode] =
+        this.serviceRequest?._embedded.patient.identifier.filter(
+          (identifier) => identifier.type === "CONFIDENCIAL"
+        );
+
+      return confidentialCode?.value;
+    },
+
+    location() {
+      return this.serviceRequest?._embedded.location.name;
+    },
+
+    namePatient() {
+      return this.serviceRequest?._embedded.patient.name[0].text;
     },
 
     observations() {
-      return this.serviceRequest._links.observations.collection;
+      return this.serviceRequest?._links.observations.collection;
+    },
+
+    specimens() {
+      return this.serviceRequest?._links.specimens.collection.reduce(
+        (accumulator, object) => {
+          let key = object.specimen["collected_at"];
+          if (!accumulator[key]) {
+            accumulator[key] = [];
+          }
+          accumulator[key].push(object);
+          return accumulator;
+        },
+        {}
+      );
     },
   },
 
-  methods: {
-    comment() {
-      if (this.events.length === 0) {
-        const requester = this.serviceRequest._embedded.requester;
-        const performer = this.serviceRequest._embedded.performer;
-
-        this.events.push({
-          id: this.serviceRequest.id + this.events.length,
-          text: `<strong class="overline">Creada por:</strong> <p class="grey--text">${requester.name} ${requester.father_family} ${requester.mother_family}</p>`,
-          time: `<span class="overline">${this.serviceRequest.authored_on}</span>`,
-          icon: "mdi-lightbulb",
-        });
-
-        this.events.push({
-          id: this.serviceRequest.id + this.events.length,
-          text: `<strong class="overline">Solicitada por:</strong> <p class="grey--text">${performer.given} ${performer.family}</p>`,
-          time: `<span class="overline">${this.serviceRequest.authored_on}</span>`,
-          icon: "mdi-lightbulb",
-        });
-      }
-    },
-  },
+  methods: {},
 };
 </script>
 

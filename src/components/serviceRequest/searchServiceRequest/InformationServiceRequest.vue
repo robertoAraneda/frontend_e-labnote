@@ -1,7 +1,7 @@
 <template>
   <ContainerDetailServiceRequest :title="title">
     <template v-slot:default>
-      <v-list>
+      <v-list class="transparent">
         <v-list-item dense v-for="item in specimens" :key="item.specimen.id">
           <v-list-item-avatar>
             <v-icon size="24">{{

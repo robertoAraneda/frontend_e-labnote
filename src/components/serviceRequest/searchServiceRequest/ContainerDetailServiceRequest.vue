@@ -1,8 +1,10 @@
 <template>
-  <v-card elevation="1">
+  <v-card color="grey lighten-5" elevation="0">
     <v-card-text>
-      <v-subheader class="subtitle-1"> {{ title }} </v-subheader>
-      <v-divider class="mb-3"></v-divider>
+      <v-subheader class="subtitle-1 text-uppercase font-weight-medium">
+        {{ title }}
+      </v-subheader>
+      <v-divider class="mb-3 primary"></v-divider>
       <slot name="default" />
     </v-card-text>
   </v-card>

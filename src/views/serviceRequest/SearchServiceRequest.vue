@@ -122,9 +122,14 @@
       v-if="serviceRequestSelected"
       :service-request="serviceRequestSelected"
       v-model="detailServiceRequestDialog"
+      :traceability="events"
     />
 
-    <v-dialog v-model="patientsFound" transition="dialog-bottom-transition">
+    <v-dialog
+      max-width="1024"
+      v-model="patientsFound"
+      transition="dialog-bottom-transition"
+    >
       <template v-slot:default="dialog">
         <v-card>
           <v-toolbar color="primary" dark>Seleccione un paciente</v-toolbar>
@@ -171,6 +176,7 @@
 <script>
 import { mapActions, mapGetters } from "vuex";
 import DialogDetailServiceRequest from "../../components/serviceRequest/searchServiceRequest/DialogDetailServiceRequest";
+import moment from "moment";
 
 export default {
   name: "SearchServiceRequest",
@@ -221,26 +227,6 @@ export default {
     this.setPatients([]);
   },
 
-  watch: {
-    async panel(value) {
-      this.setButtonName = true;
-      if (value !== undefined) {
-        const { href } =
-          this.foundServiceRequests[value]._embedded.patient._links.self;
-        const response = await this.getPatient(href);
-
-        this.setButtonName = false;
-
-        this.comment(value);
-
-        console.log(response);
-
-        this.observations =
-          this.foundServiceRequests[value]._links.observations.collection;
-      }
-    },
-  },
-
   computed: {
     ...mapGetters({
       identifierTypes: "patient/identifierTypes",
@@ -251,8 +237,7 @@ export default {
     },
 
     serviceRequests() {
-      if (this.foundServiceRequests.length === 0) return [];
-      return this.foundServiceRequests.map((serviceRequest) => {
+      return this.foundServiceRequests?.map((serviceRequest) => {
         const confidentialName =
           serviceRequest._embedded.patient.identifier.filter(
             (identifier) => identifier.type === "CONFIDENCIAL"
@@ -270,6 +255,20 @@ export default {
           raw: serviceRequest,
         };
       });
+    },
+
+    specimens() {
+      return this.serviceRequestSelected?._links.specimens.collection.reduce(
+        (accumulator, object) => {
+          let key = object.specimen["collected_at"];
+          if (!accumulator[key]) {
+            accumulator[key] = [];
+          }
+          accumulator[key].push(object);
+          return accumulator;
+        },
+        {}
+      );
     },
   },
 
@@ -289,6 +288,42 @@ export default {
       setEditedServiceRequest: "serviceRequest/handleEditServiceRequest",
     }),
 
+    traceability() {
+      this.events = [];
+      const requester = this.serviceRequestSelected?._embedded.requester;
+      const performer = this.serviceRequestSelected?._embedded.performer;
+
+      this.events.push({
+        id: this.serviceRequestSelected?.id + this.events.length,
+        text: `<strong class="overline">Creada por:</strong> <p class="secondary--text">${requester.name} ${requester.father_family} ${requester.mother_family}</p>`,
+        time: `<span class="overline">${this.serviceRequestSelected?.authored_on}</span>`,
+        icon: "mdi-clock-check-outline",
+      });
+
+      this.events.push({
+        id: this.serviceRequestSelected?.id + this.events.length,
+        text: `<strong class="overline">Solicitada por:</strong> <p class="secondary--text">${performer.given} ${performer.family}</p>`,
+        time: `<span class="overline">${this.serviceRequestSelected?.authored_on}</span>`,
+        icon: "mdi-clock-check-outline",
+      });
+      const [date] = Object.keys(this.specimens);
+
+      const [specimen] = this.specimens[date];
+
+      const collector = specimen.specimen.collector;
+
+      if (date !== "null") {
+        this.events.push({
+          id: this.serviceRequestSelected.id + this.events.length,
+          text: `<strong class="overline">Muestras tomadas por:</strong> <p class="secondary--text">${collector.names} ${collector.lastname} ${collector.mother_lastname}</p>`,
+          time: `<span class="overline">${moment(
+            specimen.specimen.collected_at
+          ).format("DD/MM/YYYY HH:mm:ss")}</span>`,
+          icon: "mdi-clock-check-outline",
+        });
+      }
+    },
+
     prueba(value) {
       return `${value.name[0].given} ${value.name[0].father_family} ${value.name[0].mother_family}`;
     },
@@ -306,30 +341,10 @@ export default {
     },
 
     openDetailServiceRequestDialog(value) {
-      this.serviceRequestSelected = value;
+      //en atributo raw se encuentra la instancia de la solicitud.
+      this.serviceRequestSelected = value.raw;
+      this.traceability();
       this.detailServiceRequestDialog = true;
-    },
-
-    comment(value) {
-      if (this.events.length === 0) {
-        const serviceRequest = this.foundServiceRequests[value];
-        const requester = serviceRequest._embedded.requester;
-        const performer = serviceRequest._embedded.performer;
-
-        this.events.push({
-          id: serviceRequest.id + this.events.length,
-          text: `<strong class="overline">Creada por:</strong> <p class="grey--text">${requester.name} ${requester.father_family} ${requester.mother_family}</p>`,
-          time: `<span class="overline">${serviceRequest.authored_on}</span>`,
-          icon: "mdi-lightbulb",
-        });
-
-        this.events.push({
-          id: serviceRequest.id + this.events.length,
-          text: `<strong class="overline">Solicitada por:</strong> <p class="grey--text">${performer.given} ${performer.family}</p>`,
-          time: `<span class="overline">${serviceRequest.authored_on}</span>`,
-          icon: "mdi-lightbulb",
-        });
-      }
     },
 
     handleEditServiceRequest(serviceRequest) {

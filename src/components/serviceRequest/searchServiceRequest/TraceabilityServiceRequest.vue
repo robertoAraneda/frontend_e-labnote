@@ -6,8 +6,9 @@
           <v-timeline-item
             v-for="event in timeline"
             :key="event.id"
-            small
             fill-dot
+            color="primary darken-1"
+            :icon="event.icon"
           >
             <v-row justify="space-between">
               <v-col cols="7" v-html="event.text"></v-col>
