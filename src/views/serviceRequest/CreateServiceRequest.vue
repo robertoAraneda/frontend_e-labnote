@@ -748,6 +748,17 @@
         </v-card-text>
       </v-card>
     </v-dialog>
+    <v-dialog max-width="500" v-model="dialogResponseCreateServiceRequest">
+      <v-card>
+        <v-card-text> Se ha creado una solicitud confidencial</v-card-text>
+        <v-card-actions class="justify-center"
+          ><v-btn @click="handleNextRequest" color="primary">Continuar</v-btn
+          ><v-btn @click="handleViewPdf" color="secondary"
+            >Imprimir solicitud confidencial</v-btn
+          ></v-card-actions
+        >
+      </v-card>
+    </v-dialog>
 
     <v-fab-transition>
       <v-btn
@@ -785,7 +796,7 @@ import { validationMessage } from "../../helpers/ValidationMessage";
 import { ConfidentialStatusEnum } from "../../enums/confidential-status.enum";
 
 export default {
-  name: "ServiceRequest",
+  name: "CreateServiceRequest",
 
   mixins: [validationMixin],
 
@@ -809,6 +820,7 @@ export default {
     infoButton: false,
     messageSnackbar: "Faltan datos obligatorios",
     openWarningMessage: false,
+    dialogResponseCreateServiceRequest: false,
     serviceRequest: {
       patient: {
         name: "",
@@ -818,6 +830,7 @@ export default {
         age: "",
         insurance: "",
       },
+      confidentialRequest: null,
       diagnosis: "",
       is_confidential: false,
       note: "",
@@ -1209,7 +1222,33 @@ export default {
       create: "serviceRequest/postItem",
       setPatientSelected: "serviceRequest/setPatient",
       findObservationServiceRequest: "observationServiceRequest/showItem",
+      viewPdf: "serviceRequest/viewPdf",
     }),
+
+    handleNextRequest() {
+      this.resetFormServiceRequest();
+    },
+
+    async handleViewPdf() {
+      const response = await this.viewPdf(this.confidentialRequest);
+
+      console.log(response);
+
+      const url = window.URL.createObjectURL(
+        new Blob([response.data], { type: "application/pdf" })
+      );
+      const link = document.createElement("a");
+      link.href = url;
+      link.href = url;
+      link.setAttribute("target", "_blank");
+      link.setAttribute("title", "prueba.pdf");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      this.confidentialRequest = null;
+      this.resetFormServiceRequest();
+    },
 
     async handleFindObservationServiceRequestInfo(item) {
       const { data } = await this.findObservationServiceRequest(
@@ -1295,7 +1334,6 @@ export default {
 
       if (this.$v.$invalid) {
         if (this.observationsErrors.length === 0) {
-          console.log("aca");
           this.messageSnackbar = "Faltan datos obligatorios";
         } else {
           this.messageSnackbar = "Debe seleccionar al menos un examen.";
@@ -1319,11 +1357,15 @@ export default {
           payload = rest;
         }
 
-        await this.create(payload);
+        const { data } = await this.create(payload);
 
+        if ("confidential" in data) {
+          this.confidentialRequest = data.confidential;
+          this.dialogResponseCreateServiceRequest = true;
+        } else {
+          //
+        }
         this.createServiceRequestLoadingButton = false;
-
-        //  this.resetFormServiceRequest();
       }
     },
 

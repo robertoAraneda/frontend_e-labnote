@@ -7,7 +7,20 @@
     />
     <v-sheet class="pa-3">
       <v-row>
-        <v-col cols="12" sm="3" md="4">
+        <v-col cols="12" sm="12" md="12" lg="4">
+          <v-subheader class="text-uppercase font-weight-medium subtitle-1"
+            >Calendario</v-subheader
+          >
+          <v-alert border="left" text type="info" color="primary" class="mt-3"
+            >Las fechas con indicador
+            <span class="error--text mr-1 font-weight-bold">ROJO</span>
+            <span
+              class="text-decoration-underline font-weight-bold text-uppercase"
+              >no</span
+            >
+
+            contienen bloques horarios disponibles.</v-alert
+          >
           <v-date-picker
             color="secondary"
             ref="picker"
@@ -19,26 +32,13 @@
             :events="arrayEvents"
             :event-color="colorEvent"
           ></v-date-picker>
-          <v-divider class="my-2" />
-          <v-alert
-            border="left"
-            colored-border
-            type="info"
-            color="primary"
-            elevation="2"
-            class="mt-3"
-            >Las fechas con indicador
-            <span class="error--text mr-1 font-weight-bold">ROJO</span>
-            <span class="text-decoration-underline">no</span>
-
-            contienen bloques horarios disponibles.</v-alert
-          >
+          <v-divider class="my-3" />
         </v-col>
-        <v-col cols="12" sm="9" md="8">
+        <v-col cols="12" sm="12" md="12" lg="8">
           <v-stepper non-linear v-model="e1">
             <v-stepper-header>
               <v-stepper-step editable :complete="e1 > 1" step="1">
-                Buscar cliente
+                Buscar paciente
               </v-stepper-step>
 
               <v-divider></v-divider>
