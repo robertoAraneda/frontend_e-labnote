@@ -749,12 +749,19 @@
       </v-card>
     </v-dialog>
     <v-dialog max-width="500" v-model="dialogResponseCreateServiceRequest">
-      <v-card>
-        <v-card-text> Se ha creado una solicitud confidencial</v-card-text>
+      <v-card class="pt-3 text-center">
+        <v-card-text>
+          <v-icon color="success" size="56">mdi-file-check-outline</v-icon>
+        </v-card-text>
+        <v-card-text class="justify-center headline">
+          Se ha creado una solicitud confidencial</v-card-text
+        >
+
         <v-card-actions class="justify-center"
-          ><v-btn @click="handleNextRequest" color="primary">Continuar</v-btn
           ><v-btn @click="handleViewPdf" color="secondary"
             >Imprimir solicitud confidencial</v-btn
+          ><v-btn @click="handleNextRequest" color="primary"
+            >Continuar</v-btn
           ></v-card-actions
         >
       </v-card>
