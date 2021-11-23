@@ -1,4 +1,5 @@
 import httpRequest from "../../services/axios";
+import { ServiceRequestStatusEnum } from "../../enums/service-request-status.enum";
 
 const BASE_URL = "/api/v1/service-requests";
 
@@ -56,6 +57,17 @@ export default {
 
     setIsServiceRequestCreatedByAppointment: ({ commit }, payload) => {
       commit("SET_IS_SERVICE_REQUEST_CREATED_BY_APPOINTMENT", payload);
+    },
+
+    updateSamplingRoomServiceRequest: async (_, payload) => {
+      try {
+        return await httpRequest.postRequest(
+          `${BASE_URL}/is-sampling-room/update`,
+          payload
+        );
+      } catch (e) {
+        return e.response;
+      }
     },
 
     viewPdf: async (_, payload) => {
@@ -186,6 +198,16 @@ export default {
         console.log(error);
       } finally {
         commit("SET_SERVICE_REQUEST_PRIORITIES_LOADING", false);
+      }
+    },
+
+    setActiveStatusServiceRequest: async (_, payload) => {
+      try {
+        return await httpRequest.getRequest(
+          `${BASE_URL}/${payload.id}/tracking?status_code=${ServiceRequestStatusEnum.ACTIVE}`
+        );
+      } catch (e) {
+        return e.response;
       }
     },
 

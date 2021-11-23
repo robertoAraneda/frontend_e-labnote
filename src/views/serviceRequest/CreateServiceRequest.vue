@@ -748,22 +748,63 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <v-dialog max-width="500" v-model="dialogResponseCreateServiceRequest">
-      <v-card class="pt-3 text-center">
-        <v-card-text>
-          <v-icon color="success" size="56">mdi-file-check-outline</v-icon>
+    <v-dialog max-width="600" v-model="dialogResponseCreateServiceRequest">
+      <v-card class="pt-3">
+        <v-card-text class="text-center">
+          <v-icon color="success" size="48">mdi-file-check-outline</v-icon>
         </v-card-text>
-        <v-card-text class="justify-center headline">
-          Se ha creado una solicitud confidencial</v-card-text
-        >
+        <v-card-text class="text-h6">
+          <div v-if="confidentialRequest">
+            <span class="font-weight-light"
+              >Se ha creado una solicitud confidencial
+            </span>
+            <span class="font-weight-bold ml-1">
+              N° {{ confidentialRequest.requisition }}</span
+            >
+            <p class="title font-weight-bold text-center">
+              {{
+                confidentialRequest._embedded.patient.identifier.filter(
+                  (value) => value.type === "CONFIDENCIAL"
+                )[0].value
+              }}
+            </p>
 
-        <v-card-actions class="justify-center"
-          ><v-btn @click="handleViewPdf" color="secondary"
-            >Imprimir solicitud confidencial</v-btn
-          ><v-btn @click="handleNextRequest" color="primary"
-            >Continuar</v-btn
-          ></v-card-actions
-        >
+            <v-alert
+              prominent
+              class="subtitle-1"
+              type="warning"
+              text
+              border="left"
+              ><strong>Recuerde</strong><br />El paciente debe firmar el
+              consentimiento informado antes de enviarlo al módulo de toma de
+              muestra.</v-alert
+            >
+
+            <v-btn block @click="handleViewPdf" color="secondary"
+              >Imprimir solicitud confidencial</v-btn
+            >
+          </div>
+          <v-divider class="my-3" />
+          <div v-if="notConfidentialRequest">
+            <span class="font-weight-light">Se ha creado una solicitud N° </span
+            ><span class="font-weight-bold ml-3">{{
+              notConfidentialRequest.requisition
+            }}</span>
+          </div>
+          <p class="subtitle-1 text-center font-weight-bold mt-6 mb-n6">
+            ¿Enviar a módulo de Toma de Muestras?
+          </p>
+        </v-card-text>
+
+        <v-card-actions>
+          <v-spacer />
+          <v-btn outlined @click="handleNextRequest" color="secondary"
+            >NO, CONTINUAR SIN ENVIAR A TM</v-btn
+          >
+          <v-btn @click="handleSendRequestSamplingModule" color="primary"
+            >SI, ENVIAR A TM</v-btn
+          >
+        </v-card-actions>
       </v-card>
     </v-dialog>
 
@@ -828,6 +869,8 @@ export default {
     messageSnackbar: "Faltan datos obligatorios",
     openWarningMessage: false,
     dialogResponseCreateServiceRequest: false,
+    confidentialRequest: null,
+    notConfidentialRequest: null,
     serviceRequest: {
       patient: {
         name: "",
@@ -837,7 +880,6 @@ export default {
         age: "",
         insurance: "",
       },
-      confidentialRequest: null,
       diagnosis: "",
       is_confidential: false,
       note: "",
@@ -1230,9 +1272,22 @@ export default {
       setPatientSelected: "serviceRequest/setPatient",
       findObservationServiceRequest: "observationServiceRequest/showItem",
       viewPdf: "serviceRequest/viewPdf",
+      setActiveStatusServiceRequest:
+        "serviceRequest/setActiveStatusServiceRequest",
     }),
 
     handleNextRequest() {
+      this.resetFormServiceRequest();
+    },
+
+    async handleSendRequestSamplingModule() {
+      if (this.confidentialRequest) {
+        await this.setActiveStatusServiceRequest(this.confidentialRequest);
+      }
+
+      if (this.notConfidentialRequest) {
+        await this.setActiveStatusServiceRequest(this.notConfidentialRequest);
+      }
       this.resetFormServiceRequest();
     },
 
@@ -1366,12 +1421,10 @@ export default {
 
         const { data } = await this.create(payload);
 
-        if ("confidential" in data) {
-          this.confidentialRequest = data.confidential;
-          this.dialogResponseCreateServiceRequest = true;
-        } else {
-          //
-        }
+        this.confidentialRequest = data.confidential;
+        this.notConfidentialRequest = data.not_confidential;
+
+        this.dialogResponseCreateServiceRequest = true;
         this.createServiceRequestLoadingButton = false;
       }
     },

@@ -15,4 +15,12 @@ export const samplings = [
         /* webpackChunkName: "SamplingRoomReception" */ "../views/sampling/SamplingRoomReception.vue"
       ),
   },
+  {
+    path: "pacientes-atendidos",
+    name: "patientsAttended",
+    component: () =>
+      import(
+        /* webpackChunkName: "PatientsAttended" */ "../views/sampling/PatientsAttended.vue"
+      ),
+  },
 ];

@@ -36,6 +36,7 @@ import serviceRequest from "./modules/serviceRequest";
 import slot from "./modules/slot";
 import appointment from "./modules/appointment";
 import specimen from "./modules/specimen";
+import task from "./modules/task";
 
 Vue.use(Vuex);
 
@@ -103,5 +104,6 @@ export default new Vuex.Store({
     slot,
     appointment,
     specimen,
+    task,
   },
 });
