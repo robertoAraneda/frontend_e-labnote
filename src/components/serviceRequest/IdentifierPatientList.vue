@@ -79,31 +79,37 @@ export default {
       );
     },
 
-    identifiers() {
-      this.localIdentifiers = [
-        ...this.identifiers
-          .map((identifier) => {
-            if (
-              identifier.identifierType?.code === PatientIdentifierTypeEnum.RUN
-            ) {
-              return {
-                ...identifier,
-                valueRut: identifier.value,
-              };
-            }
-            return {
-              ...identifier,
-              valueOther: identifier.value,
-            };
-          })
-          .filter(
-            (identifier) =>
-              identifier.identifierType?.code ===
-                PatientIdentifierTypeEnum.RUN ||
-              identifier.identifierType?.code ===
-                PatientIdentifierTypeEnum.PASSPORT
-          ),
-      ];
+    identifiers: {
+      deep: true,
+      handler() {
+        if (this.identifiers[0].identifier_use_id) {
+          this.localIdentifiers = [
+            ...this.identifiers
+              .map((identifier) => {
+                if (
+                  identifier.identifierType?.code ===
+                  PatientIdentifierTypeEnum.RUN
+                ) {
+                  return {
+                    ...identifier,
+                    valueRut: identifier.value,
+                  };
+                }
+                return {
+                  ...identifier,
+                  valueOther: identifier.value,
+                };
+              })
+              .filter(
+                (identifier) =>
+                  identifier.identifierType?.code ===
+                    PatientIdentifierTypeEnum.RUN ||
+                  identifier.identifierType?.code ===
+                    PatientIdentifierTypeEnum.PASSPORT
+              ),
+          ];
+        }
+      },
     },
 
     reset() {
