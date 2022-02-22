@@ -5,175 +5,145 @@
       subtitle="En este módulo gestionar la atención de los pacientes para su toma de muestra."
     />
 
-    <v-tabs v-model="tab" centered color="primary" icons-and-text>
-      <v-tabs-slider></v-tabs-slider>
+    <v-row justify="center" class="mt-5">
+      <v-col cols="8">
+        <v-alert text border="left" type="warning">
+          <strong>Recuerde.</strong> <br />Una vez tomada la(s) muestra(s),
+          escanear el código de barras de los contenedores.
+        </v-alert>
+      </v-col>
+    </v-row>
 
-      <v-tab>
-        PACIENTES PENDIENTES
-        <v-icon>mdi-phone</v-icon>
-      </v-tab>
-      <v-tab>
-        VER PACIENTES ATENDIDOS
-        <v-icon>mdi-heart</v-icon>
-      </v-tab>
-    </v-tabs>
-
-    <v-tabs-items v-model="tab">
-      <v-tab-item class="pa-3">
-        <v-divider />
-
-        <v-card-text>
-          <span class="subtitle-1"
-            >Seleccione un paciente para gestionar su toma de muestra.</span
+    <v-row class="fill-height">
+      <v-col cols="12" md="6" lg="6">
+        <v-sheet class="pa-3 mt-3" rounded="lg" elevation="6">
+          <v-subheader class="title text-uppercase primary--text"
+            >Pacientes en espera</v-subheader
           >
-          <v-row justify="center" class="mt-5">
-            <v-col cols="8">
-              <v-alert text border="left" type="warning">
-                <strong>Recuerde.</strong> <br />Una vez tomada la(s)
-                muestra(s), escanear el código de barras de los contenedores.
-              </v-alert>
-            </v-col>
-          </v-row>
-        </v-card-text>
-        <v-row class="fill-height">
-          <v-col cols="12" md="6" lg="6">
-            <v-sheet class="pa-3 mt-3" rounded="lg" elevation="6">
-              <v-subheader class="title text-uppercase primary--text"
-                >Pacientes en cola</v-subheader
-              >
-              <v-toolbar color="transparent" flat>
-                <v-text-field
-                  v-model="search"
-                  clearable
-                  filled
-                  hide-details
-                  prepend-inner-icon="mdi-magnify"
-                  label="Buscar"
-                ></v-text-field>
-              </v-toolbar>
-              <v-list two-line v-if="mappedFilterRequests.length === 0">
-                <v-list-item>
-                  <v-list-item-avatar>
-                    <v-icon size="32" color="success darken-1"
-                      >mdi-check-circle-outline</v-icon
-                    >
-                  </v-list-item-avatar>
+          <v-toolbar color="transparent" flat>
+            <v-text-field
+              v-model="search"
+              clearable
+              filled
+              hide-details
+              prepend-inner-icon="mdi-magnify"
+              label="Buscar"
+            ></v-text-field>
+          </v-toolbar>
+          <v-list two-line v-if="mappedFilterRequests.length === 0">
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-icon size="32" color="success darken-1"
+                  >mdi-check-circle-outline</v-icon
+                >
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title
+                  >No hay pacientes pendientes.</v-list-item-title
+                >
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <v-virtual-scroll
+            :items="mappedFilterRequests"
+            :item-height="100"
+            height="500"
+          >
+            <template v-slot:default="{ item, index }">
+              <v-slide-y-transition group>
+                <v-list-item :key="item.id" @click="test(item, index)">
                   <v-list-item-content>
                     <v-list-item-title
-                      >No hay pacientes pendientes.</v-list-item-title
+                      v-text="item.patientName"
+                    ></v-list-item-title>
+                    <v-list-item-subtitle
+                      >{{ item.patientIdentifierType }}:
+                      {{ item.patientIdentifierValue }}</v-list-item-subtitle
+                    >
+                    <v-list-item-subtitle
+                      >Fecha de nacimiento:
+                      {{ item.patientBirthdate }}</v-list-item-subtitle
+                    >
+                    <v-list-item-subtitle
+                      >Género:
+                      {{
+                        item.patientAdministrativeGender
+                      }}</v-list-item-subtitle
                     >
                   </v-list-item-content>
+
+                  <v-list-item-action>
+                    <p class="text-button">{{ item.requisition }}</p>
+                    <v-chip color="primary" label small> TOMAR MUESTRA </v-chip>
+                  </v-list-item-action>
                 </v-list-item>
-              </v-list>
-              <v-virtual-scroll
-                :items="mappedFilterRequests"
-                :item-height="100"
-                height="600"
-              >
-                <template v-slot:default="{ item, index }">
-                  <v-slide-y-transition group>
-                    <v-list-item :key="item.id" @click="test(item, index)">
-                      <v-list-item-content>
-                        <v-list-item-title
-                          v-text="item.patientName"
-                        ></v-list-item-title>
-                        <v-list-item-subtitle
-                          >{{ item.patientIdentifierType }}:
-                          {{
-                            item.patientIdentifierValue
-                          }}</v-list-item-subtitle
-                        >
-                        <v-list-item-subtitle
-                          >Fecha de nacimiento:
-                          {{ item.patientBirthdate }}</v-list-item-subtitle
-                        >
-                        <v-list-item-subtitle
-                          >Género:
-                          {{
-                            item.patientAdministrativeGender
-                          }}</v-list-item-subtitle
-                        >
-                      </v-list-item-content>
+              </v-slide-y-transition>
+              <v-divider :key="index"></v-divider>
+            </template>
+          </v-virtual-scroll>
+        </v-sheet>
+      </v-col>
+      <v-col cols="12" md="6" lg="6">
+        <v-sheet class="pa-3 mt-3" rounded="lg" elevation="6">
+          <v-subheader class="title text-uppercase primary--text"
+            >Pacientes en atención</v-subheader
+          >
+          <v-list two-line v-if="serviceRequestInAttention.length === 0">
+            <v-list-item>
+              <v-list-item-avatar>
+                <v-icon size="32" color="success darken-1"
+                  >mdi-check-circle-outline</v-icon
+                >
+              </v-list-item-avatar>
+              <v-list-item-content>
+                <v-list-item-title
+                  >No hay pacientes en atención.</v-list-item-title
+                >
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+          <v-virtual-scroll
+            :items="serviceRequestInAttention"
+            :item-height="100"
+            height="600"
+          >
+            <template v-slot:default="{ item, index }">
+              <v-slide-y-transition group>
+                <v-list-item :key="item.id">
+                  <v-list-item-content>
+                    <v-list-item-title
+                      v-text="item.patientName"
+                    ></v-list-item-title>
+                    <v-list-item-subtitle
+                      >{{ item.patientIdentifierType }}:
+                      {{ item.patientIdentifierValue }}</v-list-item-subtitle
+                    >
+                    <v-list-item-subtitle
+                      >Fecha de nacimiento:
+                      {{ item.patientBirthdate }}</v-list-item-subtitle
+                    >
+                    <v-list-item-subtitle
+                      >Género:
+                      {{
+                        item.patientAdministrativeGender
+                      }}</v-list-item-subtitle
+                    >
+                  </v-list-item-content>
 
-                      <v-list-item-action>
-                        <p class="text-button">{{ item.requisition }}</p>
-                        <v-chip color="primary" label small>
-                          TOMAR MUESTRA
-                        </v-chip>
-                      </v-list-item-action>
-                    </v-list-item>
-                  </v-slide-y-transition>
-                  <v-divider :key="index"></v-divider>
-                </template>
-              </v-virtual-scroll>
-            </v-sheet>
-          </v-col>
-          <v-col cols="12" md="6" lg="6">
-            <v-sheet class="pa-3 mt-3" rounded="lg" elevation="6">
-              <v-subheader class="title text-uppercase primary--text"
-                >Pacientes en atención</v-subheader
-              >
-              <v-virtual-scroll
-                :items="inAttentionServiceRequest"
-                :item-height="100"
-                height="600"
-              >
-                <template v-slot:default="{ item, index }">
-                  <v-slide-y-transition group>
-                    <v-list-item :key="item.id">
-                      <v-list-item-content>
-                        <v-list-item-title
-                          v-text="item.patientName"
-                        ></v-list-item-title>
-                        <v-list-item-subtitle
-                          >{{ item.patientIdentifierType }}:
-                          {{
-                            item.patientIdentifierValue
-                          }}</v-list-item-subtitle
-                        >
-                        <v-list-item-subtitle
-                          >Fecha de nacimiento:
-                          {{ item.patientBirthdate }}</v-list-item-subtitle
-                        >
-                        <v-list-item-subtitle
-                          >Género:
-                          {{
-                            item.patientAdministrativeGender
-                          }}</v-list-item-subtitle
-                        >
-                      </v-list-item-content>
-
-                      <v-list-item-action>
-                        <p class="text-button">{{ item.requisition }}</p>
-                        <v-chip color="success" label small>
-                          EN ATENCIÓN
-                        </v-chip>
-                      </v-list-item-action>
-                    </v-list-item>
-                  </v-slide-y-transition>
-                  <v-divider :key="index"></v-divider>
-                </template>
-              </v-virtual-scroll>
-            </v-sheet>
-          </v-col>
-        </v-row>
-      </v-tab-item>
-      <v-tab-item class="pa-3">
-        <v-divider />
-        <v-data-table
-          :headers="headers"
-          :items="serviceRequests"
-          sort-by="id"
-          class="elevation-1"
-          >>
-          <template v-slot:item.actions="">
-            <v-icon small class="mr-2"> mdi-pencil </v-icon>
-          </template>
-        </v-data-table>
-      </v-tab-item>
-    </v-tabs-items>
+                  <v-list-item-action>
+                    <p class="text-button">{{ item.requisition }}</p>
+                    <v-chip color="success" label small> EN ATENCIÓN </v-chip>
+                  </v-list-item-action>
+                </v-list-item>
+              </v-slide-y-transition>
+              <v-divider :key="index"></v-divider>
+            </template>
+          </v-virtual-scroll>
+        </v-sheet>
+      </v-col>
+    </v-row>
     <div class="text-center">
-      <v-bottom-sheet persistent width="800" v-model="sheet" scrollable>
+      <v-dialog max-width="800" persistent v-model="sheet" scrollable>
         <v-sheet class="text-center">
           <div class="py-3">
             <v-card
@@ -384,7 +354,7 @@
               </v-expand-transition>
             </v-card>
             <v-card v-else>
-              <v-expand-transition>
+              <v-slide-y-transition group>
                 <v-alert
                   v-for="container in scannedContainers"
                   :key="container.id"
@@ -398,17 +368,35 @@
                   <strong>Hora:</strong>
                   {{ container.specimen.collected_at | parseTime }}
                 </v-alert>
-              </v-expand-transition>
+              </v-slide-y-transition>
             </v-card>
           </div>
         </v-sheet>
-      </v-bottom-sheet>
+      </v-dialog>
     </div>
     <BaseSnackbar
       :custom-message="messageSnackbar"
       type="error"
       v-model="openWarningMessage"
     />
+    <v-snackbar
+      color="grey lighten-4"
+      :timeout="30000"
+      centered
+      multi-line
+      v-model="missingSamplesSnackbar"
+    >
+      <template v-slot:default>
+        <div class="secondary--text mb-4 text-h6">{{ messageSnackbar }}</div>
+        <div class="text-center">
+          <v-btn color="secondary" text @click="missingSamplesSnackbar = false">
+            Cancelar
+          </v-btn>
+
+          <v-btn color="primary" @click="finallySampling"> Continuar </v-btn>
+        </div>
+      </template>
+    </v-snackbar>
   </v-container>
 </template>
 
@@ -424,6 +412,7 @@ export default {
   name: "SamplingRoomReception",
 
   data: () => ({
+    missingSamplesSnackbar: false,
     selected: null,
     sheet: false,
     messageSnackbar:
@@ -436,8 +425,10 @@ export default {
       { img: "messenger.png", title: "Messenger" },
       { img: "google.png", title: "Google+" },
     ],
+    errorPatients: [],
     itemsPerPage: 2,
     serviceRequests: [],
+    cloneServiceRequest: [],
     search: "",
     selectedIndex: -1,
     selectedColor: "secondary lighten-3",
@@ -445,49 +436,19 @@ export default {
     barcodeScan: "",
     scannedContainers: [],
     serviceRequestInAttention: [],
-    headers: [
-      {
-        text: "N°",
-        value: "id",
-        sortable: true,
-        width: "65",
-      },
-      {
-        text: "Rut",
-        value: "_embedded.patient.identifier[0].value",
-        sortable: true,
-      },
-      {
-        text: "Nombre",
-        value: "_embedded.patient.name[0].text",
-        sortable: true,
-      },
-      {
-        text: "Solicitud",
-        value: "requisition",
-        sortable: true,
-      },
-      {
-        text: "Estado",
-        value: "_embedded.status.name",
-        sortable: true,
-      },
-      {
-        text: "Opciones",
-        value: "actions",
-      },
-    ],
-
     selectedSpecimens: [],
-
     activateFilterPendingSamples: true,
-
     tab: null,
   }),
 
-  mounted() {
+  async mounted() {
     this.subscribe();
-    this.handleGetServiceRequestByDate();
+    await this.handleGetServiceRequestByDate();
+
+    setTimeout(() => {
+      this.cloneServiceRequest = [...this.pendingServiceRequest];
+      this.serviceRequestInAttention = [...this.inAttentionServiceRequest];
+    }, 2000);
   },
 
   watch: {
@@ -535,7 +496,7 @@ export default {
           id: serviceRequest.id,
           requisition: serviceRequest.requisition,
           occurrence: serviceRequest.occurrence,
-          patientName: `${serviceRequest._embedded.patient.name[0].given} ${serviceRequest._embedded.patient.name[0].father_family} ${serviceRequest._embedded.patient.name[0].mother_family}`,
+          patientName: `${serviceRequest._embedded.patient?.name[0].given} ${serviceRequest._embedded.patient.name[0].father_family} ${serviceRequest._embedded.patient.name[0].mother_family}`,
           patientIdentifierValue:
             serviceRequest._embedded.patient.identifier[0].value,
           patientIdentifierType:
@@ -593,23 +554,65 @@ export default {
       getServiceRequestByDate: "serviceRequest/getServiceRequestByDate",
       generateCodbar: "serviceRequest/generateCodbar",
       generateSingleBarcode: "serviceRequest/generateSingleBarcode",
+      generateConfidentialCodbar: "serviceRequest/generateConfidentialCodbar",
+      generateSingleConfidentialBarcode:
+        "serviceRequest/generateSingleConfidentialBarcode",
       update: "specimen/putItem",
       updateDateCollection: "specimen/updateDateCollection",
       activateServiceRequest: "serviceRequest/updateSamplingRoomServiceRequest",
       createTask: "task/postItem",
+      cancelPatientSamplingRoom: "serviceRequest/setDraftStatusServiceRequest",
     }),
 
     subscribe() {
-      Pusher.logToConsole = true;
+      //  Pusher.logToConsole = true;
       let pusher = new Pusher(process.env.VUE_APP_PUSHER_KEY, {
         cluster: process.env.VUE_APP_PUSHER_CLUSTER,
       });
 
       pusher.subscribe("patient-sampling-room");
-      pusher.bind("patient_sampling_room", (data) => {
+      pusher.subscribe("send-patient-sampling-room");
+      pusher.subscribe("cancel-patient-sampling-room");
+
+      pusher.bind("send_patient_sampling_room", ({ message }) => {
+        console.log(message);
+        //his.serviceRequests.unshift()
         this.handleGetServiceRequestByDate();
-        console.log("data", data);
-        this.serviceRequestInAttention.unshift(data);
+      });
+
+      pusher.bind("patient_sampling_room", ({ message }) => {
+        console.log("data", message.id);
+        const [serviceRequest] = this.cloneServiceRequest.filter(
+          (serviceRequest) => {
+            return serviceRequest.raw.id === message.id;
+          }
+        );
+
+        console.log("serviceRequest", serviceRequest);
+
+        this.serviceRequestInAttention.unshift(serviceRequest);
+
+        const index = this.serviceRequests.findIndex(
+          (serviceRequest) => serviceRequest.id === message.id
+        );
+
+        this.serviceRequests.splice(index, 1);
+        //this.handleGetServiceRequestByDate();
+      });
+      pusher.bind("cancel_patient_sampling_room", ({ message }) => {
+        //this.handleGetServiceRequestByDate();
+
+        const [serviceRequest] = this.cloneServiceRequest.filter(
+          (serviceRequest) => serviceRequest.raw.id === message.id
+        );
+
+        this.serviceRequests.unshift(serviceRequest.raw);
+        const index = this.serviceRequestInAttention.findIndex(
+          (serviceRequest) => serviceRequest.raw.id === message.id
+        );
+
+        this.serviceRequestInAttention.splice(index, 1);
+        this.handleGetServiceRequestByDate();
       });
     },
 
@@ -617,12 +620,19 @@ export default {
       this.serviceRequests = await this.getServiceRequestByDate({
         date: moment().format("YYYY-MM-DD"),
       });
+
+      this.cloneServiceRequest = [...this.pendingServiceRequest];
     },
 
     async test(item) {
+      console.log("item", item);
       try {
         this.getSpecimens(item);
         this.sheet = true;
+
+        this.selectedIndex = this.serviceRequests.findIndex(
+          (serviceRequest) => serviceRequest.id === item.raw.id
+        );
 
         await this.createTask({
           based_on: item.id,
@@ -633,15 +643,12 @@ export default {
           this.openWarningMessage = true;
         }
       }
-
-      console.log(item);
     },
 
     handleFinallySampling() {
       const pendingContainers =
         this.selectedServiceRequest.raw._links.specimens.collection.filter(
           (specimen) => {
-            console.log(specimen);
             return (
               specimen.specimen_status.code === SpecimenStatusEnum.PENDING &&
               specimen.specimen.accession_identifier !== this.barcodeScan
@@ -650,17 +657,26 @@ export default {
         );
 
       if (pendingContainers.length !== 0) {
-        //TODO cambiar a alert
-        alert("aún hay contenedores pendientes.. continuar?");
+        this.messageSnackbar = "Aún existen muestras pendientes por tomar.";
+        this.missingSamplesSnackbar = true;
       } else {
         this.handleCancelSampling();
         this.serviceRequests.splice(this.selectedIndex, 1);
       }
     },
 
+    async finallySampling() {
+      this.errorPatients.push(this.serviceRequests[this.selectedIndex]);
+      this.serviceRequests.splice(this.selectedIndex, 1);
+      await this.handleCancelSampling();
+      this.missingSamplesSnackbar = false;
+    },
+
     handleCancelSampling() {
+      this.cancelPatientSamplingRoom(this.selectedServiceRequest);
       this.selectedServiceRequest = null;
       this.selectedIndex = -1;
+      this.sheet = false;
     },
 
     getSpecimens(item) {
@@ -669,9 +685,17 @@ export default {
     },
 
     async handleGenerateCodbar() {
-      const response = await this.generateCodbar({
-        id: this.selectedServiceRequest.raw.id,
-      });
+      let response;
+
+      if (this.selectedServiceRequest.raw.is_confidential) {
+        response = await this.generateConfidentialCodbar({
+          id: this.selectedServiceRequest.raw.id,
+        });
+      } else {
+        response = await this.generateCodbar({
+          id: this.selectedServiceRequest.raw.id,
+        });
+      }
 
       const url = window.URL.createObjectURL(
         new Blob([response.data], { type: "application/pdf" })
@@ -689,10 +713,18 @@ export default {
     },
 
     async handleGenerateSingleBarcode(sample) {
-      const response = await this.generateSingleBarcode({
-        id: this.selectedServiceRequest.raw.id,
-        accession_identifier: sample.specimen.accession_identifier,
-      });
+      let response;
+      if (this.selectedServiceRequest.raw.is_confidential) {
+        response = await this.generateSingleConfidentialBarcode({
+          id: this.selectedServiceRequest.raw.id,
+          accession_identifier: sample.specimen.accession_identifier,
+        });
+      } else {
+        response = await this.generateSingleBarcode({
+          id: this.selectedServiceRequest.raw.id,
+          accession_identifier: sample.specimen.accession_identifier,
+        });
+      }
 
       const url = window.URL.createObjectURL(
         new Blob([response.data], { type: "application/pdf" })

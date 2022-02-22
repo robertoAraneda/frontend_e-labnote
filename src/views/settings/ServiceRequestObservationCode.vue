@@ -9,9 +9,11 @@
       @editItem="handleEditModel($event)"
       @changeStatus="handleChangeStatus($event)"
       @searchItem="handleShowItem($event)"
+      @integration="handleIntegration($event)"
       :can-update="canUpdate"
       :can-delete="canDelete"
       :can-show="canShow"
+      :can-integration="canIntegration"
       :items="items"
       :headers="headers"
       sort-by="id"
@@ -44,6 +46,41 @@
       @deleteItemConfirm="deleteItemConfirm()"
       :dialog-delete="dialogDelete"
     />
+    <v-dialog
+      v-model="dialogIntegration"
+      transition="dialog-top-transition"
+      max-width="800"
+    >
+      <template v-slot:default>
+        <v-card elevation="0">
+          <v-toolbar elevation="0" tile color="primary" dark>
+            <v-toolbar-title>Integraciones</v-toolbar-title>
+          </v-toolbar>
+          <v-card-text>
+            <v-list>
+              <v-list-item>
+                <v-list-item-title v-html="editedItem.name" />
+              </v-list-item>
+            </v-list>
+            <v-subheader>Examen Nobilis</v-subheader>
+            <BaseAutocomplete
+              v-model="selectedNobilisAnalyte"
+              item-value="id"
+              item-text="text"
+              :items="mappedNobilisAnalytes"
+            />
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer />
+            <BaseAcceptButton
+              @click="handleStoreIntegration"
+              label="Guardar"
+              color="primary"
+            />
+          </v-card-actions>
+        </v-card>
+      </template>
+    </v-dialog>
 
     <v-dialog
       v-model="observationDialog"
@@ -277,6 +314,9 @@ export default {
     itemToEdit: {},
     observationDialog: false,
     loincs: [],
+    dialogIntegration: false,
+    nobilisAnalytes: [],
+    selectedNobilisAnalyte: null,
 
     isLoading: false,
     searchLoinc: null,
@@ -302,6 +342,8 @@ export default {
     itemsAnalytes: [],
     itemsAvailabilities: [],
     itemsLocations: [],
+
+    integration: null,
   }),
 
   async mounted() {
@@ -347,32 +389,60 @@ export default {
     },
 
     selectedAvailability() {
-      this.editedItem.availability_id = this.selectedAvailability.id;
+      if (this.selectedAvailability) {
+        this.editedItem.availability_id = this.selectedAvailability?.id;
+      } else {
+        this.editedItem.availability_id = null;
+      }
     },
 
     selectedContainers() {
-      this.editedItem.container_id = this.selectedContainers.id;
+      if (this.selectedContainers) {
+        this.editedItem.container_id = this.selectedContainers?.id;
+      } else {
+        this.editedItem.container_id = null;
+      }
     },
 
     selectedMedicalRequestTypes() {
-      this.editedItem.medical_request_type_id =
-        this.selectedMedicalRequestTypes.id;
+      if (this.selectedMedicalRequestTypes) {
+        this.editedItem.medical_request_type_id =
+          this.selectedMedicalRequestTypes?.id;
+      } else {
+        this.editedItem.medical_request_type_id = null;
+      }
     },
 
     selectedAnalytes() {
-      this.editedItem.analyte_id = this.selectedAnalytes.id;
+      if (this.selectedAnalytes) {
+        this.editedItem.analyte_id = this.selectedAnalytes?.id;
+      } else {
+        this.editedItem.analyte_id = null;
+      }
     },
 
     selectedProcessTimes() {
-      this.editedItem.process_time_id = this.selectedProcessTimes.id;
+      if (this.selectedProcessTimes) {
+        this.editedItem.process_time_id = this.selectedProcessTimes?.id;
+      } else {
+        this.editedItem.process_time_id = null;
+      }
     },
 
     selectedSpecimens() {
-      this.editedItem.specimen_code_id = this.selectedSpecimens.id;
+      if (this.selectedSpecimens) {
+        this.editedItem.specimen_code_id = this.selectedSpecimens?.id;
+      } else {
+        this.editedItem.specimen_code_id = null;
+      }
     },
 
     selectedLocations() {
-      this.editedItem.location_id = this.selectedLocations.id;
+      if (this.selectedLocations) {
+        this.editedItem.location_id = this.selectedSpecimens?.id;
+      } else {
+        this.editedItem.location_id = null;
+      }
     },
 
     clinical_information() {
@@ -394,6 +464,13 @@ export default {
       _locations: "location/locations",
       _medicalRequestTypes: "medicalRequestType/medicalRequestTypes",
     }),
+
+    mappedNobilisAnalytes() {
+      return this.nobilisAnalytes.map((analyte) => ({
+        id: analyte.id,
+        text: `(${analyte.id}) ${analyte.description}`,
+      }));
+    },
 
     name() {
       if (!this.selectedAnalytes || !this.selectedSpecimens) return "";
@@ -544,6 +621,11 @@ export default {
       if (!this._namedPermissions) return false;
       return this._namedPermissions.includes("workarea.show");
     },
+
+    canIntegration() {
+      if (!this._namedPermissions) return false;
+      return this._namedPermissions.includes("nobilisAnalyte.show");
+    },
   },
 
   methods: {
@@ -566,7 +648,19 @@ export default {
       changeStatus: "observationServiceRequest/changeStatusItem",
       getWorkareas: "workarea/getItems",
       setEditedItem: "observationServiceRequest/setEdit",
+      getNobilisAnalytes: "observationServiceRequest/getNobilisAnalytes",
+      storeNobilisAnalyteIntegration:
+        "observationServiceRequest/storeNobilisAnalyteIntegration",
     }),
+
+    async handleStoreIntegration() {
+      await this.storeNobilisAnalyteIntegration({
+        observation_service_request_id: this.editedItem.id,
+        model_id: this.selectedNobilisAnalyte,
+      });
+
+      this.dialogIntegration = false;
+    },
 
     async handleSelectForm() {
       await this.getWorkareas();
@@ -646,6 +740,19 @@ export default {
       }
     },
 
+    async handleIntegration(item) {
+      await this.fillEditedItem(item);
+      this.editedIndex = findIndex(item, this.items);
+
+      if (this.nobilisAnalytes.length === 0) {
+        this.nobilisAnalytes = await this.getNobilisAnalytes();
+      }
+
+      this.integration = item.integration;
+      this.selectedNobilisAnalyte = item.integration?.nobilis.id;
+      this.dialogIntegration = true;
+    },
+
     handleDeleteModel(value) {
       this.fillEditedItem(value);
       this.editedIndex = findIndex(value, this.items);
@@ -662,7 +769,7 @@ export default {
     },
 
     closeDialog() {
-      this.dialog = false;
+      this.observationDialog = false;
       this.resetForm();
     },
 
@@ -671,6 +778,8 @@ export default {
 
       // this.$router.push({ name: "createObservationServiceRequest" });
       this.observationDialog = true;
+      this.editedItem.laboratory_id = 1;
+      this.editedItem.active = true;
     },
 
     closeDeleteDialog() {
@@ -708,8 +817,18 @@ export default {
     },
 
     resetForm() {
-      this.editedItem = Object.assign({}, this.defaultItem);
       this.editedIndex = -1;
+
+      this.selectedAvailability = null;
+      this.selectedContainers = null;
+      this.selectedMedicalRequestTypes = null;
+      this.selectedAnalytes = null;
+      this.selectedProcessTimes = null;
+      this.selectedSpecimens = null;
+      this.selectedLocations = null;
+      this.clinical_information = "";
+      this.searchLoinc = "";
+      this.editedItem = Object.assign({}, this.defaultItem);
     },
   },
 };

@@ -42,14 +42,23 @@
     <v-toolbar-title class="white--text body-1">
       {{ loggedUserInfo }}</v-toolbar-title
     >
-    <v-btn class="ml-n3" icon>
-      <v-icon color="white">mdi-chevron-down</v-icon>
-    </v-btn>
+    <v-menu offset-y>
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn v-bind="attrs" v-on="on" class="ml-n3" icon>
+          <v-icon color="white">mdi-chevron-down</v-icon>
+        </v-btn>
+      </template>
+      <v-list>
+        <v-list-item link @click="handleLogout">
+          <v-list-item-title>Cerrar sesión</v-list-item-title>
+        </v-list-item>
+      </v-list>
+    </v-menu>
   </v-app-bar>
 </template>
 
 <script>
-import { mapGetters } from "vuex";
+import { mapActions, mapGetters } from "vuex";
 
 export default {
   mounted() {
@@ -101,8 +110,16 @@ export default {
     },
   },
   methods: {
+    ...mapActions({
+      logout: "auth/logout",
+    }),
     setDrawer() {
       this.drawer = !this.drawer;
+    },
+
+    async handleLogout() {
+      await this.logout();
+      this.$router.push({ name: "Login" });
     },
 
     redirectModules() {

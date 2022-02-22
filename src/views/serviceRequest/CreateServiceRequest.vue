@@ -121,13 +121,6 @@
                         v-model="date"
                         no-title
                         @input="issuedDateMenu = false"
-                        :min="
-                          new Date(
-                            Date.now() - new Date().getTimezoneOffset() * 60000
-                          )
-                            .toISOString()
-                            .substr(0, 10)
-                        "
                       ></v-date-picker>
                     </v-menu>
                   </v-card-text>
@@ -1149,6 +1142,10 @@ export default {
     observations() {
       if (this._observations.length === 0) return [];
       return this._observations.collection
+        .filter((observation) => {
+          console.log(observation);
+          return observation.integration;
+        })
         .map((observation) => {
           return {
             id: observation.id,
@@ -1157,7 +1154,6 @@ export default {
           };
         })
         .filter((observation) => {
-          console.log(observation);
           if (this.selectedSpecimenCode === "TODAS LAS MUESTRAS")
             return (
               observation && !this.selectedObservations.includes(observation.id)
@@ -1187,6 +1183,9 @@ export default {
       if (this._observations.length === 0) return [];
 
       const observation = this._observations.collection
+        .filter((observation) => {
+          return observation.integration;
+        })
         .map((observation) => {
           return {
             id: observation.id,

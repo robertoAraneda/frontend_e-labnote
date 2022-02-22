@@ -2,6 +2,9 @@
   <div>
     <NavigationDrawer :links="menusPermissions" />
     <v-container>
+      <router-link v-if="!isMainModule" :to="{ name: 'sampling' }"
+        >&#8592; Volver a Estadísticas
+      </router-link>
       <router-view />
     </v-container>
   </div>
@@ -24,6 +27,8 @@ export default {
 
       this.setCurrentModule(this.modules[slug]);
     }
+
+    console.log(this.$route);
   },
 
   watch: {
@@ -42,6 +47,11 @@ export default {
       namedPermissionsForMenu: "auth/namedPermissionsForMenu",
       modules: "auth/modules",
     }),
+
+    isMainModule() {
+      return this.$route.name === "sampling";
+    },
+
     menus() {
       if (!this.currentModule) return [];
       return this.currentModule.menus;

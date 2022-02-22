@@ -1,7 +1,10 @@
 <template>
   <div class="grey lighten-3">
     <NavigationDrawer :links="menusPermissions" />
-    <v-container :fluid="$vuetify.breakpoint.mobile">
+    <v-container>
+      <router-link v-if="!isMainModule" :to="{ name: 'serviceRequest' }"
+        >&#8592; Volver a Estadísticas
+      </router-link>
       <router-view />
     </v-container>
   </div>
@@ -42,6 +45,10 @@ export default {
       namedPermissionsForMenu: "auth/namedPermissionsForMenu",
       modules: "auth/modules",
     }),
+
+    isMainModule() {
+      return this.$route.name === "serviceRequest";
+    },
 
     mobileBreakpoint() {
       return this.$vuetify.breakpoint.mobile;

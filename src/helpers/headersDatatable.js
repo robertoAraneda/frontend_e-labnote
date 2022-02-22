@@ -69,11 +69,6 @@ export const PractitionerHeaders = [
     sortable: true,
   },
   {
-    text: "NOMBRE",
-    value: "given",
-    sortable: true,
-  },
-  {
     text: "APELLIDOS",
     value: "family",
     sortable: true,
@@ -238,7 +233,7 @@ export const WorkareaHeaders = [
     text: "Acciones",
     value: "actions",
     sortable: false,
-    width: "150",
+    width: "180",
   },
 ];
 

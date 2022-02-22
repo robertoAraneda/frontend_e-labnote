@@ -99,5 +99,17 @@ export default {
         return e.response;
       }
     },
+
+    getDataDayLineChart: async (_, payload) => {
+      try {
+        const { data } = await httpRequest.getRequest(
+          `${BASE_URL}/chart/day/${payload}`
+        );
+
+        return data;
+      } catch (e) {
+        console.log(e);
+      }
+    },
   },
 };

@@ -214,14 +214,8 @@ export default {
             response = await this.update(this.editedItem);
           }
 
-          if (response.data.success) {
+          if (response) {
             this.type = SnackbarType.SUCCESS;
-          } else {
-            this.type = SnackbarType.ERROR;
-            console.log(response.data);
-            this.customMessage = Object.values(response.data.errors).map(
-              (error) => error[0]
-            )[0];
           }
         } catch (e) {
           this.type = SnackbarType.ERROR;

@@ -343,9 +343,11 @@ export default {
           data.constructor === Object
         ) {
           commit("SET_PATIENT", data);
+          commit("SET_PATIENTS", [data]);
         } else {
           commit("SET_PATIENT", new Patient());
           commit("SET_EDITED_PATIENT", new Patient());
+          commit("SET_PATIENTS", []);
 
           const identifier = {
             value: payload.value,
@@ -358,6 +360,7 @@ export default {
         return data;
       } catch (e) {
         commit("SET_PATIENT", new Patient());
+        commit("SET_PATIENTS", []);
         return e.response;
       }
     },
@@ -443,6 +446,30 @@ export default {
 
     destroyContactItem: ({ commit }, payload) => {
       commit("SET_DESTROY_CONTACT_ITEM", payload);
+    },
+
+    getCountByDay: async (_, payload) => {
+      try {
+        const { data } = await httpRequest.getRequest(
+          `${BASE_URL}/chart/total-day/${payload}`
+        );
+
+        return data;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
+    getScheduleCountByDay: async (_, payload) => {
+      try {
+        const { data } = await httpRequest.getRequest(
+          `${BASE_URL}/chart/schedule-day/${payload}`
+        );
+
+        return data;
+      } catch (e) {
+        console.log(e);
+      }
     },
   },
 };

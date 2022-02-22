@@ -78,7 +78,7 @@
                               </v-col>
                               <v-col cols="12" sm="4">
                                 <BaseTextfield
-                                  v-model="editedItem.father_family"
+                                  v-model="editedItem.value"
                                   label="N° Documento"
                                 />
                               </v-col>
@@ -89,7 +89,7 @@
                                   small
                                   label="Buscar"
                                   class="float-right mb-3"
-                                  @click="findPatientByNames(editedItem)"
+                                  @click="findPatientByIdentifier(editedItem)"
                                 ></base-accept-button>
                               </v-col>
                             </v-row>
@@ -331,6 +331,7 @@
                 <div class="float-right">
                   <v-btn color="secondary" text @click="e1 = 1"> Cancel </v-btn>
                   <v-btn
+                    :loading="loadingCreateAppointment"
                     color="primary"
                     depressed
                     rounded
@@ -369,6 +370,7 @@ export default {
       given: "",
       father_family: "araneda",
       mother_family: "",
+      value: "",
     },
 
     appointintment: {
@@ -376,6 +378,8 @@ export default {
       slot_id: "",
       description: "",
     },
+
+    loadingCreateAppointment: false,
 
     selectedPatient: [],
 
@@ -497,10 +501,12 @@ export default {
     }),
 
     async handleSaveAppointment() {
+      this.loadingCreateAppointment = true;
       await this.store(this.appointintment);
       this.setSelectedDateWhenPatientIsAppointment(this.date);
 
       this.setSelectedPatients([]);
+      this.loadingCreateAppointment = false;
       await this.$router.push({ name: "schedules" });
     },
 

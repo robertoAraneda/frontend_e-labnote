@@ -102,6 +102,22 @@ export default {
       );
     },
 
+    generateConfidentialCodbar: async (_, payload) => {
+      const config = {
+        responseType: "blob",
+        headers: {
+          Accept: "application/pdf",
+          "Content-Type": "application/json",
+        },
+      };
+
+      return await httpRequest.getRequest(
+        `${BASE_URL}/generate-codbar-confidential/${payload.id}`,
+        config,
+        true
+      );
+    },
+
     generateSingleBarcode: async (_, payload) => {
       const config = {
         responseType: "blob",
@@ -113,6 +129,22 @@ export default {
 
       return await httpRequest.getRequest(
         `${BASE_URL}/generate-codbar/${payload.id}?accession_identifier=${payload.accession_identifier}`,
+        config,
+        true
+      );
+    },
+
+    generateSingleConfidentialBarcode: async (_, payload) => {
+      const config = {
+        responseType: "blob",
+        headers: {
+          Accept: "application/pdf",
+          "Content-Type": "application/json",
+        },
+      };
+
+      return await httpRequest.getRequest(
+        `${BASE_URL}/generate-codbar-confidential/${payload.id}?accession_identifier=${payload.accession_identifier}`,
         config,
         true
       );
@@ -211,6 +243,16 @@ export default {
       }
     },
 
+    setDraftStatusServiceRequest: async (_, payload) => {
+      try {
+        return await httpRequest.getRequest(
+          `${BASE_URL}/${payload.id}/tracking/draft`
+        );
+      } catch (e) {
+        return e.response;
+      }
+    },
+
     changeStatusItem: async (_, payload) => {
       try {
         return await httpRequest.putRequest(
@@ -243,6 +285,54 @@ export default {
         return data;
       } catch (e) {
         return e.response;
+      }
+    },
+
+    getDataDayLineChart: async (_, payload) => {
+      try {
+        const { data } = await httpRequest.getRequest(
+          `${BASE_URL}/chart/day/${payload}`
+        );
+
+        return data;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
+    getDataMonthLineChart: async (_, payload) => {
+      try {
+        const { data } = await httpRequest.getRequest(
+          `${BASE_URL}/chart/month/${payload}`
+        );
+
+        return data;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
+    getObservationLCountByDay: async (_, payload) => {
+      try {
+        const { data } = await httpRequest.getRequest(
+          `/api/v1/service-requests-observations/chart/day/${payload}`
+        );
+
+        return data;
+      } catch (e) {
+        console.log(e);
+      }
+    },
+
+    getObservationCountByMonth: async (_, payload) => {
+      try {
+        const { data } = await httpRequest.getRequest(
+          `/api/v1/service-requests-observations/chart/month/${payload}`
+        );
+
+        return data;
+      } catch (e) {
+        console.log(e);
       }
     },
   },

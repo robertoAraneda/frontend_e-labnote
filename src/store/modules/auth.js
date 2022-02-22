@@ -155,16 +155,17 @@ export default {
 
     logout: async ({ commit }) => {
       try {
-        httpRequest.setToken(localStorage.getItem("access_token"));
         const { data } = await httpRequest.getRequest(`${BASE_URL}/logout`);
 
-        httpRequest.setToken(null);
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("user");
-        commit("SET_LOGIN_USER", null);
-        commit("SET_ACCESS_TOKEN", null);
+        if (data.message) {
+          httpRequest.setToken(null);
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("user");
+          commit("SET_LOGIN_USER", null);
+          commit("SET_ACCESS_TOKEN", null);
 
-        return { success: true, message: data.message };
+          return { success: true, message: data.message };
+        }
       } catch (error) {
         console.log(error);
         return { success: false };

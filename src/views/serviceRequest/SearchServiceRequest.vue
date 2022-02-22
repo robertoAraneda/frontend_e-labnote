@@ -106,6 +106,15 @@
           >mdi-pencil</v-icon
         >
         <v-icon color="red" @click="handleViewPdf(item)">mdi-pdf-box</v-icon>
+        <v-btn
+          text
+          small
+          color="red"
+          v-if="item.raw.request_hl7_file"
+          @click="handleOpenHl7Traceability(item)"
+        >
+          HL7</v-btn
+        >
       </template>
 
       <template v-slot:group.header="{ group, remove }">
@@ -170,6 +179,34 @@
         </v-card>
       </template>
     </v-dialog>
+    <v-dialog max-width="800" v-model="dialogHl7"
+      ><v-sheet max-width="800" v-if="serviceRequestSelected">
+        <v-subheader>Trazabilidad interoperabilidad LIS</v-subheader>
+        <v-simple-table>
+          <template v-slot:default>
+            <thead>
+              <tr>
+                <th class="text-left">Fecha</th>
+                <th class="text-left">Tipo</th>
+                <th class="text-left">Contenido</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{{ serviceRequestSelected.request_hl7_date }}</td>
+                <td>Solicitud</td>
+                <td>{{ serviceRequestSelected.request_hl7_file }}</td>
+              </tr>
+              <tr>
+                <td>{{ serviceRequestSelected.request_hl7_date }}</td>
+                <td>Respuesta</td>
+                <td>{{ serviceRequestSelected.response_hl7_file }}</td>
+              </tr>
+            </tbody>
+          </template>
+        </v-simple-table>
+      </v-sheet>
+    </v-dialog>
   </section>
 </template>
 
@@ -208,7 +245,7 @@ export default {
       { text: "Procedencia", value: "location" },
       { text: "Estado", value: "status" },
       { text: "Prioridad", value: "priority" },
-      { text: "Opciones", value: "options", groupable: false },
+      { text: "Opciones", value: "options", groupable: false, width: "180" },
     ],
     observations: [],
     foundServiceRequests: [],
@@ -216,6 +253,7 @@ export default {
     patientsFound: false,
     loadingPatientFoundButton: false,
     patients: [],
+    dialogHl7: false,
   }),
 
   mounted() {
@@ -287,6 +325,11 @@ export default {
       setPatients: "patient/setPatients",
       setEditedServiceRequest: "serviceRequest/handleEditServiceRequest",
     }),
+
+    handleOpenHl7Traceability(value) {
+      this.serviceRequestSelected = value.raw;
+      this.dialogHl7 = true;
+    },
 
     traceability() {
       this.events = [];

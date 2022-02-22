@@ -1,0 +1,92 @@
+<template>
+  <BaseCardDashboard
+    :icon="icon"
+    class="v-card--material-stats"
+    v-bind="$attrs"
+    v-on="$listeners"
+  >
+    <template v-slot:after-heading>
+      <div class="ml-auto text-right">
+        <div class="body-3 secondary--text font-weight-medium">{{ title }}</div>
+
+        <h3 class="display-1 font-weight-light text--primary">
+          {{ value }} <small>{{ smallValue }}</small>
+        </h3>
+      </div>
+    </template>
+  </BaseCardDashboard>
+</template>
+
+<script>
+import BaseCardDashboard from "./BaseCardDashboard";
+
+export default {
+  name: "BaseCardStat",
+
+  inheritAttrs: false,
+
+  components: {
+    BaseCardDashboard,
+  },
+
+  props: {
+    icon: {
+      type: String,
+      required: true,
+    },
+    subIcon: {
+      type: String,
+      default: undefined,
+    },
+    subIconColor: {
+      type: String,
+      default: undefined,
+    },
+    subTextColor: {
+      type: String,
+      default: undefined,
+    },
+    subText: {
+      type: String,
+      default: undefined,
+    },
+    title: {
+      type: String,
+      default: undefined,
+    },
+    value: {
+      type: String,
+      default: undefined,
+    },
+    smallValue: {
+      type: String,
+      default: undefined,
+    },
+  },
+};
+</script>
+
+<style lang="sass" scope>
+.v-card--material-stats
+  display: flex
+  flex-wrap: wrap
+  position: relative
+
+  > div:first-child
+    justify-content: space-between
+
+  .v-card
+    border-radius: 4px
+    flex: 0 1 auto
+
+  .v-card__text
+    display: inline-block
+    flex: 1 0 calc(100% - 120px)
+    position: absolute
+    top: 0
+    right: 0
+    width: 100%
+
+  .v-card__actions
+    flex: 1 0 100%
+</style>

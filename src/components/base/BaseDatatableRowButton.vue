@@ -1,5 +1,5 @@
 <template>
-  <v-btn icon v-bind="$attrs" v-on="$listeners" color="secondary">
+  <v-btn icon v-bind="$attrs" v-on="$listeners" :color="color">
     <v-icon> {{ icon }}</v-icon>
   </v-btn>
 </template>
@@ -10,6 +10,10 @@ export default {
   props: {
     titleTooltip: String,
     icon: String,
+    color: {
+      type: String,
+      default: "secondary",
+    },
   },
 };
 </script>

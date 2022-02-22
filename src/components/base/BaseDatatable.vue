@@ -66,6 +66,13 @@
               @click="deleteItem(item)"
               v-if="canDelete"
             />
+            <BaseDatatableRowButton
+              title-tooltip="Integración Nobilis"
+              icon="mdi-swap-horizontal-bold"
+              @click="integration(item)"
+              v-if="canIntegration"
+              :color="item.integration ? 'success' : ''"
+            />
 
             <BaseAcceptButton
               v-if="extraButtons"
@@ -144,6 +151,12 @@ export default {
       type: Boolean,
       default: () => true,
     },
+
+    canIntegration: {
+      type: Boolean,
+      default: () => false,
+    },
+
     useSlugRoute: {
       type: Boolean,
       default: () => false,
@@ -175,6 +188,10 @@ export default {
 
     customMethod(item) {
       this.$emit("customMethod", item);
+    },
+
+    integration(item) {
+      this.$emit("integration", item);
     },
   },
 };

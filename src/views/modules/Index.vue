@@ -1,5 +1,6 @@
 <template>
   <v-container>
+    <div class="text-center title text-uppercase">{{ roleDescription }}</div>
     <v-row class="mt-12">
       <v-col
         v-for="module in modulesByRoles"
@@ -67,7 +68,13 @@ export default {
       modulesByLaboratory: "laboratory/modulesByLaboratory",
       modules: "auth/modules",
       modulesKeys: "auth/modulesKeys",
+      user: "auth/user",
     }),
+
+    roleDescription() {
+      if (!this.user) return "";
+      return this.user.roles[0].name;
+    },
 
     //se muestran sólo los módulos que contengan al menos un menu con privilegios de lectura (index)
     //extraido de los permissions al momento de hacer login

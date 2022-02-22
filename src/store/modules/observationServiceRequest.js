@@ -121,5 +121,31 @@ export default {
         return e.response;
       }
     },
+
+    getNobilisAnalytes: async () => {
+      try {
+        const { data } = await httpRequest.getRequest(
+          `/api/v1/nobilis-analytes`
+        );
+        return data.collection;
+      } catch (e) {
+        return e.response;
+      }
+    },
+
+    storeNobilisAnalyteIntegration: async (
+      _,
+      { observation_service_request_id, model_id }
+    ) => {
+      try {
+        const { data } = await httpRequest.postRequest(
+          `${BASE_URL}/${observation_service_request_id}/nobilis-analytes`,
+          { model_id }
+        );
+        return data;
+      } catch (e) {
+        return e.response;
+      }
+    },
   },
 };
