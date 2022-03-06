@@ -73,11 +73,30 @@ export default {
   name: "Observation",
 
   data: () => ({
+    titleAnalyte: "",
+    textAnalyte: "",
     parallaxImg,
     atbImg,
     abc,
     toggle_none: null,
   }),
+
+  mounted() {
+    const domain = window.location.host;
+    if (domain === "labisur.elabnote.cl") {
+      this.titleAnalyte = "EXÁMENES LABISUR";
+      this.textAnalyte = `El Laboratorio Clínico LABISUR ofrece una completa variedad de exámenes.
+Desde los más habituales de cualquier laboratorio clínico hasta aquellos más especializados que aportarán una efectividad importante al diagnóstico.`;
+    } else if (domain === "labhhha.elabnote.cl") {
+      this.titleAnalyte = "EXÁMENES LABORATORIO HHHA";
+      this.textAnalyte = `El Laboratorio Clínico HHHA ofrece una completa variedad de exámenes.
+Desde los más habituales de cualquier laboratorio clínico hasta aquellos más especializados que aportarán una efectividad importante al diagnóstico.`;
+    } else {
+      this.titleAnalyte = "EXÁMENES LABISUR";
+      this.textAnalyte = `El Laboratorio Clínico LABISUR ofrece una completa variedad de exámenes.
+Desde los más habituales de cualquier laboratorio clínico hasta aquellos más especializados que aportarán una efectividad importante al diagnóstico.`;
+    }
+  },
 
   methods: {
     findObservation() {
