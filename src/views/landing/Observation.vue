@@ -4,18 +4,16 @@
       <v-col cols="12" md="4">
         <v-img :src="atbImg" class="mb-4" height="275" max-width="100%"></v-img>
 
-        <h3 class="font-weight-black mb-4 text-uppercase">Exámenes LABISUR</h3>
+        <h3
+          class="font-weight-black mb-4 text-uppercase"
+          v-html="titleAnalyte"
+        ></h3>
 
         <div
           style="text-align: justify; text-justify: inter-word"
           class="title font-weight-light mb-5"
-        >
-          El Laboratorio Clínico LABISUR ofrece una completa variedad de
-          exámenes.<br />
-          Desde los más habituales de cualquier laboratorio clínico hasta
-          aquellos más especializados que aportarán una efectividad importante
-          al diagnóstico.
-        </div>
+          v-html="textAnalyte"
+        ></div>
       </v-col>
       <v-col cols="12" md="6">
         <v-card class="py-12 px-4" color="grey lighten-5" flat>
