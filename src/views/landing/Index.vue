@@ -23,8 +23,8 @@
                           : 'display-2',
                       ]"
                       class="font-weight-light"
+                      v-html="mainTitle"
                     >
-                      LABORATORIO INMUNOLÓGICO DEL SUR
                     </span>
 
                     <br />
@@ -36,8 +36,8 @@
                           : 'display-4',
                       ]"
                       class="font-weight-black"
+                      v-html="secondaryTitle"
                     >
-                      LABISUR
                     </span>
 
                     <br />
@@ -46,9 +46,8 @@
                         $vuetify.breakpoint.smAndDown ? 'headline' : 'title',
                       ]"
                       class="font-weight-bold secondary--text"
+                      v-html="legendTitle"
                     >
-                      Nos apasiona contribuir con nuestra ciencia a la salud de
-                      las personas
                     </span>
                   </v-col>
 
@@ -72,7 +71,7 @@
         <div class="py-12"></div>
 
         <v-container class="text-center">
-          <h2 class="display-2 font-weight-bold mb-3">ACERCA DE LABISUR</h2>
+          <h2 class="display-2 font-weight-bold mb-3" v-html="aboutTitle"></h2>
 
           <v-responsive class="mx-auto mb-8" width="56">
             <v-divider class="mb-1"></v-divider>
@@ -80,30 +79,14 @@
             <v-divider></v-divider>
           </v-responsive>
           <v-avatar class="elevation-12 mb-12 white" size="200">
-            <v-img contain :src="logoLabisur" />
+            <v-img contain :src="logoAbout" />
           </v-avatar>
 
           <v-responsive
             class="mx-auto title font-weight-light mb-8"
             max-width="720"
+            v-html="textAbout"
           >
-            LABISUR ha prestado servicios de diagnóstico y asesoría a Doctores,
-            Especialistas y Pacientes durante más de una década. La innovación y
-            el desarrollo ha sido un aporte a la Medicina nacional que ha sido
-            reconocida por importantes referentes. Conozca nuestro servicio.
-            Contamos con una amplia variedad de exámenes, respaldados por el
-            conocimiento y la tecnología que nos han llevado a ser la mejor
-            opción en el apoyo de Diagnóstico y Tratamiento.<br /><br />
-            Para ofrecer la mejor calidad a nuestros usuarios contamos con las
-            últmas tecnologías de diagnóstico en todas nuestras áreas.<br />
-            Nuestros profesionales están en constante capacitación.
-            <br />Exigimos a nuestros proveedores un trato preferencial en la
-            calidad de insumos, dada nuestro nivel de referente en el
-            diagnóstico clínico en el país. Hemos implementado sistemas
-            asesguramiento de la calidad de acuerdo a la norma ISO 15189 y
-            gestión de calidad ISO 9000:2000. Todo para dar a nuestros usuarios
-            Clínicos y Pacientes la mayor de las confianzas y brindarles un
-            apoyo diagnóstico eficiente y eficaz.
           </v-responsive>
 
           <div></div>
@@ -314,6 +297,15 @@ export default {
 
   data() {
     return {
+      aboutTitle: "",
+      title: "",
+      logo: "",
+      textAbout: "",
+      logoAbout: logoLabisur,
+      mainTitle: "LABORATORIO INMUNOLÓGICO DEL SUR",
+      secondaryTitle: "LABISUR",
+      legendTitle:
+        "Nos apasiona contribuir con nuestra ciencia a la salud de las personas",
       logoLabisur,
       laboratoryImg,
       chiefLabImg,
@@ -353,6 +345,84 @@ export default {
       ],
       stats: [["ASEGURAMIENTO DE CALIDAD", "Normas 15189/ISO 9000:2000"]],
     };
+  },
+
+  mounted() {
+    console.log(this.$route);
+    console.log(window.location.host);
+
+    const domain = window.location.host;
+    if (domain === "labisur.elabnote.cl") {
+      this.textAbout = `LABISUR ha prestado servicios de diagnóstico y asesoría a Doctores,
+            Especialistas y Pacientes durante más de una década. La innovación y
+            el desarrollo ha sido un aporte a la Medicina nacional que ha sido
+            reconocida por importantes referentes. Conozca nuestro servicio.
+            Contamos con una amplia variedad de exámenes, respaldados por el
+            conocimiento y la tecnología que nos han llevado a ser la mejor
+            opción en el apoyo de Diagnóstico y Tratamiento.<br /><br />
+            Para ofrecer la mejor calidad a nuestros usuarios contamos con las
+            últmas tecnologías de diagnóstico en todas nuestras áreas.<br />
+            Nuestros profesionales están en constante capacitación.
+            <br />Exigimos a nuestros proveedores un trato preferencial en la
+            calidad de insumos, dada nuestro nivel de referente en el
+            diagnóstico clínico en el país. Hemos implementado sistemas
+            asesguramiento de la calidad de acuerdo a la norma ISO 15189 y
+            gestión de calidad ISO 9000:2000. Todo para dar a nuestros usuarios
+            Clínicos y Pacientes la mayor de las confianzas y brindarles un
+            apoyo diagnóstico eficiente y eficaz.`;
+      this.aboutTitle = "ACERCA DE LABISUIR";
+      this.articles = [
+        {
+          src: this.chiefLabImg,
+          title: "Una vida dedidado a la medicina de diagnóstico",
+          text: "Referente nacional en el área de la medicina preventiva, inmunizaciones y vacunas, siendo actualmente integrante del Comité Asesor en Vacunas y Estrategias de Inmunización (CAVEI).",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1475938476802-32a7e851dad1?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80",
+          title: "Think outside the box",
+          text: "Nam ut leo ipsum. Maecenas pretium aliquam feugiat. Aenean vel tempor est, vitae tincidunt risus. Sed sodales vestibulum nibh.",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1416339442236-8ceb164046f8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1892&q=80",
+          title: "Small changes, big difference",
+          text: "Vestibulum in dictum velit, in rhoncus nibh. Maecenas neque libero, interdum a dignissim in, aliquet vitae lectus. Phasellus lorem enim, luctus ut velit eget.",
+        },
+      ];
+    } else if (domain === "labhhha.elabnote.cl") {
+      this.textAbout = `texto acerca de laboratorio clínico HHHA`;
+      this.aboutTitle = "ACERCA DE LABORATORIO CLINICO HHHA";
+      this.logoAbout =
+        "https://images.unsplash.com/photo-1475938476802-32a7e851dad1?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80";
+
+      this.mainTitle = "SUBDEPARTAMENTO DE LABORATORIO CLÍNICO HHHA";
+      this.secondaryTitle = "SIEL";
+      this.legendTitle = "Sistema de información de exámenes de laboratorio";
+      this.articles = [
+        {
+          src: "https://images.unsplash.com/photo-1475938476802-32a7e851dad1?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80",
+          title: "Una vida dedidado a la medicina de diagnóstico",
+          text: "Referente nacional en el área de la medicina preventiva, inmunizaciones y vacunas, siendo actualmente integrante del Comité Asesor en Vacunas y Estrategias de Inmunización (CAVEI).",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1475938476802-32a7e851dad1?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80",
+          title: "Think outside the box",
+          text: "Nam ut leo ipsum. Maecenas pretium aliquam feugiat. Aenean vel tempor est, vitae tincidunt risus. Sed sodales vestibulum nibh.",
+        },
+        {
+          src: "https://images.unsplash.com/photo-1416339442236-8ceb164046f8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1892&q=80",
+          title: "Small changes, big difference",
+          text: "Vestibulum in dictum velit, in rhoncus nibh. Maecenas neque libero, interdum a dignissim in, aliquet vitae lectus. Phasellus lorem enim, luctus ut velit eget.",
+        },
+      ];
+    } else {
+      this.aboutTitle = "DEVELOPER MODE";
+      this.textAbout = "developer mode";
+      this.logoAbout =
+        "https://images.unsplash.com/photo-1475938476802-32a7e851dad1?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80";
+      this.mainTitle = "SUBDEPARTAMENTO DE LABORATORIO CLÍNICO HHHA";
+      this.secondaryTitle = "SIEL";
+      this.legendTitle = "Sistema de información de exámenes de laboratorio";
+    }
   },
 
   computed: {
